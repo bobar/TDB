@@ -116,13 +116,13 @@ public class MotDePasseDialog extends JDialog {
 	    this.setVisible(true);
 
 	    if (validation = true) {
-		String mdp1 = champMDP1.getText();
-		String mdp2 = champMDP2.getText();
+		String mdp1 = champMDP1.getPassword().toString();
+		String mdp2 = champMDP2.getPassword().toString();
 		if (!mdp1.equals(mdp2)) {
 		    throw new Exception("Les mots de passe ne correspondent pas");
 		} else {
 		    Statement stmt = parent.connexion.createStatement();
-		    String mdp = MD5Hex(champMDP1.getText());
+		    String mdp = MD5Hex(champMDP1.getPassword().toString());
 		    stmt.executeUpdate("UPDATE admins SET passwd='" + mdp + "' WHERE id=" + authentification.admin);
 		    JOptionPane.showMessageDialog(this, "Mot de passe changé", "", JOptionPane.INFORMATION_MESSAGE);
 		}
