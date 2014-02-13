@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Stack;
 import java.util.prefs.Preferences;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -52,901 +51,822 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-
 import operationsStandard.TrigrammeDialog;
 import admin.AuthentificationDialog;
 
 public class MainWindow extends JFrame {
 
+    private static final long serialVersionUID = 1L;
+
+    // Les variables globales
+
+    public Trigramme trigrammeActif = null; // Le trigramme ouvert
+    public Trigramme banqueBob = null; // Le trigramme banque du BôB
+    public Trigramme banqueBinet = null; // Le trigramme banque binet
+    public boolean banqueBobActif = true; // True: banque=BôB;False:
+					  // banque=binet
+    public boolean modeAdministrateur = false; // True: mode
+					       // super-administrateur
+    public Trigramme administrateur = null; // Le trig du super-admin
+    public Connection connexion; // Pour la base de données, les autres
+				 // fonctions en ont besoin
+    public Stack<Transaction> dernieresActions;
+
+    private MainWindowListener mainWindowListener = new MainWindowListener(this);
+    Preferences prefs = Preferences.systemNodeForPackage(this.getClass());
+
+    // Création de tous les menus, on les met en variable global pour y avoir
+    // accès dans le listener
+
+    private JMenu menuStandard = new JMenu("Opérations standard");
+    JMenuItem ouvrirTrigramme = new JMenuItem("Ouvrir un trigramme");
+    JMenuItem fermerTrigramme = new JMenuItem("Fermer le trigramme");
+    JMenuItem voirHistorique = new JMenuItem("Voir tout l'historique");
+    JMenuItem rechercherTrigramme = new JMenuItem("Chercher un trigramme");
+    JMenuItem debiterTrigramme = new JMenuItem("Débiter un trigramme");
+    JMenuItem acheterClopes = new JMenuItem("Acheter des clopes");
+    JMenuItem pinteDeKroPourSIE = new JMenuItem("Pinte de Kro pour SIE");
+    JMenuItem annuler = new JMenuItem("Annuler");
+
+    JMenu menuGestion = new JMenu("Gérer un trigramme");
+    JMenuItem loggerAPlusieurs = new JMenuItem("Logger à plusieurs");
+    JMenuItem approvisionner = new JMenuItem("Approvisionner le trigramme");
+    JMenuItem transfert = new JMenuItem("Transfert");
+    JMenuItem creerTrigramme = new JMenuItem("Créer un trigramme");
+    JMenuItem modifierTrigramme = new JMenuItem("Modifier un trigramme");
+    JMenuItem supprimerTrigramme = new JMenuItem("Supprimer un trigramme");
+
+    JMenu menuTDB = new JMenu("Menu du TDB");
+    JMenuItem voirBinets = new JMenuItem("Voir les binets");
+    JMenuItem voirComptes = new JMenuItem("Voir des comptes");
+    JMenuItem debiterFichier = new JMenuItem("Débiter depuis un fichier");
+    JMenuItem positivation = new JMenuItem("Positivation");
+    JMenuItem exporter = new JMenuItem("Exporter la base");
+    JMenuItem reinitialiserHistorique = new JMenuItem("Reinitialiser les historiques");
+    JMenuItem reinitialiserConso = new JMenuItem("Reinitialiser les chiffres d'affaires");
+
+    JMenu menuAdmin = new JMenu("Menu Administration");
+    JMenuItem ouvrirModeAdmin = new JMenuItem("Lancer le mode super-administrateur");
+    JMenuItem fermerModeAdmin = new JMenuItem("Fermer le mode super-administrateur");
+    JMenuItem ouvrirBinet = new JMenuItem("Ouvrir banque binet");
+    JMenuItem fermerBinet = new JMenuItem("Fermer banque binet");
+    JMenuItem changerMDP = new JMenuItem("Changer son mot de passe");
+    JMenuItem gestionAdmins = new JMenuItem("Gestion des comptes admin");
+    JMenuItem gestionClopes = new JMenuItem("Gestion des clopes");
+
+    JPanel fond;
+
+    // Pour afficher l'historique
+    JTable historique = new JTable();
+    DefaultTableModel modele = new DefaultTableModel() {
 	private static final long serialVersionUID = 1L;
 
-	// Les variables globales
+	public boolean isCellEditable(int rowIndex, int columnInder) {
+	    return false;
+	}
+    };
+    DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+	private static final long serialVersionUID = 1L;
 
-	public Trigramme trigrammeActif = null; // Le trigramme ouvert
-	public Trigramme banqueBob = null; // Le trigramme banque du BôB
-	public Trigramme banqueBinet = null; // Le trigramme banque binet
-	public boolean banqueBobActif = true; // True: banque=BôB;False:
-											// banque=binet
-	public boolean modeAdministrateur = false; // True: mode
-												// super-administrateur
-	public Trigramme administrateur = null; // Le trig du super-admin
-	public Connection connexion; // Pour la base de données, les autres
-									// fonctions en ont besoin
-	public Stack<Transaction> dernieresActions;
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+		boolean hasFocus, int row, int column) {
+	    Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	    if (row % 2 == 0) {
+		cell.setBackground(Color.red);
+	    } else {
+		cell.setBackground(Color.white);
+	    }
+	    return cell;
+	}
+    };
+    DefaultTableColumnModel modeleColonnes;
+    JScrollPane historiqueScrollPane = new JScrollPane();
+    JPanel historiquePane = new JPanel();
 
-	private MainWindowListener mainWindowListener = new MainWindowListener(this);
-	Preferences prefs = Preferences.systemNodeForPackage(this.getClass());
+    // Pour afficher le bordel à droite
+    JPanel infos;
+    JButton bobBanqueBouton;
+    JButton binetBanqueBouton;
+    JLabel trigrammeLabel;
+    JTextPane nomLabel;
+    JLabel balanceLabel;
+    JLabel turnoverLabel;
+    JLabel photo;
 
-	// Création de tous les menus, on les met en variable global pour y avoir
-	// accès dans le listener
+    public MainWindow() {}
 
-	private JMenu menuStandard = new JMenu("Opérations standard");
-	JMenuItem ouvrirTrigramme = new JMenuItem("Ouvrir un trigramme");
-	JMenuItem fermerTrigramme = new JMenuItem("Fermer le trigramme");
-	JMenuItem voirHistorique = new JMenuItem("Voir tout l'historique");
-	JMenuItem rechercherTrigramme = new JMenuItem("Chercher un trigramme");
-	JMenuItem debiterTrigramme = new JMenuItem("Débiter un trigramme");
-	JMenuItem acheterClopes = new JMenuItem("Acheter des clopes");
-	JMenuItem pinteDeKroPourSIE = new JMenuItem("Pinte de Kro pour SIE");
-	JMenuItem annuler = new JMenuItem("Annuler");
+    public void connecter() throws Exception {
+	Database database = new Database();
+	database.connecter();
+	connexion = database.connexion;
+    }
 
-	JMenu menuGestion = new JMenu("Gérer un trigramme");
-	JMenuItem loggerAPlusieurs = new JMenuItem("Logger à plusieurs");
-	JMenuItem approvisionner = new JMenuItem("Approvisionner le trigramme");
-	JMenuItem transfert = new JMenuItem("Transfert");
-	JMenuItem creerTrigramme = new JMenuItem("Créer un trigramme");
-	JMenuItem modifierTrigramme = new JMenuItem("Modifier un trigramme");
-	JMenuItem supprimerTrigramme = new JMenuItem("Supprimer un trigramme");
+    public void deconnecter() throws Exception {
+	this.connexion.close();
+    }
 
-	JMenu menuTDB = new JMenu("Menu du TDB");
-	JMenuItem voirBinets = new JMenuItem("Voir les binets");
-	JMenuItem voirComptes = new JMenuItem("Voir des comptes");
-	JMenuItem debiterFichier = new JMenuItem("Débiter depuis un fichier");
-	JMenuItem positivation = new JMenuItem("Positivation");
-	JMenuItem exporter = new JMenuItem("Exporter la base");
-	JMenuItem reinitialiserHistorique = new JMenuItem(
-			"Reinitialiser les historiques");
-	JMenuItem reinitialiserConso = new JMenuItem(
-			"Reinitialiser les chiffres d'affaires");
+    public void setTrigrammeActif(Trigramme trigramme) throws Exception {
+	this.trigrammeActif = trigramme;
+	dernieresActions = new Stack<Transaction>();
+	this.refresh();
+    }
 
-	JMenu menuAdmin = new JMenu("Menu Administration");
-	JMenuItem ouvrirModeAdmin = new JMenuItem(
-			"Lancer le mode super-administrateur");
-	JMenuItem fermerModeAdmin = new JMenuItem(
-			"Fermer le mode super-administrateur");
-	JMenuItem ouvrirBinet = new JMenuItem("Ouvrir banque binet");
-	JMenuItem fermerBinet = new JMenuItem("Fermer banque binet");
-	JMenuItem changerMDP = new JMenuItem("Changer son mot de passe");
-	JMenuItem gestionAdmins = new JMenuItem("Gestion des comptes admin");
-	JMenuItem gestionClopes = new JMenuItem("Gestion des clopes");
+    public void fermerTrigrammeActif() throws Exception {
+	this.trigrammeActif = null;
+	dernieresActions = new Stack<Transaction>();
+	this.refresh();
+    }
 
-	JPanel fond;
+    public void ouvrirModeAdmin() throws Exception {
+	AuthentificationDialog authentification = new AuthentificationDialog(this);
+	authentification.executer();
+	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	    modeAdministrateur = true;
+	    administrateur = new Trigramme(this, authentification.admin);
+	}
+	this.refresh();
+    }
 
-	// Pour afficher l'historique
-	JTable historique = new JTable();
-	DefaultTableModel modele = new DefaultTableModel() {
-		private static final long serialVersionUID = 1L;
+    public void fermerModeAdmin() throws Exception {
+	modeAdministrateur = false;
+	administrateur = null;
+	this.refresh();
+    }
 
-		public boolean isCellEditable(int rowIndex, int columnInder) {
-			return false;
+    public void ouvrirBanqueBinet() throws Exception {
+	AuthentificationDialog authentification = new AuthentificationDialog(this);
+	authentification.executer();
+	if (authentification.droits >= AuthentificationDialog.ExBoBarman) {
+	    if (trigrammeActif == null) {
+		TrigrammeDialog dialog = new TrigrammeDialog(this, "");
+		dialog.executer();
+	    } else if (trigrammeActif.status != 2) {
+		TrigrammeDialog dialog = new TrigrammeDialog(this, "");
+		dialog.executer();
+
+	    }
+	    if (trigrammeActif.status != 2) { throw new TDBException("Le trigramme n'est pas un compte binet"); }
+	    banqueBinet = trigrammeActif;
+	    banqueBobActif = true;
+	} else {
+	    throw new TDBException("Vous n'avez pas les droits");
+	}
+	this.refresh();
+    }
+
+    public void fermerBanqueBinet() throws Exception {
+	AuthentificationDialog authentification = new AuthentificationDialog(this);
+	authentification.executer();
+	if (authentification.droits >= AuthentificationDialog.ExBoBarman) {
+	    banqueBinet = null;
+	    banqueBobActif = true;
+	} else {
+	    throw new TDBException("Vous n'avez pas les droits");
+	}
+	this.refresh();
+    }
+
+    public void reinitialiserTurnover() throws Exception {
+	AuthentificationDialog authentification = new AuthentificationDialog(this);
+	authentification.executer();
+	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	    GregorianCalendar date = new GregorianCalendar();
+	    date.setTime(new Date());
+	    String jour = "", mois = "", annee = "", heure = "", minute = "";
+	    if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
+		jour = "" + date.get(Calendar.DAY_OF_MONTH);
+	    } else {
+		jour = "0" + date.get(Calendar.DAY_OF_MONTH);
+	    }
+	    if ((1 + date.get(Calendar.MONTH)) >= 10) {
+		mois = "" + (1 + date.get(Calendar.MONTH));
+	    } else {
+		mois = "0" + (1 + date.get(Calendar.MONTH));
+	    }
+	    if (date.get(Calendar.YEAR) >= 10) {
+		annee = "" + date.get(Calendar.YEAR);
+	    } else {
+		annee = "0" + date.get(Calendar.YEAR);
+	    }
+	    if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
+		heure = "" + date.get(Calendar.HOUR_OF_DAY);
+	    } else {
+		heure = "0" + date.get(Calendar.HOUR);
+	    }
+	    if (date.get(Calendar.MINUTE) >= 10) {
+		minute = "" + date.get(Calendar.MINUTE);
+	    } else {
+		minute = "0" + date.get(Calendar.MINUTE);
+	    }
+	    String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
+	    prefs.put("dateResetTurnover", dateComplete);
+	    Statement stmt = connexion.createStatement();
+	    stmt.executeUpdate("UPDATE accounts SET turnover=+balance");
+	    refresh();
+	    JOptionPane.showMessageDialog(this, "Chiffres d'affaires réinitialisés", "",
+		    JOptionPane.INFORMATION_MESSAGE);
+	} else {
+	    throw new TDBException("Vous n'avez pas les droits");
+	}
+    }
+
+    public void reinitialiserHistorique() throws Exception {
+	AuthentificationDialog authentification = new AuthentificationDialog(this);
+	authentification.executer();
+	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	    GregorianCalendar date = new GregorianCalendar();
+	    date.setTime(new Date());
+	    String jour = "", mois = "", annee = "", heure = "", minute = "";
+	    if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
+		jour = "" + date.get(Calendar.DAY_OF_MONTH);
+	    } else {
+		jour = "0" + date.get(Calendar.DAY_OF_MONTH);
+	    }
+	    if ((1 + date.get(Calendar.MONTH)) >= 10) {
+		mois = "" + (1 + date.get(Calendar.MONTH));
+	    } else {
+		mois = "0" + (1 + date.get(Calendar.MONTH));
+	    }
+	    if (date.get(Calendar.YEAR) >= 10) {
+		annee = "" + date.get(Calendar.YEAR);
+	    } else {
+		annee = "0" + date.get(Calendar.YEAR);
+	    }
+	    if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
+		heure = "" + date.get(Calendar.HOUR_OF_DAY);
+	    } else {
+		heure = "0" + date.get(Calendar.HOUR);
+	    }
+	    if (date.get(Calendar.MINUTE) >= 10) {
+		minute = "" + date.get(Calendar.MINUTE);
+	    } else {
+		minute = "0" + date.get(Calendar.MINUTE);
+	    }
+	    String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
+	    prefs.put("dateResetHistorique", dateComplete);
+	    Statement stmt = connexion.createStatement();
+	    stmt.executeUpdate("DELETE FROM transactions");
+	    refresh();
+	    JOptionPane.showMessageDialog(this, "Historiques réinitialisés", "", JOptionPane.INFORMATION_MESSAGE);
+	} else {
+	    throw new TDBException("Vous n'avez pas les droits");
+	}
+    }
+
+    public void annuler() throws Exception {
+	if (!dernieresActions.empty()) {
+	    Transaction transaction = dernieresActions.pop();
+	    Statement stmt = connexion.createStatement();
+	    stmt.executeUpdate("DELETE FROM transactions WHERE id=" + transaction.id + " AND price="
+		    + transaction.price + " AND admin=" + transaction.admin + " AND date=" + transaction.date
+		    + " AND id2=" + transaction.id2);
+	    if (transaction.price < 0) {
+		Statement stmt2 = connexion.createStatement();
+		stmt2.executeUpdate("UPDATE accounts SET balance=balance+" + (-transaction.price) + " WHERE id="
+			+ transaction.id);
+		Statement stmt3 = connexion.createStatement();
+		stmt3.executeUpdate("UPDATE accounts SET balance=balance-" + (-transaction.price)
+			+ ",turnover=turnover-" + (-transaction.price) + " WHERE id=" + transaction.id2);
+
+	    } else {
+		Statement stmt2 = connexion.createStatement();
+		stmt2.executeUpdate("UPDATE accounts SET balance=balance-" + (transaction.price)
+			+ ",turnover=turnover-" + (transaction.price) + " WHERE id=" + transaction.id);
+		Statement stmt3 = connexion.createStatement();
+		stmt3.executeUpdate("UPDATE accounts SET balance=balance-" + (transaction.price) + " WHERE id="
+			+ transaction.id2);
+	    }
+	    this.refresh();
+	}
+    }
+
+    public void supprimerTrigramme() throws Exception {
+	if (trigrammeActif == null) {
+	    TrigrammeDialog trigrammeDialog = new TrigrammeDialog(this, "");
+	    TrigrammeDialog dialog = trigrammeDialog;
+	    dialog.executer();
+	}
+	trigrammeActif.supprimer();
+	trigrammeActif = null;
+	this.refresh();
+    }
+
+    public static void main(String[] args) {
+	MainWindow TDB = new MainWindow();
+	// TDB.prefs.put("version", "TDB 3.0");
+	// TDB.prefs.put("auteur", "Thierry Deo");
+	// TDB.prefs.put("dateMAJ", "25/01/2013");
+	// TDB.prefs.put("dateResetTurnover", "25/01/2013 00:00");
+	// TDB.prefs.put("dateResetHistorique", "25/01/2013 00:00");
+	try {
+	    // TDB.prefs.exportNode(System.out);
+	    String trigrammeBanque = "BOB";
+	    InputStream ips = new FileInputStream("./src//TDB.config");
+	    InputStreamReader ipsr = new InputStreamReader(ips);
+	    BufferedReader br = new BufferedReader(ipsr);
+	    String ligne;
+	    while ((ligne = br.readLine()) != null) {
+		if (ligne.charAt(0) != '#') {
+		    int pos = ligne.indexOf('=');
+		    String debut = ligne.substring(0, pos).trim();
+		    String fin = ligne.substring(pos + 1, ligne.length()).trim();
+		    if (debut.equals("trigrammeBanque") && fin.length() == 3) trigrammeBanque = fin;
 		}
-	};
-	DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
-		private static final long serialVersionUID = 1L;
-
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column) {
-			Component cell = super.getTableCellRendererComponent(table, value,
-					isSelected, hasFocus, row, column);
-			if (row % 2 == 0) {
-				cell.setBackground(Color.red);
-			} else {
-				cell.setBackground(Color.white);
-			}
-			return cell;
-		}
-	};
-	DefaultTableColumnModel modeleColonnes;
-	JScrollPane historiqueScrollPane = new JScrollPane();
-	JPanel historiquePane = new JPanel();
-
-	// Pour afficher le bordel à droite
-	JPanel infos;
-	JButton bobBanqueBouton;
-	JButton binetBanqueBouton;
-	JLabel trigrammeLabel;
-	JTextPane nomLabel;
-	JLabel balanceLabel;
-	JLabel turnoverLabel;
-	JLabel photo;
-
-	public MainWindow() {
+	    }
+	    br.close();
+	    TDB.initialiser(trigrammeBanque);
+	} catch (Exception e) {
+	    TDB.afficherErreur(e);
 	}
+    }
 
-	public void connecter() throws Exception {
-		Database database = new Database();
-		database.connecter();
-		connexion = database.connexion;
-	}
-
-	public void deconnecter() throws Exception {
-		this.connexion.close();
-	}
-
-	public void setTrigrammeActif(Trigramme trigramme) throws Exception {
-		this.trigrammeActif = trigramme;
-		dernieresActions = new Stack<Transaction>();
-		this.refresh();
-	}
-
-	public void fermerTrigrammeActif() throws Exception {
-		this.trigrammeActif = null;
-		dernieresActions = new Stack<Transaction>();
-		this.refresh();
-	}
-
-	public void ouvrirModeAdmin() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(
-				this);
-		authentification.executer();
-		if (authentification.droits == AuthentificationDialog.BoBarman) {
-			modeAdministrateur = true;
-			administrateur = new Trigramme(this, authentification.admin);
-		}
-		this.refresh();
-	}
-
-	public void fermerModeAdmin() throws Exception {
-		modeAdministrateur = false;
-		administrateur = null;
-		this.refresh();
-	}
-
-	public void ouvrirBanqueBinet() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(
-				this);
-		authentification.executer();
-		if (authentification.droits >= AuthentificationDialog.ExBoBarman) {
-			if (trigrammeActif == null) {
-				TrigrammeDialog dialog = new TrigrammeDialog(this, "");
-				dialog.executer();
-			} else if (trigrammeActif.status != 2) {
-				TrigrammeDialog dialog = new TrigrammeDialog(this, "");
-				dialog.executer();
-
-			}
-			if (trigrammeActif.status != 2) {
-				throw new TDBException("Le trigramme n'est pas un compte binet");
-			}
-			banqueBinet = trigrammeActif;
-			banqueBobActif = true;
-		} else {
-			throw new TDBException("Vous n'avez pas les droits");
-		}
-		this.refresh();
-	}
-
-	public void fermerBanqueBinet() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(
-				this);
-		authentification.executer();
-		if (authentification.droits >= AuthentificationDialog.ExBoBarman) {
-			banqueBinet = null;
-			banqueBobActif = true;
-		} else {
-			throw new TDBException("Vous n'avez pas les droits");
-		}
-		this.refresh();
-	}
-
-	public void reinitialiserTurnover() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(
-				this);
-		authentification.executer();
-		if (authentification.droits == AuthentificationDialog.BoBarman) {
-			GregorianCalendar date = new GregorianCalendar();
-			date.setTime(new Date());
-			String jour = "", mois = "", annee = "", heure = "", minute = "";
-			if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-				jour = "" + date.get(Calendar.DAY_OF_MONTH);
-			} else {
-				jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-			}
-			if ((1 + date.get(Calendar.MONTH)) >= 10) {
-				mois = "" + (1 + date.get(Calendar.MONTH));
-			} else {
-				mois = "0" + (1 + date.get(Calendar.MONTH));
-			}
-			if (date.get(Calendar.YEAR) >= 10) {
-				annee = "" + date.get(Calendar.YEAR);
-			} else {
-				annee = "0" + date.get(Calendar.YEAR);
-			}
-			if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-				heure = "" + date.get(Calendar.HOUR_OF_DAY);
-			} else {
-				heure = "0" + date.get(Calendar.HOUR);
-			}
-			if (date.get(Calendar.MINUTE) >= 10) {
-				minute = "" + date.get(Calendar.MINUTE);
-			} else {
-				minute = "0" + date.get(Calendar.MINUTE);
-			}
-			String dateComplete = jour + "/" + mois + "/" + annee + " " + heure
-					+ ":" + minute;
-			prefs.put("dateResetTurnover", dateComplete);
-			Statement stmt = connexion.createStatement();
-			stmt.executeUpdate("UPDATE accounts SET turnover=+balance");
-			refresh();
-			JOptionPane.showMessageDialog(this,
-					"Chiffres d'affaires réinitialisés", "",
-					JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			throw new TDBException("Vous n'avez pas les droits");
-		}
-	}
-
-	public void reinitialiserHistorique() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(
-				this);
-		authentification.executer();
-		if (authentification.droits == AuthentificationDialog.BoBarman) {
-			GregorianCalendar date = new GregorianCalendar();
-			date.setTime(new Date());
-			String jour = "", mois = "", annee = "", heure = "", minute = "";
-			if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-				jour = "" + date.get(Calendar.DAY_OF_MONTH);
-			} else {
-				jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-			}
-			if ((1 + date.get(Calendar.MONTH)) >= 10) {
-				mois = "" + (1 + date.get(Calendar.MONTH));
-			} else {
-				mois = "0" + (1 + date.get(Calendar.MONTH));
-			}
-			if (date.get(Calendar.YEAR) >= 10) {
-				annee = "" + date.get(Calendar.YEAR);
-			} else {
-				annee = "0" + date.get(Calendar.YEAR);
-			}
-			if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-				heure = "" + date.get(Calendar.HOUR_OF_DAY);
-			} else {
-				heure = "0" + date.get(Calendar.HOUR);
-			}
-			if (date.get(Calendar.MINUTE) >= 10) {
-				minute = "" + date.get(Calendar.MINUTE);
-			} else {
-				minute = "0" + date.get(Calendar.MINUTE);
-			}
-			String dateComplete = jour + "/" + mois + "/" + annee + " " + heure
-					+ ":" + minute;
-			prefs.put("dateResetHistorique", dateComplete);
-			Statement stmt = connexion.createStatement();
-			stmt.executeUpdate("DELETE FROM transactions");
-			refresh();
-			JOptionPane.showMessageDialog(this, "Historiques réinitialisés",
-					"", JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			throw new TDBException("Vous n'avez pas les droits");
-		}
-	}
-
-	public void annuler() throws Exception {
-		if (!dernieresActions.empty()) {
-			Transaction transaction = dernieresActions.pop();
-			Statement stmt = connexion.createStatement();
-			stmt.executeUpdate("DELETE FROM transactions WHERE id="
-					+ transaction.id + " AND price=" + transaction.price
-					+ " AND admin=" + transaction.admin + " AND date="
-					+ transaction.date + " AND id2=" + transaction.id2);
-			if (transaction.price < 0) {
-				Statement stmt2 = connexion.createStatement();
-				stmt2.executeUpdate("UPDATE accounts SET balance=balance+"
-						+ (-transaction.price) + " WHERE id=" + transaction.id);
-				Statement stmt3 = connexion.createStatement();
-				stmt3.executeUpdate("UPDATE accounts SET balance=balance-"
-						+ (-transaction.price) + ",turnover=turnover-"
-						+ (-transaction.price) + " WHERE id=" + transaction.id2);
-
-			} else {
-				Statement stmt2 = connexion.createStatement();
-				stmt2.executeUpdate("UPDATE accounts SET balance=balance-"
-						+ (transaction.price) + ",turnover=turnover-"
-						+ (transaction.price) + " WHERE id=" + transaction.id);
-				Statement stmt3 = connexion.createStatement();
-				stmt3.executeUpdate("UPDATE accounts SET balance=balance-"
-						+ (transaction.price) + " WHERE id=" + transaction.id2);
-			}
-			this.refresh();
-		}
-	}
-
-	public void supprimerTrigramme() throws Exception {
-		if (trigrammeActif == null) {
-			TrigrammeDialog trigrammeDialog = new TrigrammeDialog(this, "");
-			TrigrammeDialog dialog = trigrammeDialog;
-			dialog.executer();
-		}
-		trigrammeActif.supprimer();
-		trigrammeActif = null;
-		this.refresh();
-	}
-
-	public static void main(String[] args) {
-		MainWindow TDB = new MainWindow();
-		// TDB.prefs.put("version", "TDB 3.0");
-		// TDB.prefs.put("auteur", "Thierry Deo");
-		// TDB.prefs.put("dateMAJ", "25/01/2013");
-		// TDB.prefs.put("dateResetTurnover", "25/01/2013 00:00");
-		// TDB.prefs.put("dateResetHistorique", "25/01/2013 00:00");
-		try {
-			// TDB.prefs.exportNode(System.out);
-			String trigrammeBanque = "BOB";
-			InputStream ips = new FileInputStream("./src//TDB.config");
-			InputStreamReader ipsr = new InputStreamReader(ips);
-			BufferedReader br = new BufferedReader(ipsr);
-			String ligne;
-			while ((ligne = br.readLine()) != null) {
-				if (ligne.charAt(0) != '#') {
-					int pos = ligne.indexOf('=');
-					String debut = ligne.substring(0, pos).trim();
-					String fin = ligne.substring(pos + 1, ligne.length())
-							.trim();
-					if (debut.equals("trigrammeBanque") && fin.length() == 3)
-						trigrammeBanque = fin;
-				}
-			}
-			br.close();
-			TDB.initialiser(trigrammeBanque);
-		} catch (Exception e) {
-			TDB.afficherErreur(e);
-		}
-	}
-
-	public void afficherErreur(Exception e) {
-		JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur",
-				JOptionPane.ERROR_MESSAGE);
-		if (e.getClass() == SQLException.class) {
-			try {
-				this.deconnecter();
-				this.connecter();
-			} catch (Exception e1) {
-			}
-		}
-		if (e.getClass() != TDBException.class) {
-			try {
-				PrintWriter out = new PrintWriter(new BufferedWriter(
-						new FileWriter("/home/thierry/Bureau/logTDB", true)));
-				out.println(e.getMessage());
-				GregorianCalendar date = new GregorianCalendar();
-				date.setTime(new Date());
-				String jour = "", mois = "", annee = "", heure = "", minute = "";
-				if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-					jour = "" + date.get(Calendar.DAY_OF_MONTH);
-				} else {
-					jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-				}
-				if ((1 + date.get(Calendar.MONTH)) >= 10) {
-					mois = "" + (1 + date.get(Calendar.MONTH));
-				} else {
-					mois = "0" + (1 + date.get(Calendar.MONTH));
-				}
-				if (date.get(Calendar.YEAR) >= 10) {
-					annee = "" + date.get(Calendar.YEAR);
-				} else {
-					annee = "0" + date.get(Calendar.YEAR);
-				}
-				if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-					heure = "" + date.get(Calendar.HOUR_OF_DAY);
-				} else {
-					heure = "0" + date.get(Calendar.HOUR);
-				}
-				if (date.get(Calendar.MINUTE) >= 10) {
-					minute = "" + date.get(Calendar.MINUTE);
-				} else {
-					minute = "0" + date.get(Calendar.MINUTE);
-				}
-				String dateComplete = jour + "/" + mois + "/" + annee + " "
-						+ heure + ":" + minute;
-				out.println(dateComplete);
-				out.println();
-				for (StackTraceElement zou : e.getStackTrace()) {
-					out.println(zou);
-				}
-				out.println();
-				out.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
-
-	}
-
-	public void afficherMythe() {
-		JOptionPane.showMessageDialog(
-				this,
-				"Version : "
-						+ prefs.get("version", "TDB 3.0")
-						+ "\nAuteur : "
-						+ prefs.get("auteur", "Thierry Deo")
-						// + "\nDernière mise à jour : "
-						// + prefs.get("dateMAJ", "")
-						+ "\n\nReset chiffres d'affaires : "
-						+ prefs.get("dateResetTurnover", "")
-						+ "\nReset historiques : "
-						+ prefs.get("dateResetHistorique", ""), "Mythe",
-				JOptionPane.INFORMATION_MESSAGE);
-		// for (int i = 0; i < 30; i++) {
-		// JOptionPane.showMessageDialog(this, "Manou Manou Manou Manou",
-		// "Mythe", JOptionPane.INFORMATION_MESSAGE);
-		// }
-	}
-
-	public void initialiser(String trigrammeBanque) throws Exception {
-		this.setTitle("TDB");
-		Dimension tailleEcran = Toolkit.getDefaultToolkit().getScreenSize();
-		tailleEcran.setSize(tailleEcran.getWidth()-60, tailleEcran.getHeight());
-		//hack sordide, a cause du lanceur Unity a gauche
-		this.setSize(tailleEcran);
-		// this.setSize(1280, 768);
-
-		// Création de tous les menus
-		ouvrirTrigramme.addActionListener(mainWindowListener);
-		fermerTrigramme.addActionListener(mainWindowListener);
-		fermerTrigramme.setAccelerator(KeyStroke
-				.getKeyStroke((char) KeyEvent.VK_ESCAPE));
-		voirHistorique.addActionListener(mainWindowListener);
-		voirHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
-				InputEvent.CTRL_DOWN_MASK));
-		rechercherTrigramme.addActionListener(mainWindowListener);
-		rechercherTrigramme.setAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
-		debiterTrigramme.addActionListener(mainWindowListener);
-		acheterClopes.addActionListener(mainWindowListener);
-		acheterClopes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
-				InputEvent.CTRL_DOWN_MASK));
-		pinteDeKroPourSIE.addActionListener(mainWindowListener);
-		pinteDeKroPourSIE.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K,
-				InputEvent.CTRL_DOWN_MASK + InputEvent.ALT_DOWN_MASK));
-		annuler.addActionListener(mainWindowListener);
-		annuler.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-				InputEvent.CTRL_DOWN_MASK));
-
-		menuStandard.add(ouvrirTrigramme);
-		menuStandard.add(fermerTrigramme);
-		menuStandard.add(voirHistorique);
-		menuStandard.add(rechercherTrigramme);
-		menuStandard.add(debiterTrigramme);
-		menuStandard.add(acheterClopes);
-		menuStandard.add(pinteDeKroPourSIE);
-		menuStandard.add(annuler);
-
-		loggerAPlusieurs.addActionListener(mainWindowListener);
-		loggerAPlusieurs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
-				InputEvent.CTRL_DOWN_MASK));
-		approvisionner.addActionListener(mainWindowListener);
-		approvisionner.setAccelerator(KeyStroke.getKeyStroke('+'));
-		transfert.addActionListener(mainWindowListener);
-		transfert.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
-				InputEvent.CTRL_DOWN_MASK));
-		creerTrigramme.addActionListener(mainWindowListener);
-		creerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-				InputEvent.CTRL_DOWN_MASK));
-		modifierTrigramme.addActionListener(mainWindowListener);
-		modifierTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
-				InputEvent.CTRL_DOWN_MASK));
-		supprimerTrigramme.addActionListener(mainWindowListener);
-		supprimerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				InputEvent.CTRL_DOWN_MASK));
-
-		menuGestion.add(loggerAPlusieurs);
-		menuGestion.add(approvisionner);
-		menuGestion.add(transfert);
-		menuGestion.add(creerTrigramme);
-		menuGestion.add(modifierTrigramme);
-		menuGestion.add(supprimerTrigramme);
-
-		voirBinets.addActionListener(mainWindowListener);
-		voirComptes.addActionListener(mainWindowListener);
-		debiterFichier.addActionListener(mainWindowListener);
-		positivation.addActionListener(mainWindowListener);
-		exporter.addActionListener(mainWindowListener);
-		reinitialiserHistorique.addActionListener(mainWindowListener);
-		reinitialiserConso.addActionListener(mainWindowListener);
-
-		menuTDB.add(voirBinets);
-		menuTDB.add(voirComptes);
-		menuTDB.add(debiterFichier);
-		menuTDB.add(positivation);
-		menuTDB.add(exporter);
-		menuTDB.add(reinitialiserHistorique);
-		menuTDB.add(reinitialiserConso);
-
-		ouvrirModeAdmin.addActionListener(mainWindowListener);
-		fermerModeAdmin.addActionListener(mainWindowListener);
-		ouvrirBinet.addActionListener(mainWindowListener);
-		fermerBinet.addActionListener(mainWindowListener);
-		changerMDP.addActionListener(mainWindowListener);
-		gestionAdmins.addActionListener(mainWindowListener);
-		gestionClopes.addActionListener(mainWindowListener);
-
-		menuAdmin.add(ouvrirModeAdmin);
-		menuAdmin.add(fermerModeAdmin);
-		menuAdmin.add(ouvrirBinet);
-		menuAdmin.add(fermerBinet);
-		menuAdmin.add(changerMDP);
-		menuAdmin.add(gestionAdmins);
-		menuAdmin.add(gestionClopes);
-
-		JMenuBar barreDeMenu = new JMenuBar();
-		barreDeMenu.add(menuStandard);
-		barreDeMenu.add(menuGestion);
-		barreDeMenu.add(menuTDB);
-		barreDeMenu.add(menuAdmin);
-
-		this.setJMenuBar(barreDeMenu);
-
-		// Création de l'historique
-
-		historiqueScrollPane = new JScrollPane(historique);
-		historiqueScrollPane
-				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		historiqueScrollPane.setPreferredSize(new Dimension(
-				(this.getWidth() - 20) * 2 / 3, this.getHeight() - 80));
-
-		String[] header = { "Montant", "Banque", "Admin", "Commentaire", "Date" };
-		modele.setColumnIdentifiers(header);
-
-		historique.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		historique.setModel(modele);
-		historique.getColumnModel().getColumn(0).setPreferredWidth(65);
-		historique.getColumnModel().getColumn(1).setPreferredWidth(60);
-		historique.getColumnModel().getColumn(2).setPreferredWidth(50);
-		historique
-				.getColumnModel()
-				.getColumn(3)
-				.setPreferredWidth(
-						historiqueScrollPane.getPreferredSize().width - 340);
-		historique.getColumnModel().getColumn(4).setPreferredWidth(140);
-		historique.setShowGrid(false);
-		historique.setDefaultRenderer(String.class, renderer);
-		historique.repaint();
-
-		// Création du panneau d'infos de droite
-		infos = new JPanel();
-		infos.setPreferredSize(new Dimension((this.getWidth() - 20) * 1 / 3,
-				this.getHeight() - 80));
-		infos.setLayout(new FlowLayout(SwingConstants.CENTER));
-		infos.setBackground(null);
-
-		if (trigrammeBanque.equals("BOB"))
-			bobBanqueBouton = new JButton("BôB");
-		else
-			bobBanqueBouton = new JButton(trigrammeBanque);
-		bobBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
-		bobBanqueBouton.setPreferredSize(new Dimension((int) (infos
-				.getPreferredSize().getWidth() - 20) / 2, 60));
-
-		binetBanqueBouton = new JButton("Mythe");
-		binetBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
-		binetBanqueBouton.setPreferredSize(new Dimension((int) (infos
-				.getPreferredSize().getWidth() - 20) / 2, 60));
-
-		trigrammeLabel = new JLabel();
-		trigrammeLabel.setPreferredSize(new Dimension((int) (infos
-				.getPreferredSize().getWidth() - 20), 60));
-		trigrammeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		trigrammeLabel.setFont(new Font("ARIAL", Font.BOLD, 40));
-
-		nomLabel = new JTextPane();
-		nomLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize()
-				.getWidth() - 10), 150));
-		nomLabel.setOpaque(true);
-		StyledDocument doc = nomLabel.getStyledDocument();
-		MutableAttributeSet center = new SimpleAttributeSet();
-		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
-		StyleConstants.setFontSize(center, 25);
-		StyleConstants.setFontFamily(center, "ARIAL");
-		doc.setParagraphAttributes(0, 0, center, true);
-		nomLabel.setBackground(null);
-		nomLabel.setEditable(false);
-		nomLabel.setFocusable(false);
-
-		balanceLabel = new JLabel();
-		balanceLabel.setPreferredSize(new Dimension((int) (infos
-				.getPreferredSize().getWidth() - 10), 100));
-		balanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		balanceLabel.setFont(new Font("ARIAL", Font.BOLD, 40));
-
-		turnoverLabel = new JLabel();
-		turnoverLabel.setPreferredSize(new Dimension((int) (infos
-				.getPreferredSize().getWidth() - 10), 40));
-		turnoverLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		turnoverLabel.setFont(new Font("ARIAL", Font.PLAIN, 12));
-
-		photo = new JLabel();
-		photo.setPreferredSize(new Dimension((int) (infos.getPreferredSize()
-				.getWidth() - 10), 200));
-		photo.setHorizontalAlignment(SwingConstants.CENTER);
-
-		infos.add(bobBanqueBouton);
-		infos.add(binetBanqueBouton);
-		infos.add(trigrammeLabel);
-		infos.add(nomLabel);
-		infos.add(balanceLabel);
-		infos.add(turnoverLabel);
-		infos.add(photo);
-
-		fond = new JPanel();
-		fond.add(historiqueScrollPane);
-		fond.add(infos);
-		this.add(fond);
-
-		this.setVisible(true);
-
-		this.addKeyListener(mainWindowListener);
-		historique.addKeyListener(mainWindowListener);
-		infos.addKeyListener(mainWindowListener);
-		bobBanqueBouton.addActionListener(mainWindowListener);
-		bobBanqueBouton.setFocusable(false);
-		binetBanqueBouton.addActionListener(mainWindowListener);
-		binetBanqueBouton.setFocusable(false);
-
-		// Finalement,connexion à la base de données.
+    public void afficherErreur(Exception e) {
+	JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+	if (e.getClass() == SQLException.class) {
+	    try {
+		this.deconnecter();
 		this.connecter();
-		banqueBob = new Trigramme(this, trigrammeBanque);
-		if (banqueBob.status != 2) {
-			this.dispose();
-			throw new TDBException("La banque doit être un compte binet");
+	    } catch (Exception e1) {}
+	}
+	if (e.getClass() != TDBException.class) {
+	    try {
+		PrintWriter out = new PrintWriter(new BufferedWriter(
+			new FileWriter("/home/thierry/Bureau/logTDB", true)));
+		out.println(e.getMessage());
+		GregorianCalendar date = new GregorianCalendar();
+		date.setTime(new Date());
+		String jour = "", mois = "", annee = "", heure = "", minute = "";
+		if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
+		    jour = "" + date.get(Calendar.DAY_OF_MONTH);
+		} else {
+		    jour = "0" + date.get(Calendar.DAY_OF_MONTH);
 		}
-		banqueBobActif = true;
-
+		if ((1 + date.get(Calendar.MONTH)) >= 10) {
+		    mois = "" + (1 + date.get(Calendar.MONTH));
+		} else {
+		    mois = "0" + (1 + date.get(Calendar.MONTH));
+		}
+		if (date.get(Calendar.YEAR) >= 10) {
+		    annee = "" + date.get(Calendar.YEAR);
+		} else {
+		    annee = "0" + date.get(Calendar.YEAR);
+		}
+		if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
+		    heure = "" + date.get(Calendar.HOUR_OF_DAY);
+		} else {
+		    heure = "0" + date.get(Calendar.HOUR);
+		}
+		if (date.get(Calendar.MINUTE) >= 10) {
+		    minute = "" + date.get(Calendar.MINUTE);
+		} else {
+		    minute = "0" + date.get(Calendar.MINUTE);
+		}
+		String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
+		out.println(dateComplete);
+		out.println();
+		for (StackTraceElement zou : e.getStackTrace()) {
+		    out.println(zou);
+		}
+		out.println();
+		out.close();
+	    } catch (IOException e1) {
+		e1.printStackTrace();
+	    }
 	}
 
-	public void refresh() throws Exception {
-		if (banqueBinet != null) {
-			binetBanqueBouton.setText(banqueBinet.trigramme);
-		} else {
-			binetBanqueBouton.setText("Mythe");
-		}
+    }
 
-		if (!banqueBobActif) {
-			fond.setBackground(Color.CYAN);
-			historiqueScrollPane.setBackground(Color.CYAN);
-			historique.setBackground(Color.CYAN);
-		} else {
-			fond.setBackground(null);
-			historiqueScrollPane.setBackground(null);
-			historique.setBackground(Color.WHITE);
-		}
-		if (modeAdministrateur) {
-			fond.setBackground(Color.YELLOW);
-		}
+    public void afficherMythe() {
+	JOptionPane.showMessageDialog(this,
+		"Version : " + prefs.get("version", "TDB 3.0") + "\nAuteur : "
+			+ prefs.get("auteur", "Thierry Deo")
+			// + "\nDernière mise à jour : "
+			// + prefs.get("dateMAJ", "")
+			+ "\n\nReset chiffres d'affaires : " + prefs.get("dateResetTurnover", "")
+			+ "\nReset historiques : " + prefs.get("dateResetHistorique", ""), "Mythe",
+		JOptionPane.INFORMATION_MESSAGE);
+	// for (int i = 0; i < 30; i++) {
+	// JOptionPane.showMessageDialog(this, "Manou Manou Manou Manou",
+	// "Mythe", JOptionPane.INFORMATION_MESSAGE);
+	// }
+    }
 
-		if (trigrammeActif != null) {
-			trigrammeActif = new Trigramme(this, trigrammeActif.id);
-		}
+    public void initialiser(String trigrammeBanque) throws Exception {
+	this.setTitle("TDB");
+	Dimension tailleEcran = Toolkit.getDefaultToolkit().getScreenSize();
+	tailleEcran.setSize(tailleEcran.getWidth() - 60, tailleEcran.getHeight());
+	// hack sordide, a cause du lanceur Unity a gauche
+	this.setSize(tailleEcran);
+	// this.setSize(1280, 768);
 
-		// En gros, ca met à jour tout l'affichage
-		for (int i = modele.getRowCount() - 1; i >= 0; i--) {
-			modele.removeRow(i);
-		}
+	// Création de tous les menus
+	ouvrirTrigramme.addActionListener(mainWindowListener);
+	fermerTrigramme.addActionListener(mainWindowListener);
+	fermerTrigramme.setAccelerator(KeyStroke.getKeyStroke((char) KeyEvent.VK_ESCAPE));
+	voirHistorique.addActionListener(mainWindowListener);
+	voirHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK));
+	rechercherTrigramme.addActionListener(mainWindowListener);
+	rechercherTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
+	debiterTrigramme.addActionListener(mainWindowListener);
+	acheterClopes.addActionListener(mainWindowListener);
+	acheterClopes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK));
+	pinteDeKroPourSIE.addActionListener(mainWindowListener);
+	pinteDeKroPourSIE.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK
+		+ InputEvent.ALT_DOWN_MASK));
+	annuler.addActionListener(mainWindowListener);
+	annuler.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
 
-		if (trigrammeActif != null) {
-			if (trigrammeActif.balance >= 0) {
-				balanceLabel.setForeground(Color.BLACK);
-			} else {
-				balanceLabel.setForeground(Color.RED);
-			}
-			if (trigrammeActif.status == Trigramme.XPlatal) {
-				trigrammeLabel.setForeground(Color.BLACK);
-			} else if (trigrammeActif.status == Trigramme.Binet) {
-				trigrammeLabel.setForeground(Color.GREEN);
-			} else {
-				trigrammeLabel.setForeground(Color.BLUE);
-			}
-			Statement stmt = connexion.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
-							+ trigrammeActif.id
-							+ " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
-							+ trigrammeActif.id
-							+ " ORDER BY date DESC LIMIT 50");
-			while (rs.next()) {
-				int adminId = rs.getInt("admin");
-				String adminTrig = "";
-				Statement stmt2 = connexion.createStatement();
-				ResultSet rs2 = stmt2
-						.executeQuery("SELECT trigramme FROM accounts WHERE id="
-								+ adminId);
-				if (rs2.next()) {
-					adminTrig = rs2.getString("trigramme");
-				}
-				String banqueTrig = "";
-				Statement stmt3 = connexion.createStatement();
-				ResultSet rs3 = stmt3
-						.executeQuery("SELECT trigramme FROM accounts WHERE id="
-								+ (rs.getInt("id") + rs.getInt("id2") - trigrammeActif.id));
-				if (rs3.next()) {
-					banqueTrig = rs3.getString("trigramme");
-				}
-				if (banqueTrig.equals("BOB")) {
-					banqueTrig = ""; // Plus de lisibilité
-				}
-				GregorianCalendar date = new GregorianCalendar();
-				date.setTimeInMillis(((long) rs.getInt("date")) * 1000);
-				String jour = "", mois = "", annee = "", heure = "", minute = "";
-				if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-					jour = "" + date.get(Calendar.DAY_OF_MONTH);
-				} else {
-					jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-				}
-				if ((1 + date.get(Calendar.MONTH)) >= 10) {
-					mois = "" + (1 + date.get(Calendar.MONTH));
-				} else {
-					mois = "0" + (1 + date.get(Calendar.MONTH));
-				}
-				if (date.get(Calendar.YEAR) >= 10) {
-					annee = "" + date.get(Calendar.YEAR);
-				} else {
-					annee = "0" + date.get(Calendar.YEAR);
-				}
-				if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-					heure = "" + date.get(Calendar.HOUR_OF_DAY);
-				} else {
-					heure = "0" + date.get(Calendar.HOUR);
-				}
-				if (date.get(Calendar.MINUTE) >= 10) {
-					minute = "" + date.get(Calendar.MINUTE);
-				} else {
-					minute = "0" + date.get(Calendar.MINUTE);
-				}
-				String dateComplete = jour + "/" + mois + "/" + annee + " "
-						+ heure + ":" + minute;
-				String[] item = { ((double) rs.getInt("price") / 100) + "",
-						banqueTrig, adminTrig, rs.getString("comment"),
-						dateComplete };
-				modele.addRow(item);
-			}
+	menuStandard.add(ouvrirTrigramme);
+	menuStandard.add(fermerTrigramme);
+	menuStandard.add(voirHistorique);
+	menuStandard.add(rechercherTrigramme);
+	menuStandard.add(debiterTrigramme);
+	menuStandard.add(acheterClopes);
+	menuStandard.add(pinteDeKroPourSIE);
+	menuStandard.add(annuler);
 
-			trigrammeLabel.setText(trigrammeActif.trigramme);
-			String promo = "";
-			if (trigrammeActif.promo > 0) {
-				promo = "" + trigrammeActif.promo;
-			}
-			if (!trigrammeActif.nickname.equals("")) {
-				nomLabel.setText(trigrammeActif.name + " "
-						+ trigrammeActif.first_name + " ("
-						+ trigrammeActif.nickname + ") " + promo);
-			} else {
-				nomLabel.setText(trigrammeActif.name + " "
-						+ trigrammeActif.first_name + " " + promo);
-			}
-			balanceLabel.setText("" + (double) trigrammeActif.balance / 100);
-			if (trigrammeActif.status == 2) {
-				turnoverLabel
-						.setText(((double) (trigrammeActif.balance - trigrammeActif.turnover) / 100)
-								+ "€ depensés depuis dernier reset.");
-			} else {
-				turnoverLabel
-						.setText(((double) (trigrammeActif.turnover - trigrammeActif.balance) / 100)
-								+ "€ depensés depuis dernier reset.");
-			}
-			if (trigrammeActif.picture != "") {
-				try {
-					Image image = ImageIO
-							.read(new File(trigrammeActif.picture));
-					new ImageIcon(image);
-					double zoom = Math.min(
-							(double) photo.getWidth()
-									/ (double) image.getWidth(null),
-							(double) photo.getHeight()
-									/ (double) image.getHeight(null));
-					photo.setIcon(new ImageIcon(image.getScaledInstance(
-							(int) (image.getWidth(null) * zoom),
-							(int) (image.getHeight(null) * zoom),
-							Image.SCALE_DEFAULT)));
-					photo.repaint();
-				} catch (IOException e) {
-					photo.setIcon(null);
-				}
-			} else {
-				photo.setIcon(null);
-			}
+	loggerAPlusieurs.addActionListener(mainWindowListener);
+	loggerAPlusieurs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
+	approvisionner.addActionListener(mainWindowListener);
+	approvisionner.setAccelerator(KeyStroke.getKeyStroke('+'));
+	transfert.addActionListener(mainWindowListener);
+	transfert.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
+	creerTrigramme.addActionListener(mainWindowListener);
+	creerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+	modifierTrigramme.addActionListener(mainWindowListener);
+	modifierTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK));
+	supprimerTrigramme.addActionListener(mainWindowListener);
+	supprimerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 
-		} else {
-			trigrammeLabel.setText("");
-			nomLabel.setText("");
-			balanceLabel.setText("");
-			turnoverLabel.setText("");
-			photo.setIcon(null);
-		}
-		infos.repaint();
-		historique.setDefaultRenderer(String.class, renderer);
-		historique.setModel(modele);
-		historique.repaint();
-		this.repaint();
+	menuGestion.add(loggerAPlusieurs);
+	menuGestion.add(approvisionner);
+	menuGestion.add(transfert);
+	menuGestion.add(creerTrigramme);
+	menuGestion.add(modifierTrigramme);
+	menuGestion.add(supprimerTrigramme);
+
+	voirBinets.addActionListener(mainWindowListener);
+	voirComptes.addActionListener(mainWindowListener);
+	debiterFichier.addActionListener(mainWindowListener);
+	positivation.addActionListener(mainWindowListener);
+	exporter.addActionListener(mainWindowListener);
+	reinitialiserHistorique.addActionListener(mainWindowListener);
+	reinitialiserConso.addActionListener(mainWindowListener);
+
+	menuTDB.add(voirBinets);
+	menuTDB.add(voirComptes);
+	menuTDB.add(debiterFichier);
+	menuTDB.add(positivation);
+	menuTDB.add(exporter);
+	menuTDB.add(reinitialiserHistorique);
+	menuTDB.add(reinitialiserConso);
+
+	ouvrirModeAdmin.addActionListener(mainWindowListener);
+	fermerModeAdmin.addActionListener(mainWindowListener);
+	ouvrirBinet.addActionListener(mainWindowListener);
+	fermerBinet.addActionListener(mainWindowListener);
+	changerMDP.addActionListener(mainWindowListener);
+	gestionAdmins.addActionListener(mainWindowListener);
+	gestionClopes.addActionListener(mainWindowListener);
+
+	menuAdmin.add(ouvrirModeAdmin);
+	menuAdmin.add(fermerModeAdmin);
+	menuAdmin.add(ouvrirBinet);
+	menuAdmin.add(fermerBinet);
+	menuAdmin.add(changerMDP);
+	menuAdmin.add(gestionAdmins);
+	menuAdmin.add(gestionClopes);
+
+	JMenuBar barreDeMenu = new JMenuBar();
+	barreDeMenu.add(menuStandard);
+	barreDeMenu.add(menuGestion);
+	barreDeMenu.add(menuTDB);
+	barreDeMenu.add(menuAdmin);
+
+	this.setJMenuBar(barreDeMenu);
+
+	// Création de l'historique
+
+	historiqueScrollPane = new JScrollPane(historique);
+	historiqueScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	historiqueScrollPane.setPreferredSize(new Dimension((this.getWidth() - 20) * 2 / 3, this.getHeight() - 80));
+
+	String[] header = { "Montant", "Banque", "Admin", "Commentaire", "Date" };
+	modele.setColumnIdentifiers(header);
+
+	historique.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	historique.setModel(modele);
+	historique.getColumnModel().getColumn(0).setPreferredWidth(65);
+	historique.getColumnModel().getColumn(1).setPreferredWidth(60);
+	historique.getColumnModel().getColumn(2).setPreferredWidth(50);
+	historique.getColumnModel().getColumn(3).setPreferredWidth(historiqueScrollPane.getPreferredSize().width - 340);
+	historique.getColumnModel().getColumn(4).setPreferredWidth(140);
+	historique.setShowGrid(false);
+	historique.setDefaultRenderer(String.class, renderer);
+	historique.repaint();
+
+	// Création du panneau d'infos de droite
+	infos = new JPanel();
+	infos.setPreferredSize(new Dimension((this.getWidth() - 20) * 1 / 3, this.getHeight() - 80));
+	infos.setLayout(new FlowLayout(SwingConstants.CENTER));
+	infos.setBackground(null);
+
+	if (trigrammeBanque.equals("BOB")) bobBanqueBouton = new JButton("BôB");
+	else bobBanqueBouton = new JButton(trigrammeBanque);
+	bobBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
+	bobBanqueBouton.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
+
+	binetBanqueBouton = new JButton("Mythe");
+	binetBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
+	binetBanqueBouton.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
+
+	trigrammeLabel = new JLabel();
+	trigrammeLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 20), 60));
+	trigrammeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	trigrammeLabel.setFont(new Font("ARIAL", Font.BOLD, 40));
+
+	nomLabel = new JTextPane();
+	nomLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 150));
+	nomLabel.setOpaque(true);
+	StyledDocument doc = nomLabel.getStyledDocument();
+	MutableAttributeSet center = new SimpleAttributeSet();
+	StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+	StyleConstants.setFontSize(center, 25);
+	StyleConstants.setFontFamily(center, "ARIAL");
+	doc.setParagraphAttributes(0, 0, center, true);
+	nomLabel.setBackground(null);
+	nomLabel.setEditable(false);
+	nomLabel.setFocusable(false);
+
+	balanceLabel = new JLabel();
+	balanceLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 100));
+	balanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	balanceLabel.setFont(new Font("ARIAL", Font.BOLD, 40));
+
+	turnoverLabel = new JLabel();
+	turnoverLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 40));
+	turnoverLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	turnoverLabel.setFont(new Font("ARIAL", Font.PLAIN, 12));
+
+	photo = new JLabel();
+	photo.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 200));
+	photo.setHorizontalAlignment(SwingConstants.CENTER);
+
+	infos.add(bobBanqueBouton);
+	infos.add(binetBanqueBouton);
+	infos.add(trigrammeLabel);
+	infos.add(nomLabel);
+	infos.add(balanceLabel);
+	infos.add(turnoverLabel);
+	infos.add(photo);
+
+	fond = new JPanel();
+	fond.add(historiqueScrollPane);
+	fond.add(infos);
+	this.add(fond);
+
+	this.setVisible(true);
+
+	this.addKeyListener(mainWindowListener);
+	historique.addKeyListener(mainWindowListener);
+	infos.addKeyListener(mainWindowListener);
+	bobBanqueBouton.addActionListener(mainWindowListener);
+	bobBanqueBouton.setFocusable(false);
+	binetBanqueBouton.addActionListener(mainWindowListener);
+	binetBanqueBouton.setFocusable(false);
+
+	// Finalement,connexion à la base de données.
+	this.connecter();
+	banqueBob = new Trigramme(this, trigrammeBanque);
+	if (banqueBob.status != 2) {
+	    this.dispose();
+	    throw new TDBException("La banque doit être un compte binet");
+	}
+	banqueBobActif = true;
+
+    }
+
+    public void refresh() throws Exception {
+	if (banqueBinet != null) {
+	    binetBanqueBouton.setText(banqueBinet.trigramme);
+	} else {
+	    binetBanqueBouton.setText("Mythe");
 	}
 
-	public void refreshHistorique() throws Exception {
-
-		// En gros, ca met à jour l'historique au complet (dans la précédente,
-		// on affiche que 50 lignes)
-		for (int i = modele.getRowCount() - 1; i >= 0; i--) {
-			modele.removeRow(i);
-		}
-
-		if (trigrammeActif != null) {
-			Statement stmt = connexion.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
-							+ trigrammeActif.id
-							+ " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
-							+ trigrammeActif.id + " ORDER BY date DESC");
-			while (rs.next()) {
-				int adminId = rs.getInt("admin");
-				String adminTrig = "";
-				Statement stmt2 = connexion.createStatement();
-				ResultSet rs2 = stmt2
-						.executeQuery("SELECT trigramme FROM accounts WHERE id="
-								+ adminId);
-				if (rs2.next()) {
-					adminTrig = rs2.getString("trigramme");
-				}
-				String banqueTrig = "";
-				Statement stmt3 = connexion.createStatement();
-				ResultSet rs3 = stmt3
-						.executeQuery("SELECT trigramme FROM accounts WHERE id="
-								+ (rs.getInt("id") + rs.getInt("id2") - trigrammeActif.id));
-				if (rs3.next()) {
-					banqueTrig = rs3.getString("trigramme");
-				}
-				if (banqueTrig.equals("BOB")) {
-					banqueTrig = ""; // Plus de lisibilité
-				}
-				GregorianCalendar date = new GregorianCalendar();
-				date.setTimeInMillis(((long) rs.getInt("date")) * 1000);
-				String jour = "", mois = "", annee = "", heure = "", minute = "";
-				if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-					jour = "" + date.get(Calendar.DAY_OF_MONTH);
-				} else {
-					jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-				}
-				if ((1 + date.get(Calendar.MONTH)) >= 10) {
-					mois = "" + (1 + date.get(Calendar.MONTH));
-				} else {
-					mois = "0" + (1 + date.get(Calendar.MONTH));
-				}
-				if (date.get(Calendar.YEAR) >= 10) {
-					annee = "" + date.get(Calendar.YEAR);
-				} else {
-					annee = "0" + date.get(Calendar.YEAR);
-				}
-				if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-					heure = "" + date.get(Calendar.HOUR_OF_DAY);
-				} else {
-					heure = "0" + date.get(Calendar.HOUR);
-				}
-				if (date.get(Calendar.MINUTE) >= 10) {
-					minute = "" + date.get(Calendar.MINUTE);
-				} else {
-					minute = "0" + date.get(Calendar.MINUTE);
-				}
-				String dateComplete = jour + "/" + mois + "/" + annee + " "
-						+ heure + ":" + minute;
-				String[] item = { ((double) rs.getInt("price") / 100) + "",
-						banqueTrig, adminTrig, rs.getString("comment"),
-						dateComplete };
-				modele.addRow(item);
-
-			}
-
-			infos.repaint();
-			historique.setModel(modele);
-			historique.repaint();
-			this.repaint();
-		}
+	if (!banqueBobActif) {
+	    fond.setBackground(Color.CYAN);
+	    historiqueScrollPane.setBackground(Color.CYAN);
+	    historique.setBackground(Color.CYAN);
+	} else {
+	    fond.setBackground(null);
+	    historiqueScrollPane.setBackground(null);
+	    historique.setBackground(Color.WHITE);
 	}
+	if (modeAdministrateur) {
+	    fond.setBackground(Color.YELLOW);
+	}
+
+	if (trigrammeActif != null) {
+	    trigrammeActif = new Trigramme(this, trigrammeActif.id);
+	}
+
+	// En gros, ca met à jour tout l'affichage
+	for (int i = modele.getRowCount() - 1; i >= 0; i--) {
+	    modele.removeRow(i);
+	}
+
+	if (trigrammeActif != null) {
+	    if (trigrammeActif.balance >= 0) {
+		balanceLabel.setForeground(Color.BLACK);
+	    } else {
+		balanceLabel.setForeground(Color.RED);
+	    }
+	    if (trigrammeActif.status == Trigramme.XPlatal) {
+		trigrammeLabel.setForeground(Color.BLACK);
+	    } else if (trigrammeActif.status == Trigramme.Binet) {
+		trigrammeLabel.setForeground(Color.GREEN);
+	    } else {
+		trigrammeLabel.setForeground(Color.BLUE);
+	    }
+	    Statement stmt = connexion.createStatement();
+	    ResultSet rs = stmt
+		    .executeQuery("SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
+			    + trigrammeActif.id
+			    + " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
+			    + trigrammeActif.id + " ORDER BY date DESC LIMIT 50");
+	    while (rs.next()) {
+		int adminId = rs.getInt("admin");
+		String adminTrig = "";
+		Statement stmt2 = connexion.createStatement();
+		ResultSet rs2 = stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId);
+		if (rs2.next()) {
+		    adminTrig = rs2.getString("trigramme");
+		}
+		String banqueTrig = "";
+		Statement stmt3 = connexion.createStatement();
+		ResultSet rs3 = stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id="
+			+ (rs.getInt("id") + rs.getInt("id2") - trigrammeActif.id));
+		if (rs3.next()) {
+		    banqueTrig = rs3.getString("trigramme");
+		}
+		if (banqueTrig.equals("BOB")) {
+		    banqueTrig = ""; // Plus de lisibilité
+		}
+		GregorianCalendar date = new GregorianCalendar();
+		date.setTimeInMillis(((long) rs.getInt("date")) * 1000);
+		String jour = "", mois = "", annee = "", heure = "", minute = "";
+		if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
+		    jour = "" + date.get(Calendar.DAY_OF_MONTH);
+		} else {
+		    jour = "0" + date.get(Calendar.DAY_OF_MONTH);
+		}
+		if ((1 + date.get(Calendar.MONTH)) >= 10) {
+		    mois = "" + (1 + date.get(Calendar.MONTH));
+		} else {
+		    mois = "0" + (1 + date.get(Calendar.MONTH));
+		}
+		if (date.get(Calendar.YEAR) >= 10) {
+		    annee = "" + date.get(Calendar.YEAR);
+		} else {
+		    annee = "0" + date.get(Calendar.YEAR);
+		}
+		if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
+		    heure = "" + date.get(Calendar.HOUR_OF_DAY);
+		} else {
+		    heure = "0" + date.get(Calendar.HOUR);
+		}
+		if (date.get(Calendar.MINUTE) >= 10) {
+		    minute = "" + date.get(Calendar.MINUTE);
+		} else {
+		    minute = "0" + date.get(Calendar.MINUTE);
+		}
+		String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
+		String[] item = { ((double) rs.getInt("price") / 100) + "", banqueTrig, adminTrig,
+			rs.getString("comment"), dateComplete };
+		modele.addRow(item);
+	    }
+
+	    trigrammeLabel.setText(trigrammeActif.trigramme);
+	    String promo = "";
+	    if (trigrammeActif.promo > 0) {
+		promo = "" + trigrammeActif.promo;
+	    }
+	    if (!trigrammeActif.nickname.equals("")) {
+		nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " (" + trigrammeActif.nickname
+			+ ") " + promo);
+	    } else {
+		nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " " + promo);
+	    }
+	    balanceLabel.setText("" + (double) trigrammeActif.balance / 100);
+	    if (trigrammeActif.status == 2) {
+		turnoverLabel.setText(((double) (trigrammeActif.balance - trigrammeActif.turnover) / 100)
+			+ "€ depensés depuis dernier reset.");
+	    } else {
+		turnoverLabel.setText(((double) (trigrammeActif.turnover - trigrammeActif.balance) / 100)
+			+ "€ depensés depuis dernier reset.");
+	    }
+	    if (trigrammeActif.picture != "") {
+		try {
+		    Image image = ImageIO.read(new File(trigrammeActif.picture));
+		    new ImageIcon(image);
+		    double zoom = Math.min((double) photo.getWidth() / (double) image.getWidth(null),
+			    (double) photo.getHeight() / (double) image.getHeight(null));
+		    photo.setIcon(new ImageIcon(image.getScaledInstance((int) (image.getWidth(null) * zoom),
+			    (int) (image.getHeight(null) * zoom), Image.SCALE_DEFAULT)));
+		    photo.repaint();
+		} catch (IOException e) {
+		    photo.setIcon(null);
+		}
+	    } else {
+		photo.setIcon(null);
+	    }
+
+	} else {
+	    trigrammeLabel.setText("");
+	    nomLabel.setText("");
+	    balanceLabel.setText("");
+	    turnoverLabel.setText("");
+	    photo.setIcon(null);
+	}
+	infos.repaint();
+	historique.setDefaultRenderer(String.class, renderer);
+	historique.setModel(modele);
+	historique.repaint();
+	this.repaint();
+    }
+
+    public void refreshHistorique() throws Exception {
+
+	// En gros, ca met à jour l'historique au complet (dans la précédente,
+	// on affiche que 50 lignes)
+	for (int i = modele.getRowCount() - 1; i >= 0; i--) {
+	    modele.removeRow(i);
+	}
+
+	if (trigrammeActif != null) {
+	    Statement stmt = connexion.createStatement();
+	    ResultSet rs = stmt
+		    .executeQuery("SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
+			    + trigrammeActif.id
+			    + " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
+			    + trigrammeActif.id + " ORDER BY date DESC");
+	    while (rs.next()) {
+		int adminId = rs.getInt("admin");
+		String adminTrig = "";
+		Statement stmt2 = connexion.createStatement();
+		ResultSet rs2 = stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId);
+		if (rs2.next()) {
+		    adminTrig = rs2.getString("trigramme");
+		}
+		String banqueTrig = "";
+		Statement stmt3 = connexion.createStatement();
+		ResultSet rs3 = stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id="
+			+ (rs.getInt("id") + rs.getInt("id2") - trigrammeActif.id));
+		if (rs3.next()) {
+		    banqueTrig = rs3.getString("trigramme");
+		}
+		if (banqueTrig.equals("BOB")) {
+		    banqueTrig = ""; // Plus de lisibilité
+		}
+		GregorianCalendar date = new GregorianCalendar();
+		date.setTimeInMillis(((long) rs.getInt("date")) * 1000);
+		String jour = "", mois = "", annee = "", heure = "", minute = "";
+		if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
+		    jour = "" + date.get(Calendar.DAY_OF_MONTH);
+		} else {
+		    jour = "0" + date.get(Calendar.DAY_OF_MONTH);
+		}
+		if ((1 + date.get(Calendar.MONTH)) >= 10) {
+		    mois = "" + (1 + date.get(Calendar.MONTH));
+		} else {
+		    mois = "0" + (1 + date.get(Calendar.MONTH));
+		}
+		if (date.get(Calendar.YEAR) >= 10) {
+		    annee = "" + date.get(Calendar.YEAR);
+		} else {
+		    annee = "0" + date.get(Calendar.YEAR);
+		}
+		if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
+		    heure = "" + date.get(Calendar.HOUR_OF_DAY);
+		} else {
+		    heure = "0" + date.get(Calendar.HOUR);
+		}
+		if (date.get(Calendar.MINUTE) >= 10) {
+		    minute = "" + date.get(Calendar.MINUTE);
+		} else {
+		    minute = "0" + date.get(Calendar.MINUTE);
+		}
+		String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
+		String[] item = { ((double) rs.getInt("price") / 100) + "", banqueTrig, adminTrig,
+			rs.getString("comment"), dateComplete };
+		modele.addRow(item);
+
+	    }
+
+	    infos.repaint();
+	    historique.setModel(modele);
+	    historique.repaint();
+	    this.repaint();
+	}
+    }
 }
