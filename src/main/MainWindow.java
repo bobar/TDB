@@ -44,9 +44,9 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -117,7 +117,19 @@ public class MainWindow extends JFrame {
     JPanel fond;
 
     // Pour afficher l'historique
-    JTable historique = new JTable();
+    JTable historique = new JTable() {
+	private static final long serialVersionUID = 1L;
+
+	public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+	    Component c = super.prepareRenderer(renderer, row, column);
+	    if ((row % 2) == 1) {
+		c.setBackground(new Color((float) 0.9, (float) 0.9, (float) 0.9));
+	    } else {
+		c.setBackground(Color.WHITE);
+	    }
+	    return c;
+	}
+    };
     DefaultTableModel modele = new DefaultTableModel() {
 	private static final long serialVersionUID = 1L;
 
@@ -125,22 +137,15 @@ public class MainWindow extends JFrame {
 	    return false;
 	}
     };
-    DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
-	private static final long serialVersionUID = 1L;
-
-	public Component getTableCellRendererComponent(JTable table, Object value,
-		boolean isSelected, boolean hasFocus, int row, int column) {
-	    Component cell =
-		    super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
-			    column);
-	    if (row % 2 == 0) {
-		cell.setBackground(Color.red);
-	    } else {
-		cell.setBackground(Color.white);
-	    }
-	    return cell;
-	}
-    };
+    /*
+     * DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() { private static final long serialVersionUID =
+     * 1L;
+     * 
+     * public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+     * int row, int column) { Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
+     * row, column); if (row % 2 == 0) { cell.setBackground(Color.red); } else { cell.setBackground(Color.white); }
+     * return cell; } };
+     */
     DefaultTableColumnModel modeleColonnes;
     JScrollPane historiqueScrollPane = new JScrollPane();
     JPanel historiquePane = new JPanel();
@@ -575,7 +580,7 @@ public class MainWindow extends JFrame {
 		.setPreferredWidth(historiqueScrollPane.getPreferredSize().width - 340);
 	historique.getColumnModel().getColumn(4).setPreferredWidth(140);
 	historique.setShowGrid(false);
-	historique.setDefaultRenderer(String.class, renderer);
+	// historique.setDefaultRenderer(String.class, renderer);
 	historique.repaint();
 
 	// Création du panneau d'infos de droite
@@ -829,7 +834,7 @@ public class MainWindow extends JFrame {
 	    photo.setIcon(null);
 	}
 	infos.repaint();
-	historique.setDefaultRenderer(String.class, renderer);
+	// historique.setDefaultRenderer(String.class, renderer);
 	historique.setModel(modele);
 	historique.repaint();
 	this.repaint();
