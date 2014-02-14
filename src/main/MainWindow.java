@@ -128,9 +128,11 @@ public class MainWindow extends JFrame {
     DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
 	private static final long serialVersionUID = 1L;
 
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-		boolean hasFocus, int row, int column) {
-	    Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	public Component getTableCellRendererComponent(JTable table, Object value,
+		boolean isSelected, boolean hasFocus, int row, int column) {
+	    Component cell =
+		    super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+			    column);
 	    if (row % 2 == 0) {
 		cell.setBackground(Color.red);
 	    } else {
@@ -205,7 +207,8 @@ public class MainWindow extends JFrame {
 		dialog.executer();
 
 	    }
-	    if (trigrammeActif.status != 2) { throw new TDBException("Le trigramme n'est pas un compte binet"); }
+	    if (trigrammeActif.status != 2) { throw new TDBException(
+		    "Le trigramme n'est pas un compte binet"); }
 	    banqueBinet = trigrammeActif;
 	    banqueBobActif = true;
 	} else {
@@ -307,7 +310,8 @@ public class MainWindow extends JFrame {
 	    Statement stmt = connexion.createStatement();
 	    stmt.executeUpdate("DELETE FROM transactions");
 	    refresh();
-	    JOptionPane.showMessageDialog(this, "Historiques réinitialisés", "", JOptionPane.INFORMATION_MESSAGE);
+	    JOptionPane.showMessageDialog(this, "Historiques réinitialisés", "",
+		    JOptionPane.INFORMATION_MESSAGE);
 	} else {
 	    throw new TDBException("Vous n'avez pas les droits");
 	}
@@ -317,24 +321,26 @@ public class MainWindow extends JFrame {
 	if (!dernieresActions.empty()) {
 	    Transaction transaction = dernieresActions.pop();
 	    Statement stmt = connexion.createStatement();
-	    stmt.executeUpdate("DELETE FROM transactions WHERE id=" + transaction.id + " AND price="
-		    + transaction.price + " AND admin=" + transaction.admin + " AND date=" + transaction.date
-		    + " AND id2=" + transaction.id2);
+	    stmt.executeUpdate("DELETE FROM transactions WHERE id=" + transaction.id
+		    + " AND price=" + transaction.price + " AND admin=" + transaction.admin
+		    + " AND date=" + transaction.date + " AND id2=" + transaction.id2);
 	    if (transaction.price < 0) {
 		Statement stmt2 = connexion.createStatement();
-		stmt2.executeUpdate("UPDATE accounts SET balance=balance+" + (-transaction.price) + " WHERE id="
-			+ transaction.id);
+		stmt2.executeUpdate("UPDATE accounts SET balance=balance+" + (-transaction.price)
+			+ " WHERE id=" + transaction.id);
 		Statement stmt3 = connexion.createStatement();
 		stmt3.executeUpdate("UPDATE accounts SET balance=balance-" + (-transaction.price)
-			+ ",turnover=turnover-" + (-transaction.price) + " WHERE id=" + transaction.id2);
+			+ ",turnover=turnover-" + (-transaction.price) + " WHERE id="
+			+ transaction.id2);
 
 	    } else {
 		Statement stmt2 = connexion.createStatement();
 		stmt2.executeUpdate("UPDATE accounts SET balance=balance-" + (transaction.price)
-			+ ",turnover=turnover-" + (transaction.price) + " WHERE id=" + transaction.id);
+			+ ",turnover=turnover-" + (transaction.price) + " WHERE id="
+			+ transaction.id);
 		Statement stmt3 = connexion.createStatement();
-		stmt3.executeUpdate("UPDATE accounts SET balance=balance-" + (transaction.price) + " WHERE id="
-			+ transaction.id2);
+		stmt3.executeUpdate("UPDATE accounts SET balance=balance-" + (transaction.price)
+			+ " WHERE id=" + transaction.id2);
 	    }
 	    this.refresh();
 	}
@@ -370,7 +376,8 @@ public class MainWindow extends JFrame {
 		    int pos = ligne.indexOf('=');
 		    String debut = ligne.substring(0, pos).trim();
 		    String fin = ligne.substring(pos + 1, ligne.length()).trim();
-		    if (debut.equals("trigrammeBanque") && fin.length() == 3) trigrammeBanque = fin;
+		    if (debut.equals("trigrammeBanque") && fin.length() == 3)
+			trigrammeBanque = fin;
 		}
 	    }
 	    br.close();
@@ -390,8 +397,9 @@ public class MainWindow extends JFrame {
 	}
 	if (e.getClass() != TDBException.class) {
 	    try {
-		PrintWriter out = new PrintWriter(new BufferedWriter(
-			new FileWriter("/home/thierry/Bureau/logTDB", true)));
+		PrintWriter out =
+			new PrintWriter(new BufferedWriter(new FileWriter(
+				"/home/thierry/Bureau/logTDB", true)));
 		out.println(e.getMessage());
 		GregorianCalendar date = new GregorianCalendar();
 		date.setTime(new Date());
@@ -438,17 +446,12 @@ public class MainWindow extends JFrame {
 
     public void afficherMythe() {
 	JOptionPane.showMessageDialog(this,
-		"Version : " + prefs.get("version", "TDB 3.0") + "\nAuteur : "
-			+ prefs.get("auteur", "Thierry Deo")
-			// + "\nDernière mise à jour : "
-			// + prefs.get("dateMAJ", "")
+		"Plap zde mythe" + "\nAuteur : " + prefs.get("auteur", "Thierry Deo")
 			+ "\n\nReset chiffres d'affaires : " + prefs.get("dateResetTurnover", "")
 			+ "\nReset historiques : " + prefs.get("dateResetHistorique", ""), "Mythe",
 		JOptionPane.INFORMATION_MESSAGE);
-	// for (int i = 0; i < 30; i++) {
-	// JOptionPane.showMessageDialog(this, "Manou Manou Manou Manou",
-	// "Mythe", JOptionPane.INFORMATION_MESSAGE);
-	// }
+	JOptionPane.showMessageDialog(this, "Manou Manou Manou Manou", "Mythe",
+		JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void initialiser(String trigrammeBanque) throws Exception {
@@ -464,15 +467,18 @@ public class MainWindow extends JFrame {
 	fermerTrigramme.addActionListener(mainWindowListener);
 	fermerTrigramme.setAccelerator(KeyStroke.getKeyStroke((char) KeyEvent.VK_ESCAPE));
 	voirHistorique.addActionListener(mainWindowListener);
-	voirHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK));
+	voirHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
+		InputEvent.CTRL_DOWN_MASK));
 	rechercherTrigramme.addActionListener(mainWindowListener);
-	rechercherTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
+	rechercherTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
+		InputEvent.CTRL_DOWN_MASK));
 	debiterTrigramme.addActionListener(mainWindowListener);
 	acheterClopes.addActionListener(mainWindowListener);
-	acheterClopes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK));
+	acheterClopes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
+		InputEvent.CTRL_DOWN_MASK));
 	pinteDeKroPourSIE.addActionListener(mainWindowListener);
-	pinteDeKroPourSIE.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK
-		+ InputEvent.ALT_DOWN_MASK));
+	pinteDeKroPourSIE.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K,
+		InputEvent.CTRL_DOWN_MASK + InputEvent.ALT_DOWN_MASK));
 	annuler.addActionListener(mainWindowListener);
 	annuler.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
 
@@ -486,17 +492,21 @@ public class MainWindow extends JFrame {
 	menuStandard.add(annuler);
 
 	loggerAPlusieurs.addActionListener(mainWindowListener);
-	loggerAPlusieurs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
+	loggerAPlusieurs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+		InputEvent.CTRL_DOWN_MASK));
 	approvisionner.addActionListener(mainWindowListener);
 	approvisionner.setAccelerator(KeyStroke.getKeyStroke('+'));
 	transfert.addActionListener(mainWindowListener);
 	transfert.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
 	creerTrigramme.addActionListener(mainWindowListener);
-	creerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+	creerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
+		InputEvent.CTRL_DOWN_MASK));
 	modifierTrigramme.addActionListener(mainWindowListener);
-	modifierTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK));
+	modifierTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
+		InputEvent.CTRL_DOWN_MASK));
 	supprimerTrigramme.addActionListener(mainWindowListener);
-	supprimerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+	supprimerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+		InputEvent.CTRL_DOWN_MASK));
 
 	menuGestion.add(loggerAPlusieurs);
 	menuGestion.add(approvisionner);
@@ -548,8 +558,10 @@ public class MainWindow extends JFrame {
 	// Création de l'historique
 
 	historiqueScrollPane = new JScrollPane(historique);
-	historiqueScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-	historiqueScrollPane.setPreferredSize(new Dimension((this.getWidth() - 20) * 2 / 3, this.getHeight() - 80));
+	historiqueScrollPane
+		.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	historiqueScrollPane.setPreferredSize(new Dimension((this.getWidth() - 20) * 2 / 3, this
+		.getHeight() - 80));
 
 	String[] header = { "Montant", "Banque", "Admin", "Commentaire", "Date" };
 	modele.setColumnIdentifiers(header);
@@ -559,7 +571,8 @@ public class MainWindow extends JFrame {
 	historique.getColumnModel().getColumn(0).setPreferredWidth(65);
 	historique.getColumnModel().getColumn(1).setPreferredWidth(60);
 	historique.getColumnModel().getColumn(2).setPreferredWidth(50);
-	historique.getColumnModel().getColumn(3).setPreferredWidth(historiqueScrollPane.getPreferredSize().width - 340);
+	historique.getColumnModel().getColumn(3)
+		.setPreferredWidth(historiqueScrollPane.getPreferredSize().width - 340);
 	historique.getColumnModel().getColumn(4).setPreferredWidth(140);
 	historique.setShowGrid(false);
 	historique.setDefaultRenderer(String.class, renderer);
@@ -574,19 +587,23 @@ public class MainWindow extends JFrame {
 	if (trigrammeBanque.equals("BOB")) bobBanqueBouton = new JButton("BôB");
 	else bobBanqueBouton = new JButton(trigrammeBanque);
 	bobBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
-	bobBanqueBouton.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
+	bobBanqueBouton.setPreferredSize(new Dimension(
+		(int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
 
 	binetBanqueBouton = new JButton("Mythe");
 	binetBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
-	binetBanqueBouton.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
+	binetBanqueBouton.setPreferredSize(new Dimension(
+		(int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
 
 	trigrammeLabel = new JLabel();
-	trigrammeLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 20), 60));
+	trigrammeLabel.setPreferredSize(new Dimension(
+		(int) (infos.getPreferredSize().getWidth() - 20), 60));
 	trigrammeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 	trigrammeLabel.setFont(new Font("ARIAL", Font.BOLD, 40));
 
 	nomLabel = new JTextPane();
-	nomLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 150));
+	nomLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10),
+		150));
 	nomLabel.setOpaque(true);
 	StyledDocument doc = nomLabel.getStyledDocument();
 	MutableAttributeSet center = new SimpleAttributeSet();
@@ -599,12 +616,14 @@ public class MainWindow extends JFrame {
 	nomLabel.setFocusable(false);
 
 	balanceLabel = new JLabel();
-	balanceLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 100));
+	balanceLabel.setPreferredSize(new Dimension(
+		(int) (infos.getPreferredSize().getWidth() - 10), 100));
 	balanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 	balanceLabel.setFont(new Font("ARIAL", Font.BOLD, 40));
 
 	turnoverLabel = new JLabel();
-	turnoverLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 40));
+	turnoverLabel.setPreferredSize(new Dimension(
+		(int) (infos.getPreferredSize().getWidth() - 10), 40));
 	turnoverLabel.setHorizontalAlignment(SwingConstants.CENTER);
 	turnoverLabel.setFont(new Font("ARIAL", Font.PLAIN, 12));
 
@@ -689,28 +708,43 @@ public class MainWindow extends JFrame {
 		trigrammeLabel.setForeground(Color.BLUE);
 	    }
 	    Statement stmt = connexion.createStatement();
-	    ResultSet rs = stmt
-		    .executeQuery("SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
+	    /*
+	     * ResultSet rs = stmt
+	     * .executeQuery("SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id=" +
+	     * trigrammeActif.id +
+	     * " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
+	     * + trigrammeActif.id + " ORDER BY date DESC LIMIT 50");
+	     */
+	    ResultSet rs =
+		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " FROM transactions as tr "
+			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
+			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
+			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
+			    + " WHERE tr.id="
 			    + trigrammeActif.id
-			    + " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " FROM transactions as tr "
+			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
+			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
+			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
+			    + " WHERE tr.id2="
 			    + trigrammeActif.id + " ORDER BY date DESC LIMIT 50");
 	    while (rs.next()) {
-		int adminId = rs.getInt("admin");
-		String adminTrig = "";
-		Statement stmt2 = connexion.createStatement();
-		ResultSet rs2 = stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId);
-		if (rs2.next()) {
-		    adminTrig = rs2.getString("trigramme");
-		}
-		String banqueTrig = "";
-		Statement stmt3 = connexion.createStatement();
-		ResultSet rs3 = stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id="
-			+ (rs.getInt("id") + rs.getInt("id2") - trigrammeActif.id));
-		if (rs3.next()) {
-		    banqueTrig = rs3.getString("trigramme");
-		}
+		/*
+		 * int adminId = rs.getInt("admin"); String adminTrig = ""; Statement stmt2 =
+		 * connexion.createStatement(); ResultSet rs2 =
+		 * stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId); if (rs2.next()) { adminTrig
+		 * = rs2.getString("trigramme"); } String banqueTrig = ""; Statement stmt3 =
+		 * connexion.createStatement(); ResultSet rs3 =
+		 * stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id=" + (rs.getInt("id") + rs.getInt("id2") -
+		 * trigrammeActif.id)); if (rs3.next()) { banqueTrig = rs3.getString("trigramme"); } if
+		 * (banqueTrig.equals("BOB")) { banqueTrig = ""; // Plus de lisibilité }
+		 */
+		String adminTrig = rs.getString("t3");
+		String banqueTrig = rs.getString("t2");
 		if (banqueTrig.equals("BOB")) {
-		    banqueTrig = ""; // Plus de lisibilité
+		    banqueTrig = "";
 		}
 		GregorianCalendar date = new GregorianCalendar();
 		date.setTimeInMillis(((long) rs.getInt("date")) * 1000);
@@ -741,8 +775,9 @@ public class MainWindow extends JFrame {
 		    minute = "0" + date.get(Calendar.MINUTE);
 		}
 		String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
-		String[] item = { ((double) rs.getInt("price") / 100) + "", banqueTrig, adminTrig,
-			rs.getString("comment"), dateComplete };
+		String[] item =
+			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
+				rs.getString("c"), dateComplete };
 		modele.addRow(item);
 	    }
 
@@ -752,26 +787,31 @@ public class MainWindow extends JFrame {
 		promo = "" + trigrammeActif.promo;
 	    }
 	    if (!trigrammeActif.nickname.equals("")) {
-		nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " (" + trigrammeActif.nickname
-			+ ") " + promo);
+		nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " ("
+			+ trigrammeActif.nickname + ") " + promo);
 	    } else {
-		nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " " + promo);
+		nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " "
+			+ promo);
 	    }
 	    balanceLabel.setText("" + (double) trigrammeActif.balance / 100);
 	    if (trigrammeActif.status == 2) {
-		turnoverLabel.setText(((double) (trigrammeActif.balance - trigrammeActif.turnover) / 100)
-			+ "€ depensés depuis dernier reset.");
+		turnoverLabel
+			.setText(((double) (trigrammeActif.balance - trigrammeActif.turnover) / 100)
+				+ "€ gagnés depuis dernier reset.");
 	    } else {
-		turnoverLabel.setText(((double) (trigrammeActif.turnover - trigrammeActif.balance) / 100)
-			+ "€ depensés depuis dernier reset.");
+		turnoverLabel
+			.setText(((double) (trigrammeActif.turnover - trigrammeActif.balance) / 100)
+				+ "€ depensés depuis dernier reset.");
 	    }
 	    if (trigrammeActif.picture != "") {
 		try {
 		    Image image = ImageIO.read(new File(trigrammeActif.picture));
 		    new ImageIcon(image);
-		    double zoom = Math.min((double) photo.getWidth() / (double) image.getWidth(null),
-			    (double) photo.getHeight() / (double) image.getHeight(null));
-		    photo.setIcon(new ImageIcon(image.getScaledInstance((int) (image.getWidth(null) * zoom),
+		    double zoom =
+			    Math.min((double) photo.getWidth() / (double) image.getWidth(null),
+				    (double) photo.getHeight() / (double) image.getHeight(null));
+		    photo.setIcon(new ImageIcon(image.getScaledInstance(
+			    (int) (image.getWidth(null) * zoom),
 			    (int) (image.getHeight(null) * zoom), Image.SCALE_DEFAULT)));
 		    photo.repaint();
 		} catch (IOException e) {
@@ -794,7 +834,6 @@ public class MainWindow extends JFrame {
 	historique.repaint();
 	this.repaint();
     }
-
     public void refreshHistorique() throws Exception {
 
 	// En gros, ca met à jour l'historique au complet (dans la précédente,
@@ -805,28 +844,43 @@ public class MainWindow extends JFrame {
 
 	if (trigrammeActif != null) {
 	    Statement stmt = connexion.createStatement();
-	    ResultSet rs = stmt
-		    .executeQuery("SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
+	    /*
+	     * ResultSet rs =
+	     * stmt.executeQuery("SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
+	     * + trigrammeActif.id +
+	     * " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
+	     * + trigrammeActif.id + " ORDER BY date DESC");
+	     */
+	    ResultSet rs =
+		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " FROM transactions as tr "
+			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
+			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
+			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
+			    + " WHERE tr.id="
 			    + trigrammeActif.id
-			    + " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " FROM transactions as tr "
+			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
+			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
+			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
+			    + " WHERE tr.id2="
 			    + trigrammeActif.id + " ORDER BY date DESC");
 	    while (rs.next()) {
-		int adminId = rs.getInt("admin");
-		String adminTrig = "";
-		Statement stmt2 = connexion.createStatement();
-		ResultSet rs2 = stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId);
-		if (rs2.next()) {
-		    adminTrig = rs2.getString("trigramme");
-		}
-		String banqueTrig = "";
-		Statement stmt3 = connexion.createStatement();
-		ResultSet rs3 = stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id="
-			+ (rs.getInt("id") + rs.getInt("id2") - trigrammeActif.id));
-		if (rs3.next()) {
-		    banqueTrig = rs3.getString("trigramme");
-		}
+		/*
+		 * int adminId = rs.getInt("admin"); String adminTrig = ""; Statement stmt2 =
+		 * connexion.createStatement(); ResultSet rs2 =
+		 * stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId); if (rs2.next()) { adminTrig
+		 * = rs2.getString("trigramme"); } String banqueTrig = ""; Statement stmt3 =
+		 * connexion.createStatement(); ResultSet rs3 =
+		 * stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id=" + (rs.getInt("id") + rs.getInt("id2") -
+		 * trigrammeActif.id)); if (rs3.next()) { banqueTrig = rs3.getString("trigramme"); } if
+		 * (banqueTrig.equals("BOB")) { banqueTrig = ""; // Plus de lisibilité }
+		 */
+		String adminTrig = rs.getString("t3");
+		String banqueTrig = rs.getString("t2");
 		if (banqueTrig.equals("BOB")) {
-		    banqueTrig = ""; // Plus de lisibilité
+		    banqueTrig = "";
 		}
 		GregorianCalendar date = new GregorianCalendar();
 		date.setTimeInMillis(((long) rs.getInt("date")) * 1000);
@@ -857,12 +911,11 @@ public class MainWindow extends JFrame {
 		    minute = "0" + date.get(Calendar.MINUTE);
 		}
 		String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
-		String[] item = { ((double) rs.getInt("price") / 100) + "", banqueTrig, adminTrig,
-			rs.getString("comment"), dateComplete };
+		String[] item =
+			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
+				rs.getString("c"), dateComplete };
 		modele.addRow(item);
-
 	    }
-
 	    infos.repaint();
 	    historique.setModel(modele);
 	    historique.repaint();
