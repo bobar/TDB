@@ -134,10 +134,8 @@ public class AdminCreationDialog extends JDialog {
 	this.setVisible(true);
 
 	if (validation) {
-	    String cryptage1 = MD5Hex(champMDP1.getPassword().toString());
-	    String cryptage2 = MD5Hex(champMDP2.getPassword().toString());
-	    // String cryptage1 = MD5Hex(champMDP1.getText());
-	    // String cryptage2 = MD5Hex(champMDP2.getText());
+	    String cryptage1 = MD5Hex(champMDP1.getText());
+	    String cryptage2 = MD5Hex(champMDP2.getText());
 	    if (!cryptage1.equals(cryptage2)) { throw new Exception("Les mots de passe ne correspondent pas"); }
 	    try {
 		Trigramme trigramme = new Trigramme(parent, champTrigramme.getText());

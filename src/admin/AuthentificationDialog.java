@@ -128,7 +128,7 @@ public class AuthentificationDialog extends JDialog {
 
 	    if (validation) {
 		String trigramme = champTrigramme.getText();
-		String cryptage = MD5Hex(champMDP.getPassword().toString());
+		String cryptage = MD5Hex(champMDP.getText());
 		try {
 		    Statement stmt = parent.connexion.createStatement();
 		    ResultSet rs = stmt
