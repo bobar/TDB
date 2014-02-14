@@ -1,6 +1,6 @@
 .classpath
 .project
 TDB.jar
-ant.xml
-build.xml
 bin/*
+/bin
+*~
