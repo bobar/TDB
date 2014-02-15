@@ -362,6 +362,14 @@ public class MainWindow extends JFrame {
 	this.refresh();
     }
 
+    private String getExecutionPath() {
+	String absolutePath =
+		getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+	absolutePath = absolutePath.substring(0, absolutePath.lastIndexOf("/"));
+	absolutePath = absolutePath.replaceAll("%20", " "); // Surely need to do this here
+	return absolutePath;
+    }
+
     public static void main(String[] args) {
 	MainWindow TDB = new MainWindow();
 	// TDB.prefs.put("version", "TDB 3.0");
@@ -372,7 +380,9 @@ public class MainWindow extends JFrame {
 	try {
 	    // TDB.prefs.exportNode(System.out);
 	    String trigrammeBanque = "BOB";
-	    InputStream ips = new FileInputStream("./src//TDB.config");
+	    String absolutePath = TDB.getExecutionPath();
+	    // System.out.println(TDB.getExecutionPath());
+	    InputStream ips = new FileInputStream(absolutePath + "/src//TDB.config");
 	    InputStreamReader ipsr = new InputStreamReader(ips);
 	    BufferedReader br = new BufferedReader(ipsr);
 	    String ligne;

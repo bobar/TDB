@@ -13,13 +13,22 @@ public class Database {
 
     Connection connexion;
 
+    private String getExecutionPath() {
+	String absolutePath =
+		getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+	absolutePath = absolutePath.substring(0, absolutePath.lastIndexOf("/"));
+	absolutePath = absolutePath.replaceAll("%20", " "); // Surely need to do this here
+	return absolutePath;
+    }
+
     public void connecter() throws SQLException, ClassNotFoundException, IOException {
 	Class.forName("com.mysql.jdbc.Driver");
 	String user = "root";
 	String passwd = "";
 	String host = "localhost";
 	String db = "tdb";
-	InputStream ips = new FileInputStream("./src//TDB.config");
+	String absolutePath = this.getExecutionPath();
+	InputStream ips = new FileInputStream(absolutePath + "/src//TDB.config");
 	InputStreamReader ipsr = new InputStreamReader(ips);
 	BufferedReader br = new BufferedReader(ipsr);
 	String ligne;
@@ -40,7 +49,8 @@ public class Database {
 	    }
 	}
 	br.close();
-	this.connexion = DriverManager.getConnection("jdbc:mysql://" + host + "/" + db, user, passwd);
+	this.connexion =
+		DriverManager.getConnection("jdbc:mysql://" + host + "/" + db, user, passwd);
     }
 
     public boolean deconnecter() throws SQLException {
