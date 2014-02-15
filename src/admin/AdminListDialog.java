@@ -78,16 +78,21 @@ public class AdminListDialog extends JDialog {
 		    } else {
 			permissions = 0;
 		    }
-		    AdminModificationDialog dialog = new AdminModificationDialog(parent,
-			    (String) listeAdmin.getValueAt(ligneChoisie, 0), permissions);
+		    AdminModificationDialog dialog =
+			    new AdminModificationDialog(parent, (String) listeAdmin.getValueAt(
+				    ligneChoisie, 0), permissions);
 		    dialog.executer();
 		} else if (arg0.getSource().equals(supprimerButton)) {
 		    int ligneChoisie = listeAdmin.getSelectedRow();
 		    if (ligneChoisie == -1) { throw new TDBException("Pas d'admin sélectionné"); }
-		    Trigramme trigramme = new Trigramme(parent, (String) listeAdmin.getValueAt(ligneChoisie, 0));
-		    int confirmation = JOptionPane.showConfirmDialog(parent, "Etes-vous sur de vouloir supprimer "
-			    + trigramme.trigramme + " (" + trigramme.name + " " + trigramme.first_name + ")",
-			    "Confirmation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+		    Trigramme trigramme =
+			    new Trigramme(parent, (String) listeAdmin.getValueAt(ligneChoisie, 0));
+		    int confirmation =
+			    JOptionPane.showConfirmDialog(parent,
+				    "Etes-vous sur de vouloir supprimer " + trigramme.trigramme
+					    + " (" + trigramme.name + " " + trigramme.first_name
+					    + ")", "Confirmation", JOptionPane.OK_CANCEL_OPTION,
+				    JOptionPane.QUESTION_MESSAGE, null);
 		    if (confirmation == JOptionPane.OK_OPTION) {
 			Statement stmt = parent.connexion.createStatement();
 			stmt.executeUpdate("DELETE FROM admins WHERE id=" + trigramme.id);
@@ -121,7 +126,8 @@ public class AdminListDialog extends JDialog {
 	    listeAdmin.repaint();
 
 	    resultatsScrollPane = new JScrollPane(listeAdmin);
-	    resultatsScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	    resultatsScrollPane
+		    .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 	    resultatsScrollPane.setPreferredSize(new Dimension(400, 340));
 
 	    String[] header = { "Trigramme", "Nom", "Prénom", "Statut" };
@@ -165,19 +171,22 @@ public class AdminListDialog extends JDialog {
 	    fond.setOpaque(true);
 
 	    Statement stmt = parent.connexion.createStatement();
-	    ResultSet rs = stmt
-		    .executeQuery("SELECT admins.id,permissions,trigramme,name,first_name FROM admins INNER JOIN accounts ON admins.id=accounts.id ORDER BY permissions DESC,name ASC");
+	    ResultSet rs =
+		    stmt.executeQuery("SELECT admins.id,permissions,trigramme,name,first_name FROM admins INNER JOIN accounts ON admins.id=accounts.id ORDER BY permissions DESC,name ASC");
 
 	    while (rs.next()) {
 		String perms = Trigramme.adminCategoriesList[rs.getInt("permissions")];
-		String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"), perms };
+		String[] item =
+			{ rs.getString("trigramme"), rs.getString("name"),
+				rs.getString("first_name"), perms };
 		modele.addRow(item);
 	    }
 	    listeAdmin.setModel(modele);
 
 	    this.setContentPane(fond);
 	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		    (parent.getHeight() - this.getHeight()) / 2);
 	    this.setResizable(false);
 
 	    this.setVisible(true);
@@ -190,12 +199,14 @@ public class AdminListDialog extends JDialog {
 	    modele.removeRow(i);
 	}
 	Statement stmt = parent.connexion.createStatement();
-	ResultSet rs = stmt
-		.executeQuery("SELECT admins.id,permissions,trigramme,name,first_name FROM admins INNER JOIN accounts ON admins.id=accounts.id ORDER BY permissions DESC,name ASC");
+	ResultSet rs =
+		stmt.executeQuery("SELECT admins.id,permissions,trigramme,name,first_name FROM admins INNER JOIN accounts ON admins.id=accounts.id ORDER BY permissions DESC,name ASC");
 
 	while (rs.next()) {
 	    String perms = Trigramme.adminCategoriesList[rs.getInt("permissions")];
-	    String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"), perms };
+	    String[] item =
+		    { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
+			    perms };
 	    modele.addRow(item);
 	}
 	listeAdmin.setModel(modele);

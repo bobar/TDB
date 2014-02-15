@@ -45,8 +45,10 @@ public class LogGroupeDialog extends JDialog {
 	public void keyPressed(KeyEvent arg0) {
 	    if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
 		try {
-		    int confirmation = JOptionPane.showConfirmDialog(parent, "Etes-vous sur ?", "Confirmation",
-			    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+		    int confirmation =
+			    JOptionPane.showConfirmDialog(parent, "Etes-vous sur ?",
+				    "Confirmation", JOptionPane.YES_NO_OPTION,
+				    JOptionPane.QUESTION_MESSAGE, null);
 		    if (confirmation == JOptionPane.YES_OPTION) {
 			String trig = champTrigramme.getText().toUpperCase();
 			trig.replace(" ", ",");
@@ -57,8 +59,9 @@ public class LogGroupeDialog extends JDialog {
 			String trigrammesFaux = "Trigrammes faux : ";
 			for (int i = 0; i < trigrammes.length; i++) {
 			    Statement stmt = parent.connexion.createStatement();
-			    ResultSet rs = stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
-				    + trigrammes[i] + "'");
+			    ResultSet rs =
+				    stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
+					    + trigrammes[i] + "'");
 			    if (!rs.first()) {
 				trigrammesFaux += trigrammes[i] + " ";
 			    }
@@ -87,8 +90,10 @@ public class LogGroupeDialog extends JDialog {
 	public void actionPerformed(ActionEvent arg0) {
 	    if (arg0.getSource().equals(okButton)) {
 		try {
-		    int confirmation = JOptionPane.showConfirmDialog(parent, "Etes-vous sur ?", "Confirmation",
-			    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+		    int confirmation =
+			    JOptionPane.showConfirmDialog(parent, "Etes-vous sur ?",
+				    "Confirmation", JOptionPane.YES_NO_OPTION,
+				    JOptionPane.QUESTION_MESSAGE, null);
 		    if (confirmation == JOptionPane.YES_OPTION) {
 			String trig = champTrigramme.getText().toUpperCase();
 			trig.replace(" ", ",");
@@ -99,8 +104,9 @@ public class LogGroupeDialog extends JDialog {
 			String trigrammesFaux = "Trigrammes faux : ";
 			for (int i = 0; i < trigrammes.length; i++) {
 			    Statement stmt = parent.connexion.createStatement();
-			    ResultSet rs = stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
-				    + trigrammes[i] + "'");
+			    ResultSet rs =
+				    stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
+					    + trigrammes[i] + "'");
 			    if (!rs.first()) {
 				trigrammesFaux += trigrammes[i] + " ";
 			    }
@@ -177,7 +183,8 @@ public class LogGroupeDialog extends JDialog {
 	    Container contentPane = this.getContentPane();
 	    contentPane.add(pane);
 	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		    (parent.getHeight() - this.getHeight()) / 2);
 	    this.setResizable(false);
 	    this.setVisible(true);
 
@@ -196,31 +203,44 @@ public class LogGroupeDialog extends JDialog {
 		String trigrammesFaux = "Trigrammes faux : ";
 		for (int i = 0; i < trigrammes.length; i++) {
 		    Statement stmt = parent.connexion.createStatement();
-		    ResultSet rs = stmt
-			    .executeQuery("SELECT id FROM accounts WHERE trigramme ='" + trigrammes[i] + "'");
+		    ResultSet rs =
+			    stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
+				    + trigrammes[i] + "'");
 		    if (!rs.first()) {
 			trigrammesFaux += trigrammes[i] + " ";
 		    }
 		}
 		if (!trigrammesFaux.equals("Trigrammes faux : ")) {
-		    JOptionPane.showMessageDialog(parent, trigrammesFaux, "Erreurs", JOptionPane.WARNING_MESSAGE, null);
+		    JOptionPane.showMessageDialog(parent, trigrammesFaux, "Erreurs",
+			    JOptionPane.WARNING_MESSAGE, null);
 		}
 
-		int montant = 10 * (int) Math.ceil(10 * Double.parseDouble(champMontant.getText()) / trigrammes.length);
+		int montant =
+			10 * (int) Math.ceil(10 * Double.parseDouble(champMontant.getText())
+				/ trigrammes.length);
 
 		if (montant > 0) {
 		    for (int i = 0; i < trigrammes.length; i++) {
 			Trigramme trigramme = new Trigramme(parent, trigrammes[i]);
 			Statement stmt = parent.connexion.createStatement();
-			stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + " WHERE id="
-				+ trigramme.id);
-			Transaction transaction = new Transaction(trigramme.id, -montant, commentaire,
-				authentification.admin, (int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
+			stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
+				+ " WHERE id=" + trigramme.id);
+			Transaction transaction =
+				new Transaction(trigramme.id, -montant, commentaire,
+					authentification.admin,
+					(int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
 			stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-				+ transaction.id + "," + transaction.price + ",'" + transaction.comment + "',"
-				+ transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
-			stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id="
-				+ parent.banqueBob.id);
+				+ transaction.id
+				+ ","
+				+ transaction.price
+				+ ",'"
+				+ transaction.comment
+				+ "',"
+				+ transaction.admin
+				+ ","
+				+ transaction.date + "," + transaction.id2 + ")");
+			stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
+				+ " WHERE id=" + parent.banqueBob.id);
 		    }
 		} else {
 		    throw new TDBException("Montant négatif");

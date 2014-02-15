@@ -69,25 +69,33 @@ public class ClopesListDialog extends JDialog {
 		} else if (arg0.getSource().equals(modifierButton)) {
 		    int ligneChoisie = listeClopes.getSelectedRow();
 		    if (ligneChoisie == -1) { throw new TDBException("Pas de clopes sélectionnées"); }
-		    double prix = Double.parseDouble((String) listeClopes.getValueAt(ligneChoisie, 1));
-		    ClopesModificationDialog dialog = new ClopesModificationDialog(parent,
-			    (String) listeClopes.getValueAt(ligneChoisie, 0), prix);
+		    double prix =
+			    Double.parseDouble((String) listeClopes.getValueAt(ligneChoisie, 1));
+		    ClopesModificationDialog dialog =
+			    new ClopesModificationDialog(parent, (String) listeClopes.getValueAt(
+				    ligneChoisie, 0), prix);
 		    dialog.executer();
 		} else if (arg0.getSource().equals(supprimerButton)) {
 		    int ligneChoisie = listeClopes.getSelectedRow();
 		    if (ligneChoisie == -1) { throw new TDBException("Pas de clopes sélectionnées"); }
-		    int confirmation = JOptionPane.showConfirmDialog(parent, "Etes-vous sur de vouloir supprimer "
-			    + modele.getValueAt(ligneChoisie, 0) + " ?", "Confirmation", JOptionPane.OK_CANCEL_OPTION,
-			    JOptionPane.QUESTION_MESSAGE, null);
+		    int confirmation =
+			    JOptionPane.showConfirmDialog(
+				    parent,
+				    "Etes-vous sur de vouloir supprimer "
+					    + modele.getValueAt(ligneChoisie, 0) + " ?",
+				    "Confirmation", JOptionPane.OK_CANCEL_OPTION,
+				    JOptionPane.QUESTION_MESSAGE, null);
 		    if (confirmation == JOptionPane.OK_OPTION) {
 			Statement stmt = parent.connexion.createStatement();
-			stmt.executeUpdate("DELETE FROM clopes WHERE marque='" + modele.getValueAt(ligneChoisie, 0)
-				+ "'");
+			stmt.executeUpdate("DELETE FROM clopes WHERE marque='"
+				+ modele.getValueAt(ligneChoisie, 0) + "'");
 		    }
 		} else if (arg0.getSource().equals(resetButton)) {
-		    int confirmation = JOptionPane.showConfirmDialog(parent,
-			    "Etes-vous sur de vouloir remettre les quantités à 0 ?", "Confirmation",
-			    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+		    int confirmation =
+			    JOptionPane.showConfirmDialog(parent,
+				    "Etes-vous sur de vouloir remettre les quantités à 0 ?",
+				    "Confirmation", JOptionPane.OK_CANCEL_OPTION,
+				    JOptionPane.QUESTION_MESSAGE, null);
 		    if (confirmation == JOptionPane.OK_OPTION) {
 			Statement stmt = parent.connexion.createStatement();
 			stmt.executeUpdate("UPDATE clopes SET quantite =0");
@@ -121,7 +129,8 @@ public class ClopesListDialog extends JDialog {
 	    listeClopes.repaint();
 
 	    resultatsScrollPane = new JScrollPane(listeClopes);
-	    resultatsScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	    resultatsScrollPane
+		    .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 	    resultatsScrollPane.setPreferredSize(new Dimension(330, 320));
 
 	    String[] header = { "Marque", "Prix", "Quantité" };
@@ -172,15 +181,18 @@ public class ClopesListDialog extends JDialog {
 	    ResultSet rs = stmt.executeQuery("SELECT * FROM clopes ORDER BY quantite DESC");
 
 	    while (rs.next()) {
-		String[] item = { rs.getString("marque"), Double.parseDouble(rs.getString("prix")) / 100 + "",
-			rs.getString("quantite") };
+		String[] item =
+			{ rs.getString("marque"),
+				Double.parseDouble(rs.getString("prix")) / 100 + "",
+				rs.getString("quantite") };
 		modele.addRow(item);
 	    }
 	    listeClopes.setModel(modele);
 
 	    this.setContentPane(fond);
 	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		    (parent.getHeight() - this.getHeight()) / 2);
 	    this.setResizable(false);
 
 	    this.setVisible(true);
@@ -195,8 +207,9 @@ public class ClopesListDialog extends JDialog {
 	ResultSet rs = stmt.executeQuery("SELECT * FROM clopes ORDER BY quantite DESC");
 
 	while (rs.next()) {
-	    String[] item = { rs.getString("marque"), Double.parseDouble(rs.getString("prix")) / 100 + "",
-		    rs.getString("quantite") };
+	    String[] item =
+		    { rs.getString("marque"), Double.parseDouble(rs.getString("prix")) / 100 + "",
+			    rs.getString("quantite") };
 	    modele.addRow(item);
 	}
 	listeClopes.setModel(modele);

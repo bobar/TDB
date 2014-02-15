@@ -118,7 +118,8 @@ public class CreditDialog extends JDialog {
 	    this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	    this.getContentPane().add(pane);
 	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		    (parent.getHeight() - this.getHeight()) / 2);
 	    this.setResizable(false);
 	    this.setVisible(true);
 
@@ -130,7 +131,8 @@ public class CreditDialog extends JDialog {
 		} else {
 		    comment = champCommentaire.getText();
 		}
-		parent.trigrammeActif.crediter(parent.connexion, montant, comment, authentification.admin);
+		parent.trigrammeActif.crediter(parent.connexion, montant, comment,
+			authentification.admin);
 	    }
 	} else {
 	    throw new TDBException("Vous n'avez pas les droits");

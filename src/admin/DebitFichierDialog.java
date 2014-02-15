@@ -132,7 +132,8 @@ public class DebitFichierDialog extends JDialog {
 	}
 	if (parent.trigrammeActif == null) {
 	    throw new TDBException("Trigramme Inexistant");
-	} else if (parent.trigrammeActif.status != 2) { throw new TDBException("Le trigramme n'est pas un compte binet"); }
+	} else if (parent.trigrammeActif.status != 2) { throw new TDBException(
+		"Le trigramme n'est pas un compte binet"); }
 
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
@@ -153,7 +154,8 @@ public class DebitFichierDialog extends JDialog {
 		resultats.setModel(modele);
 
 		resultatsScrollPane = new JScrollPane(resultats);
-		resultatsScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		resultatsScrollPane
+			.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		resultatsScrollPane.setPreferredSize(new Dimension(590, 560));
 
 		String[] header = { "", "Trigramme", "Nom", "Montant", "Commentaire" };
@@ -191,9 +193,12 @@ public class DebitFichierDialog extends JDialog {
 		    int erreur = -1;
 		    String comment = "";
 		    try {
-			Trigramme trigramme = new Trigramme(parent, (String) modele.getValueAt(i, 1));
-			int montant = (int) (100 * Double.parseDouble((String) modele.getValueAt(i, 3)));
-			if (!trigramme.name.toUpperCase().equals(modele.getValueAt(i, 2).toString().toUpperCase())) {
+			Trigramme trigramme =
+				new Trigramme(parent, (String) modele.getValueAt(i, 1));
+			int montant =
+				(int) (100 * Double.parseDouble((String) modele.getValueAt(i, 3)));
+			if (!trigramme.name.toUpperCase().equals(
+				modele.getValueAt(i, 2).toString().toUpperCase())) {
 			    erreur = 1;
 			    comment = "Mauvais nom : " + trigramme.name;
 			} else if (montant < 0) {
@@ -202,14 +207,17 @@ public class DebitFichierDialog extends JDialog {
 			    comment = "Montant négatif";
 			} else if (trigramme.status != 0 && trigramme.balance < montant) {
 			    erreur = 3;
-			    comment = "Compte non X en négatif (" + (double) (trigramme.balance - montant) / 100 + ")";
+			    comment =
+				    "Compte non X en négatif ("
+					    + (double) (trigramme.balance - montant) / 100 + ")";
 			} else if (montant > 2000) {
 			    erreur = 4;
 			    comment = "Montant élevé";
 			} else if (trigramme.balance < montant && trigramme.balance >= 0) {
 			    erreur = 5;
-			    comment = "Le compte passe en négatif (" + (double) (trigramme.balance - montant) / 100
-				    + ")";
+			    comment =
+				    "Le compte passe en négatif ("
+					    + (double) (trigramme.balance - montant) / 100 + ")";
 			}
 			modele.setValueAt(comment, i, 4);
 			if (erreur >= 1 && erreur <= 3) {
@@ -249,41 +257,54 @@ public class DebitFichierDialog extends JDialog {
 
 		this.setContentPane(fond);
 		this.pack();
-		this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+		this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+			(parent.getHeight() - this.getHeight()) / 2);
 		this.setResizable(false);
 		this.setVisible(true);
 
 		if (validation) {
 
-		    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichier.replace(".csv", "")
-			    + "_refuses.csv", true)));
+		    PrintWriter out =
+			    new PrintWriter(new BufferedWriter(new FileWriter(fichier.replace(
+				    ".csv", "") + "_refuses.csv", true)));
 		    int refuses = 0;
 
 		    for (int i = 0; i < modele.getRowCount(); i++) {
 
 			if (modele.getValueAt(i, 0).equals(Boolean.TRUE)) {
-			    int montant = (int) (100 * Double.parseDouble((String) modele.getValueAt(i, 3)));
-			    Trigramme trigramme = new Trigramme(parent, (String) modele.getValueAt(i, 1));
+			    int montant =
+				    (int) (100 * Double.parseDouble((String) modele
+					    .getValueAt(i, 3)));
+			    Trigramme trigramme =
+				    new Trigramme(parent, (String) modele.getValueAt(i, 1));
 
 			    if (!parent.banqueBobActif) {
 				banqueId = parent.banqueBinet.id;
 			    }
 			    Statement stmt = parent.connexion.createStatement();
-			    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + " WHERE id="
-				    + trigramme.id);
+			    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
+				    + " WHERE id=" + trigramme.id);
 			    GregorianCalendar date = new GregorianCalendar();
 			    date.setTime(new Date());
-			    Transaction transaction = new Transaction(trigramme.id, -montant, "", adminId,
-				    (int) (date.getTimeInMillis() / 1000), banqueId);
+			    Transaction transaction =
+				    new Transaction(trigramme.id, -montant, "", adminId,
+					    (int) (date.getTimeInMillis() / 1000), banqueId);
 			    parent.dernieresActions.add(transaction);
 			    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-				    + transaction.id + "," + transaction.price + ",'" + transaction.comment + "',"
-				    + transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
-			    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id="
-				    + banqueId);
+				    + transaction.id
+				    + ","
+				    + transaction.price
+				    + ",'"
+				    + transaction.comment
+				    + "',"
+				    + transaction.admin
+				    + ","
+				    + transaction.date + "," + transaction.id2 + ")");
+			    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
+				    + " WHERE id=" + banqueId);
 			} else {
-			    out.println(modele.getValueAt(i, 1) + "," + modele.getValueAt(i, 2) + ","
-				    + modele.getValueAt(i, 3) + "," + modele.getValueAt(i, 4));
+			    out.println(modele.getValueAt(i, 1) + "," + modele.getValueAt(i, 2)
+				    + "," + modele.getValueAt(i, 3) + "," + modele.getValueAt(i, 4));
 			    refuses++;
 			}
 
@@ -294,9 +315,10 @@ public class DebitFichierDialog extends JDialog {
 			JOptionPane.showMessageDialog(parent, "Opération terminéé", "",
 				JOptionPane.INFORMATION_MESSAGE, null);
 		    } else {
-			JOptionPane.showMessageDialog(parent, "Les " + refuses
-				+ " lignes ignorées ont été stockées dans " + fichier.replace(".csv", "")
-				+ "_refuses.csv", "", JOptionPane.INFORMATION_MESSAGE, null);
+			JOptionPane.showMessageDialog(parent,
+				"Les " + refuses + " lignes ignorées ont été stockées dans "
+					+ fichier.replace(".csv", "") + "_refuses.csv", "",
+				JOptionPane.INFORMATION_MESSAGE, null);
 		    }
 
 		    parent.refresh();

@@ -133,7 +133,8 @@ public class TransfertDialog extends JDialog {
 	    Container contentPane = this.getContentPane();
 	    contentPane.add(pane);
 	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		    (parent.getHeight() - this.getHeight()) / 2);
 	    this.setResizable(false);
 	    this.setVisible(true);
 
@@ -144,39 +145,63 @@ public class TransfertDialog extends JDialog {
 		    Trigramme trigramme1 = new Trigramme(parent, champTrigramme1.getText());
 		    Trigramme trigramme2 = new Trigramme(parent, champTrigramme2.getText());
 		    Statement stmt = parent.connexion.createStatement();
-		    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-montant) + " WHERE id="
-			    + trigramme1.id);
+		    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-montant)
+			    + " WHERE id=" + trigramme1.id);
 		    GregorianCalendar date = new GregorianCalendar();
 		    date.setTime(new Date());
 		    // Statement stmt2 = parent.connexion.createStatement();
-		    Transaction transaction = new Transaction(trigramme1.id, -montant, commentaire,
-			    authentification.admin, (int) (date.getTimeInMillis() / 1000), trigramme2.id);
+		    Transaction transaction =
+			    new Transaction(trigramme1.id, -montant, commentaire,
+				    authentification.admin, (int) (date.getTimeInMillis() / 1000),
+				    trigramme2.id);
 		    parent.dernieresActions.add(transaction);
 		    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-			    + transaction.id + "," + transaction.price + ",'" + transaction.comment + "',"
-			    + transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
+			    + transaction.id
+			    + ","
+			    + transaction.price
+			    + ",'"
+			    + transaction.comment
+			    + "',"
+			    + transaction.admin
+			    + ","
+			    + transaction.date
+			    + ","
+			    + transaction.id2 + ")");
 
 		    // Statement stmt3 = parent.connexion.createStatement();
-		    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-montant) + " WHERE id="
-			    + trigramme2.id);
+		    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-montant)
+			    + " WHERE id=" + trigramme2.id);
 		    stmt.closeOnCompletion();
 		} else {
 		    Trigramme trigramme1 = new Trigramme(parent, champTrigramme1.getText());
 		    Trigramme trigramme2 = new Trigramme(parent, champTrigramme2.getText());
 		    Statement stmt = parent.connexion.createStatement();
-		    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + " WHERE id=" + trigramme1.id);
+		    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
+			    + " WHERE id=" + trigramme1.id);
 		    GregorianCalendar date = new GregorianCalendar();
 		    date.setTime(new Date());
 		    // Statement stmt2 = parent.connexion.createStatement();
-		    Transaction transaction = new Transaction(trigramme1.id, -montant, commentaire,
-			    authentification.admin, (int) (date.getTimeInMillis() / 1000), trigramme2.id);
+		    Transaction transaction =
+			    new Transaction(trigramme1.id, -montant, commentaire,
+				    authentification.admin, (int) (date.getTimeInMillis() / 1000),
+				    trigramme2.id);
 		    parent.dernieresActions.add(transaction);
 		    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-			    + transaction.id + "," + transaction.price + ",'" + transaction.comment + "',"
-			    + transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
+			    + transaction.id
+			    + ","
+			    + transaction.price
+			    + ",'"
+			    + transaction.comment
+			    + "',"
+			    + transaction.admin
+			    + ","
+			    + transaction.date
+			    + ","
+			    + transaction.id2 + ")");
 
 		    // Statement stmt3 = parent.connexion.createStatement();
-		    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id=" + trigramme2.id);
+		    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
+			    + " WHERE id=" + trigramme2.id);
 		    stmt.closeOnCompletion();
 		}
 	    }

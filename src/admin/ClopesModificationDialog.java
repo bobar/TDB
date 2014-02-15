@@ -110,7 +110,8 @@ public class ClopesModificationDialog extends JDialog {
 	Container contentPane = this.getContentPane();
 	contentPane.add(pane);
 	this.pack();
-	this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
 	this.setResizable(false);
 	this.setVisible(true);
 
@@ -118,8 +119,8 @@ public class ClopesModificationDialog extends JDialog {
 	    try {
 		Statement stmt = parent.connexion.createStatement();
 		stmt.executeUpdate("UPDATE clopes SET prix="
-			+ (int) Math.round(100 * Double.parseDouble(champPrix.getText())) + " WHERE marque='" + marque
-			+ "'");
+			+ (int) Math.round(100 * Double.parseDouble(champPrix.getText()))
+			+ " WHERE marque='" + marque + "'");
 	    } catch (Exception e) {
 		parent.afficherErreur(e);
 	    }

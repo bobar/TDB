@@ -17,9 +17,10 @@ public class Trigramme {
     public static final int Personnel = 3;
     public static final int Etudiant = 4;
     public static final int Autre = 5;
-    public static final String[] categoriesList = { "X Platalien", "X Ancien", "Binet", "Personnel", "Etudiant non X",
-	    "Autre" };
-    public static final String[] adminCategoriesList = { "Pékin", "Ami du BôB", "Ex-BôBarman", "BôBarman" };
+    public static final String[] categoriesList = { "X Platalien", "X Ancien", "Binet",
+	    "Personnel", "Etudiant non X", "Autre" };
+    public static final String[] adminCategoriesList = { "Pékin", "Ami du BôB", "Ex-BôBarman",
+	    "BôBarman" };
 
     public MainWindow parent;
     public int id;
@@ -58,8 +59,9 @@ public class Trigramme {
 	}
     }
 
-    public Trigramme(MainWindow parent, String trigramme, String name, String first_name, String nickname,
-	    String casert, int status, int promo, String mail, String picture, int balance, int turnover) {
+    public Trigramme(MainWindow parent, String trigramme, String name, String first_name,
+	    String nickname, String casert, int status, int promo, String mail, String picture,
+	    int balance, int turnover) {
 	this.parent = parent;
 	this.trigramme = trigramme;
 	this.name = name;
@@ -101,10 +103,12 @@ public class Trigramme {
 	if (rs.next()) {
 	    id = rs.getInt("maxid") + 1;
 	}
-	ResultSet rs1 = stmt.executeQuery("SELECT id FROM accounts WHERE trigramme='" + trigramme + "'");
+	ResultSet rs1 =
+		stmt.executeQuery("SELECT id FROM accounts WHERE trigramme='" + trigramme + "'");
 	if (rs1.first()) { throw new TDBException("Trigramme existant"); }
-	PreparedStatement stmt2 = parent.connexion
-		.prepareStatement("INSERT INTO accounts (id,trigramme, name, first_name, nickname, casert, status, promo, mail, picture, balance, turnover) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+	PreparedStatement stmt2 =
+		parent.connexion
+			.prepareStatement("INSERT INTO accounts (id,trigramme, name, first_name, nickname, casert, status, promo, mail, picture, balance, turnover) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 	stmt2.setInt(1, id);
 	stmt2.setString(2, trigramme);
 	stmt2.setString(3, name);
@@ -125,10 +129,12 @@ public class Trigramme {
 
 	GregorianCalendar date = new GregorianCalendar();
 	date.setTime(new Date());
-	Transaction transaction = new Transaction(id, balance, "Création de trigramme", admin,
-		(int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
-	stmt2 = parent.connexion
-		.prepareStatement("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (?,?,?,?,?,?)");
+	Transaction transaction =
+		new Transaction(id, balance, "Création de trigramme", admin,
+			(int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
+	stmt2 =
+		parent.connexion
+			.prepareStatement("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (?,?,?,?,?,?)");
 	stmt2.setInt(1, transaction.id);
 	stmt2.setInt(2, transaction.price);
 	stmt2.setString(3, transaction.comment);
@@ -137,14 +143,15 @@ public class Trigramme {
 	stmt2.setInt(6, transaction.id2);
 	stmt2.executeUpdate();
 
-	stmt.executeUpdate("UPDATE accounts SET balance=balance-" + balance + " ,turnover=turnover-" + turnover
-		+ " WHERE id=" + parent.banqueBob.id);
+	stmt.executeUpdate("UPDATE accounts SET balance=balance-" + balance
+		+ " ,turnover=turnover-" + turnover + " WHERE id=" + parent.banqueBob.id);
 	parent.setTrigrammeActif(new Trigramme(parent, trigramme));
     }
 
     public int getId() throws Exception {
 	Statement stmt = parent.connexion.createStatement();
-	ResultSet rs = stmt.executeQuery("SELECT id FROM accounts WHERE trigramme='" + trigramme + "'");
+	ResultSet rs =
+		stmt.executeQuery("SELECT id FROM accounts WHERE trigramme='" + trigramme + "'");
 	if (rs.next()) {
 	    int id = rs.getInt("id");
 	    if (rs.next()) {
@@ -162,8 +169,9 @@ public class Trigramme {
 	ResultSet rs = stmt.executeQuery("SELECT trigramme FROM accounts WHERE id=" + id);
 
 	if (rs.first()) {
-	    PreparedStatement stmt2 = parent.connexion
-		    .prepareStatement("UPDATE accounts SET trigramme = ?, name = ?, first_name = ?, nickname = ?, casert = ?, status = ?, promo = ?, picture = ? WHERE id=?");
+	    PreparedStatement stmt2 =
+		    parent.connexion
+			    .prepareStatement("UPDATE accounts SET trigramme = ?, name = ?, first_name = ?, nickname = ?, casert = ?, status = ?, promo = ?, picture = ? WHERE id=?");
 	    stmt2.setString(1, trigramme);
 	    stmt2.setString(2, name);
 	    stmt2.setString(3, first_name);
@@ -181,11 +189,13 @@ public class Trigramme {
 
 	    GregorianCalendar date = new GregorianCalendar();
 	    date.setTime(new Date());
-	    Transaction transaction = new Transaction(id, 0, "Modification du trigramme (ancien trigramme : "
-		    + rs.getString("trigramme") + ")", admin, (int) (date.getTimeInMillis() / 1000),
-		    parent.banqueBob.id);
-	    stmt2 = parent.connexion
-		    .prepareStatement("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (?,?,?,?,?,?)");
+	    Transaction transaction =
+		    new Transaction(id, 0, "Modification du trigramme (ancien trigramme : "
+			    + rs.getString("trigramme") + ")", admin,
+			    (int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
+	    stmt2 =
+		    parent.connexion
+			    .prepareStatement("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (?,?,?,?,?,?)");
 	    stmt2.setInt(1, transaction.id);
 	    stmt2.setInt(2, transaction.price);
 	    stmt2.setString(3, transaction.comment);
@@ -200,7 +210,8 @@ public class Trigramme {
     }
 
     public void debiter(int montant) throws Exception {
-	if (Math.abs(montant) > 1000000) { throw new TDBException("Opération annulée car le montant est trop élevé"); }
+	if (Math.abs(montant) > 1000000) { throw new TDBException(
+		"Opération annulée car le montant est trop élevé"); }
 	if (montant >= 0 && montant <= 2000) {
 	    if (balance - montant < 0 && status != Trigramme.XPlatal) {
 		AuthentificationDialog authentification = new AuthentificationDialog(parent);
@@ -216,30 +227,50 @@ public class Trigramme {
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + " WHERE id=" + id);
 	    GregorianCalendar date = new GregorianCalendar();
 	    date.setTime(new Date());
-	    Transaction transaction = new Transaction(id, -montant, "", 0, (int) (date.getTimeInMillis() / 1000),
-		    banqueId);
+	    Transaction transaction =
+		    new Transaction(id, -montant, "", 0, (int) (date.getTimeInMillis() / 1000),
+			    banqueId);
 	    parent.dernieresActions.add(transaction);
-	    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (" + transaction.id
-		    + "," + transaction.price + ",'" + transaction.comment + "'," + transaction.admin + ","
-		    + transaction.date + "," + transaction.id2 + ")");
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id=" + banqueId);
+	    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
+		    + transaction.id
+		    + ","
+		    + transaction.price
+		    + ",'"
+		    + transaction.comment
+		    + "',"
+		    + transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id="
+		    + banqueId);
 	} else if (montant > 2000) {
 	    AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	    authentification.executer();
 	    if (authentification.droits >= AuthentificationDialog.Ami) {
 		int banqueId = parent.banqueBob.id;
 		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + " WHERE id=" + id);
+		stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + " WHERE id="
+			+ id);
 		GregorianCalendar date = new GregorianCalendar();
 		date.setTime(new Date());
-		Transaction transaction = new Transaction(id, -montant, "", authentification.admin,
-			(int) (date.getTimeInMillis() / 1000), banqueId);
+		Transaction transaction =
+			new Transaction(id, -montant, "", authentification.admin,
+				(int) (date.getTimeInMillis() / 1000), banqueId);
 		parent.dernieresActions.add(transaction);
 		stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-			+ transaction.id + "," + transaction.price + ",'" + transaction.comment + "',"
-			+ transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
+			+ transaction.id
+			+ ","
+			+ transaction.price
+			+ ",'"
+			+ transaction.comment
+			+ "',"
+			+ transaction.admin
+			+ ","
+			+ transaction.date
+			+ ","
+			+ transaction.id2
+			+ ")");
 
-		stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id=" + banqueId);
+		stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id="
+			+ banqueId);
 		stmt.closeOnCompletion();
 	    } else {
 		throw new TDBException("Vous n'avez pas les droits");
@@ -250,19 +281,30 @@ public class Trigramme {
 	    if (authentification.droits >= AuthentificationDialog.Ami) {
 		int banqueId = parent.banqueBob.id;
 		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-montant) + ", turnover=turnover+"
-			+ (-montant) + " WHERE id=" + id);
+		stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-montant)
+			+ ", turnover=turnover+" + (-montant) + " WHERE id=" + id);
 		GregorianCalendar date = new GregorianCalendar();
 		date.setTime(new Date());
-		Transaction transaction = new Transaction(id, montant, "", authentification.admin,
-			(int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
+		Transaction transaction =
+			new Transaction(id, montant, "", authentification.admin,
+				(int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
 		parent.dernieresActions.add(transaction);
 		stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-			+ transaction.id + "," + transaction.price + ",'" + transaction.comment + "',"
-			+ transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
+			+ transaction.id
+			+ ","
+			+ transaction.price
+			+ ",'"
+			+ transaction.comment
+			+ "',"
+			+ transaction.admin
+			+ ","
+			+ transaction.date
+			+ ","
+			+ transaction.id2
+			+ ")");
 
-		stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-montant) + ", turnover=turnover-"
-			+ (-montant) + " WHERE id=" + banqueId);
+		stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-montant)
+			+ ", turnover=turnover-" + (-montant) + " WHERE id=" + banqueId);
 		stmt.closeOnCompletion();
 	    } else {
 		throw new TDBException("Vous n'avez pas les droits");
@@ -274,23 +316,26 @@ public class Trigramme {
 
     }
 
-    public void crediter(Connection connexion, int montant, String commentaire, int admin) throws Exception {
-	if (Math.abs(montant) > 100000) { throw new TDBException("Opération annulée car le montant est trop élevé"); }
+    public void crediter(Connection connexion, int montant, String commentaire, int admin)
+	    throws Exception {
+	if (Math.abs(montant) > 100000) { throw new TDBException(
+		"Opération annulée car le montant est trop élevé"); }
 	int banqueId = parent.banqueBob.id;
 	Statement stmt = connexion.createStatement();
-	stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + ", turnover=turnover+" + montant
-		+ " WHERE id=" + id);
+	stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
+		+ ", turnover=turnover+" + montant + " WHERE id=" + id);
 	GregorianCalendar date = new GregorianCalendar();
 	date.setTime(new Date());
-	Transaction transaction = new Transaction(id, montant, commentaire, admin,
-		(int) (date.getTimeInMillis() / 1000), banqueId);
+	Transaction transaction =
+		new Transaction(id, montant, commentaire, admin,
+			(int) (date.getTimeInMillis() / 1000), banqueId);
 	parent.dernieresActions.add(transaction);
-	stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (" + transaction.id + ","
-		+ transaction.price + ",'" + transaction.comment + "'," + transaction.admin + "," + transaction.date
-		+ "," + transaction.id2 + ")");
+	stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
+		+ transaction.id + "," + transaction.price + ",'" + transaction.comment + "',"
+		+ transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
 
-	stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + ", turnover=turnover-" + montant
-		+ " WHERE id=" + banqueId);
+	stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
+		+ ", turnover=turnover-" + montant + " WHERE id=" + banqueId);
 	stmt.closeOnCompletion();
 	parent.trigrammeActif = new Trigramme(parent, parent.trigrammeActif.trigramme);
 	parent.refresh();

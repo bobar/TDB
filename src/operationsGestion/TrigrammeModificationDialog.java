@@ -77,8 +77,8 @@ public class TrigrammeModificationDialog extends JDialog {
 		    } else {
 			try {
 			    Statement stmt = parent.connexion.createStatement();
-			    ResultSet rs = stmt
-				    .executeQuery("SELECT COUNT(trigramme) as c FROM accounts WHERE trigramme='"
+			    ResultSet rs =
+				    stmt.executeQuery("SELECT COUNT(trigramme) as c FROM accounts WHERE trigramme='"
 					    + champTrigramme.getText() + "'");
 			    rs.first();
 			    if (rs.getInt("c") == 0) {
@@ -113,8 +113,9 @@ public class TrigrammeModificationDialog extends JDialog {
 
 		    public boolean accept(File arg0) {
 			return (arg0.isDirectory() || arg0.getName().contains(".gif")
-				|| arg0.getName().contains(".jpg") || arg0.getName().contains(".jpeg") || arg0
-				.getName().contains(".png"));
+				|| arg0.getName().contains(".jpg")
+				|| arg0.getName().contains(".jpeg") || arg0.getName().contains(
+				".png"));
 		    }
 
 		    public String getDescription() {
@@ -247,7 +248,8 @@ public class TrigrammeModificationDialog extends JDialog {
 		Container contentPane = this.getContentPane();
 		contentPane.add(pane);
 		this.pack();
-		this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+		this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+			(parent.getHeight() - this.getHeight()) / 2);
 		this.setResizable(false);
 		this.setVisible(true);
 
@@ -261,8 +263,9 @@ public class TrigrammeModificationDialog extends JDialog {
 		    for (int i = 0; i < prenom.length(); i++) {
 			if (majusculeSuivant) {
 			    if (i != 0) {
-				prenom = prenom.substring(0, i) + (char) (prenom.charAt(i) - 32)
-					+ prenom.substring(i + 1);
+				prenom =
+					prenom.substring(0, i) + (char) (prenom.charAt(i) - 32)
+						+ prenom.substring(i + 1);
 			    } else {
 				prenom = (char) (prenom.charAt(i) - 32) + prenom.substring(i + 1);
 			    }
@@ -276,10 +279,13 @@ public class TrigrammeModificationDialog extends JDialog {
 		    String surnom = champSurnom.getText().replace(",", ";");
 
 		    if (champTrigramme.getBackground().equals(Color.GREEN)) {
-			Trigramme trigramme = new Trigramme(parent, champTrigramme.getText(), nom, prenom, surnom,
-				champCasert.getText(), champCategorie.getSelectedIndex(), Integer.parseInt(champPromo
-					.getText()), "", champPhoto.getText(), parent.trigrammeActif.balance,
-				parent.trigrammeActif.turnover);
+			Trigramme trigramme =
+				new Trigramme(parent, champTrigramme.getText(), nom, prenom,
+					surnom, champCasert.getText(),
+					champCategorie.getSelectedIndex(),
+					Integer.parseInt(champPromo.getText()), "",
+					champPhoto.getText(), parent.trigrammeActif.balance,
+					parent.trigrammeActif.turnover);
 			trigramme.modifier(parent.trigrammeActif.id, authentification.admin);
 		    } else {
 			throw new TDBException("Trigramme déjà pris.");

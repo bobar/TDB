@@ -104,7 +104,8 @@ public class ClopesCreationDialog extends JDialog {
 	Container contentPane = this.getContentPane();
 	contentPane.add(pane);
 	this.pack();
-	this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
 	this.setResizable(false);
 	this.setVisible(true);
 
@@ -117,7 +118,9 @@ public class ClopesCreationDialog extends JDialog {
 	    for (int i = 0; i < marque.length(); i++) {
 		if (majusculeSuivant) {
 		    if (i != 0) {
-			marque = marque.substring(0, i) + (char) (marque.charAt(i) - 32) + marque.substring(i + 1);
+			marque =
+				marque.substring(0, i) + (char) (marque.charAt(i) - 32)
+					+ marque.substring(i + 1);
 		    } else {
 			marque = (char) (marque.charAt(i) - 32) + marque.substring(i + 1);
 		    }
@@ -130,8 +133,9 @@ public class ClopesCreationDialog extends JDialog {
 	    }
 	    try {
 		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("INSERT INTO clopes (marque,prix,quantite) VALUES ('" + marque + "',"
-			+ (int) (Math.round(100 * Double.parseDouble(champPrix.getText()))) + ",0)");
+		stmt.executeUpdate("INSERT INTO clopes (marque,prix,quantite) VALUES ('" + marque
+			+ "'," + (int) (Math.round(100 * Double.parseDouble(champPrix.getText())))
+			+ ",0)");
 	    } catch (Exception e) {
 		parent.afficherErreur(e);
 	    }

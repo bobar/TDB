@@ -113,7 +113,8 @@ public class AdminModificationDialog extends JDialog {
 	Container contentPane = this.getContentPane();
 	contentPane.add(pane);
 	this.pack();
-	this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
 	this.setResizable(false);
 	this.setVisible(true);
 
@@ -121,8 +122,8 @@ public class AdminModificationDialog extends JDialog {
 	    try {
 		Trigramme trigramme = new Trigramme(parent, champTrigramme.getText());
 		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("UPDATE admins SET permissions=" + champCategorie.getSelectedIndex() + " WHERE id="
-			+ trigramme.id);
+		stmt.executeUpdate("UPDATE admins SET permissions="
+			+ champCategorie.getSelectedIndex() + " WHERE id=" + trigramme.id);
 	    } catch (Exception e) {
 		parent.afficherErreur(e);
 	    }

@@ -53,7 +53,8 @@ public class BinetsListeDialog extends JDialog {
 	    } else if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
 		int ligneChoisie = resultats.getSelectedRow();
 		try {
-		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(ligneChoisie, 0)));
+		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
+			    ligneChoisie, 0)));
 		    dispose();
 		} catch (Exception e) {
 		    parent.afficherErreur(e);
@@ -71,7 +72,8 @@ public class BinetsListeDialog extends JDialog {
 	    } else if (arg0.getSource() == ouvrirButton) {
 		int ligneChoisie = resultats.getSelectedRow();
 		try {
-		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(ligneChoisie, 0)));
+		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
+			    ligneChoisie, 0)));
 		    dispose();
 		} catch (Exception e) {
 		    parent.afficherErreur(e);
@@ -100,7 +102,8 @@ public class BinetsListeDialog extends JDialog {
 	    resultats.repaint();
 
 	    resultatsScrollPane = new JScrollPane(resultats);
-	    resultatsScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	    resultatsScrollPane
+		    .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 	    resultatsScrollPane.setPreferredSize(new Dimension(450, 460));
 
 	    String[] header = { "Trigramme", "Nom", "Prénom", "Balance" };
@@ -135,7 +138,8 @@ public class BinetsListeDialog extends JDialog {
 
 	    this.setContentPane(fond);
 	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		    (parent.getHeight() - this.getHeight()) / 2);
 	    this.chargerListe();
 	    this.setResizable(false);
 	    this.setVisible(true);
@@ -149,19 +153,21 @@ public class BinetsListeDialog extends JDialog {
 	    modele.removeRow(i);
 	}
 	Statement stmt = parent.connexion.createStatement();
-	ResultSet rs = stmt
-		.executeQuery("SELECT trigramme,name,first_name,balance FROM accounts WHERE status=2 and balance<>0 ORDER BY balance ASC");
 
+	ResultSet rs =
+		stmt.executeQuery("SELECT trigramme,name,first_name,balance FROM accounts WHERE status=2 and balance<>0 ORDER BY balance ASC");
 	while (rs.next()) {
-	    String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-		    "" + ((double) (rs.getInt("balance")) / 100) };
+	    String[] item =
+		    { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
+			    "" + ((double) (rs.getInt("balance")) / 100) };
 	    modele.addRow(item);
 	}
-	rs = stmt.executeQuery("SELECT trigramme,name,first_name,balance FROM accounts WHERE status=2 and balance=0");
-
+	rs =
+		stmt.executeQuery("SELECT trigramme,name,first_name,balance FROM accounts WHERE status=2 and balance=0");
 	while (rs.next()) {
-	    String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-		    "" + ((double) (rs.getInt("balance")) / 100) };
+	    String[] item =
+		    { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
+			    "" + ((double) (rs.getInt("balance")) / 100) };
 	    modele.addRow(item);
 	}
 	resultats.setModel(modele);

@@ -67,7 +67,8 @@ public class TrigrammeDialog extends JDialog {
 	Container contentPane = this.getContentPane();
 	contentPane.add(pane);
 	this.pack();
-	this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
 	this.setResizable(false);
 	this.setVisible(true);
 

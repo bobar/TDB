@@ -63,18 +63,21 @@ public class Export {
 	    String fichier = chemin + "/positivation_" + dateComplete + ".csv";
 	    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
 
-	    PreparedStatement stmt = parent.connexion
-		    .prepareStatement("SELECT trigramme,name,first_name,casert,balance FROM accounts WHERE status=0 AND promo= ? AND balance<= ? ORDER BY casert ASC");
+	    PreparedStatement stmt =
+		    parent.connexion
+			    .prepareStatement("SELECT trigramme,name,first_name,casert,balance FROM accounts WHERE status=0 AND promo= ? AND balance<= ? ORDER BY casert ASC");
 	    stmt.setInt(1, promo);
 	    stmt.setInt(2, seuil);
 	    ResultSet rs = stmt.executeQuery();
 
 	    while (rs.next()) {
-		out.println(rs.getString("trigramme") + "," + rs.getString("name") + "," + rs.getString("first_name")
-			+ "," + rs.getString("casert") + "," + ((double) rs.getInt("balance") / 100));
+		out.println(rs.getString("trigramme") + "," + rs.getString("name") + ","
+			+ rs.getString("first_name") + "," + rs.getString("casert") + ","
+			+ ((double) rs.getInt("balance") / 100));
 	    }
 	    out.close();
-	    JOptionPane.showConfirmDialog(parent, "Fichier sauvegardé dans " + chemin, "", JOptionPane.PLAIN_MESSAGE);
+	    JOptionPane.showConfirmDialog(parent, "Fichier sauvegardé dans " + chemin, "",
+		    JOptionPane.PLAIN_MESSAGE);
 	}
     }
 
@@ -122,13 +125,15 @@ public class Export {
 		String fichier = chemin + "/transactions_" + dateComplete + ".csv";
 		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
 
-		PreparedStatement stmt = parent.connexion
-			.prepareStatement("SELECT * FROM transactions ORDER BY date DESC");
+		PreparedStatement stmt =
+			parent.connexion
+				.prepareStatement("SELECT * FROM transactions ORDER BY date DESC");
 		ResultSet rs = stmt.executeQuery();
 
 		while (rs.next()) {
-		    out.println(rs.getInt("id") + "," + rs.getInt("price") + "," + rs.getString("comment") + ","
-			    + rs.getInt("id") + "," + rs.getInt("date") + "," + rs.getInt("id2"));
+		    out.println(rs.getInt("id") + "," + rs.getInt("price") + ","
+			    + rs.getString("comment") + "," + rs.getInt("id") + ","
+			    + rs.getInt("date") + "," + rs.getInt("id2"));
 		}
 		out.close();
 
@@ -137,10 +142,11 @@ public class Export {
 		rs = stmt.executeQuery();
 		out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
 		while (rs.next()) {
-		    out.println(rs.getInt("id") + "," + rs.getString("trigramme") + "," + rs.getString("name") + ","
-			    + rs.getString("first_name") + "," + rs.getString("nickname") + ","
-			    + rs.getString("casert") + "," + rs.getInt("status") + "," + rs.getInt("promo")
-			    + rs.getString("mail") + "," + rs.getString("picture") + "," + rs.getInt("balance") + ","
+		    out.println(rs.getInt("id") + "," + rs.getString("trigramme") + ","
+			    + rs.getString("name") + "," + rs.getString("first_name") + ","
+			    + rs.getString("nickname") + "," + rs.getString("casert") + ","
+			    + rs.getInt("status") + "," + rs.getInt("promo") + rs.getString("mail")
+			    + "," + rs.getString("picture") + "," + rs.getInt("balance") + ","
 			    + rs.getString("turnover"));
 		}
 		out.close();
@@ -151,7 +157,8 @@ public class Export {
 		out.close();
 		out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
 		while (rs.next()) {
-		    out.println(rs.getInt("id") + "," + rs.getInt("permissions") + "," + rs.getString("passwd"));
+		    out.println(rs.getInt("id") + "," + rs.getInt("permissions") + ","
+			    + rs.getString("passwd"));
 		}
 		out.close();
 
@@ -160,7 +167,8 @@ public class Export {
 		rs = stmt.executeQuery();
 		out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
 		while (rs.next()) {
-		    out.println(rs.getString("marque") + "," + rs.getInt("prix") + "," + rs.getInt("quantite"));
+		    out.println(rs.getString("marque") + "," + rs.getInt("prix") + ","
+			    + rs.getInt("quantite"));
 		}
 		out.close();
 
@@ -180,7 +188,9 @@ public class Export {
 	int returnVal = chooser.showOpenDialog(parent);
 	if (returnVal == JFileChooser.APPROVE_OPTION) {
 	    chemin = chooser.getSelectedFile().getPath();
-	    String titre = JOptionPane.showInputDialog(parent, "Saisir un titre", "", JOptionPane.QUESTION_MESSAGE);
+	    String titre =
+		    JOptionPane.showInputDialog(parent, "Saisir un titre", "",
+			    JOptionPane.QUESTION_MESSAGE);
 
 	    TableModel modele = table.getModel();
 

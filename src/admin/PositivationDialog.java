@@ -107,7 +107,8 @@ public class PositivationDialog extends JDialog {
 	    this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	    this.getContentPane().add(pane);
 	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		    (parent.getHeight() - this.getHeight()) / 2);
 	    this.setResizable(false);
 	    this.setVisible(true);
 

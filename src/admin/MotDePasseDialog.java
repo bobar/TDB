@@ -111,20 +111,22 @@ public class MotDePasseDialog extends JDialog {
 	    Container contentPane = this.getContentPane();
 	    contentPane.add(pane);
 	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		    (parent.getHeight() - this.getHeight()) / 2);
 	    this.setResizable(false);
 	    this.setVisible(true);
 
 	    if (validation = true) {
-		String mdp1 = champMDP1.getText();
-		String mdp2 = champMDP2.getText();
+		String mdp1 = MD5Hex(champMDP1.getPassword());
+		String mdp2 = MD5Hex(champMDP2.getPassword());
 		if (!mdp1.equals(mdp2)) {
 		    throw new Exception("Les mots de passe ne correspondent pas");
 		} else {
 		    Statement stmt = parent.connexion.createStatement();
-		    String mdp = MD5Hex(champMDP1.getText());
-		    stmt.executeUpdate("UPDATE admins SET passwd='" + mdp + "' WHERE id=" + authentification.admin);
-		    JOptionPane.showMessageDialog(this, "Mot de passe changé", "", JOptionPane.INFORMATION_MESSAGE);
+		    stmt.executeUpdate("UPDATE admins SET passwd='" + mdp1 + "' WHERE id="
+			    + authentification.admin);
+		    JOptionPane.showMessageDialog(this, "Mot de passe changé", "",
+			    JOptionPane.INFORMATION_MESSAGE);
 		}
 	    }
 	} else {
@@ -142,6 +144,14 @@ public class MotDePasseDialog extends JDialog {
 	    // this won't happen, we know Java has MD5!
 	}
 	return result;
+    }
+
+    public static String MD5Hex(char[] c) {
+	String init = "";
+	for (int i = c.length - 1; i >= 0; --i) {
+	    init = c[i] + init;
+	}
+	return MD5Hex(init);
     }
 
     public static String toHex(byte[] a) {

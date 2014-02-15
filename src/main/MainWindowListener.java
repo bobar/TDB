@@ -154,9 +154,11 @@ public class MainWindowListener implements KeyListener, ActionListener {
 	    // + (int) 'Z');
 	    if ((arg0.getKeyChar() >= 'a' && arg0.getKeyChar() <= 'z')
 		    || (arg0.getKeyChar() >= 'A' && arg0.getKeyChar() <= 'Z')) {
-		TrigrammeDialog dialog = new TrigrammeDialog(parent, ("" + arg0.getKeyChar()).toUpperCase());
+		TrigrammeDialog dialog =
+			new TrigrammeDialog(parent, ("" + arg0.getKeyChar()).toUpperCase());
 		dialog.executer();
-	    } else if ((arg0.getKeyChar() >= '0' && arg0.getKeyChar() <= '9') || arg0.getKeyChar() == '.') {
+	    } else if ((arg0.getKeyChar() >= '0' && arg0.getKeyChar() <= '9')
+		    || arg0.getKeyChar() == '.') {
 		if (parent.trigrammeActif == null) {
 		    TrigrammeDialog dialog = new TrigrammeDialog(parent, "");
 		    dialog.executer();

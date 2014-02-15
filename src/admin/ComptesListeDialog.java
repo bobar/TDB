@@ -54,7 +54,8 @@ public class ComptesListeDialog extends JDialog {
 	    } else if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
 		int ligneChoisie = resultats.getSelectedRow();
 		try {
-		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(ligneChoisie, 0)));
+		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
+			    ligneChoisie, 0)));
 		    dispose();
 		} catch (Exception e) {
 		    parent.afficherErreur(e);
@@ -79,7 +80,8 @@ public class ComptesListeDialog extends JDialog {
 	    } else if (arg0.getSource() == ouvrirButton) {
 		int ligneChoisie = resultats.getSelectedRow();
 		try {
-		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(ligneChoisie, 0)));
+		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
+			    ligneChoisie, 0)));
 		    dispose();
 		} catch (Exception e) {
 		    parent.afficherErreur(e);
@@ -105,7 +107,8 @@ public class ComptesListeDialog extends JDialog {
 	resultats.repaint();
 
 	resultatsScrollPane = new JScrollPane(resultats);
-	resultatsScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	resultatsScrollPane
+		.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 	resultatsScrollPane.setPreferredSize(new Dimension(450, 460));
 
 	String[] header = { "Trigramme", "Nom", "Prénom", "Balance" };
@@ -145,7 +148,8 @@ public class ComptesListeDialog extends JDialog {
 
 	this.setContentPane(fond);
 	this.pack();
-	this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
 	this.chargerListe();
 	this.setResizable(false);
 	this.setVisible(true);
@@ -155,8 +159,9 @@ public class ComptesListeDialog extends JDialog {
 	for (int i = modele.getRowCount() - 1; i >= 0; i--) {
 	    modele.removeRow(i);
 	}
-	PreparedStatement stmt = parent.connexion
-		.prepareStatement("SELECT trigramme,name,first_name,balance FROM accounts WHERE status = ? AND promo >= ? AND promo <= ? AND balance >= ? AND balance <= ?");
+	PreparedStatement stmt =
+		parent.connexion
+			.prepareStatement("SELECT trigramme,name,first_name,balance FROM accounts WHERE status = ? AND promo >= ? AND promo <= ? AND balance >= ? AND balance <= ?");
 	if (choix.casePromoMin.isSelected()) {
 	    stmt.setInt(2, Integer.parseInt(choix.champPromoMin.getText()));
 	} else {
@@ -182,8 +187,10 @@ public class ComptesListeDialog extends JDialog {
 	    stmt.setInt(1, Trigramme.XPlatal);
 	    ResultSet rs = stmt.executeQuery();
 	    while (rs.next()) {
-		String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-			"" + ((double) (rs.getInt("balance")) / 100) };
+		String[] item =
+			{ rs.getString("trigramme"), rs.getString("name"),
+				rs.getString("first_name"),
+				"" + ((double) (rs.getInt("balance")) / 100) };
 		modele.addRow(item);
 	    }
 	}
@@ -191,8 +198,10 @@ public class ComptesListeDialog extends JDialog {
 	    stmt.setInt(1, Trigramme.XAncien);
 	    ResultSet rs = stmt.executeQuery();
 	    while (rs.next()) {
-		String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-			"" + ((double) (rs.getInt("balance")) / 100) };
+		String[] item =
+			{ rs.getString("trigramme"), rs.getString("name"),
+				rs.getString("first_name"),
+				"" + ((double) (rs.getInt("balance")) / 100) };
 		modele.addRow(item);
 	    }
 	}
@@ -200,8 +209,10 @@ public class ComptesListeDialog extends JDialog {
 	    stmt.setInt(1, Trigramme.Binet);
 	    ResultSet rs = stmt.executeQuery();
 	    while (rs.next()) {
-		String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-			"" + ((double) (rs.getInt("balance")) / 100) };
+		String[] item =
+			{ rs.getString("trigramme"), rs.getString("name"),
+				rs.getString("first_name"),
+				"" + ((double) (rs.getInt("balance")) / 100) };
 		modele.addRow(item);
 	    }
 	}
@@ -209,8 +220,10 @@ public class ComptesListeDialog extends JDialog {
 	    stmt.setInt(1, Trigramme.Personnel);
 	    ResultSet rs = stmt.executeQuery();
 	    while (rs.next()) {
-		String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-			"" + ((double) (rs.getInt("balance")) / 100) };
+		String[] item =
+			{ rs.getString("trigramme"), rs.getString("name"),
+				rs.getString("first_name"),
+				"" + ((double) (rs.getInt("balance")) / 100) };
 		modele.addRow(item);
 	    }
 	}
@@ -218,8 +231,10 @@ public class ComptesListeDialog extends JDialog {
 	    stmt.setInt(1, Trigramme.Etudiant);
 	    ResultSet rs = stmt.executeQuery();
 	    while (rs.next()) {
-		String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-			"" + ((double) (rs.getInt("balance")) / 100) };
+		String[] item =
+			{ rs.getString("trigramme"), rs.getString("name"),
+				rs.getString("first_name"),
+				"" + ((double) (rs.getInt("balance")) / 100) };
 		modele.addRow(item);
 	    }
 	}
@@ -227,8 +242,10 @@ public class ComptesListeDialog extends JDialog {
 	    stmt.setInt(1, Trigramme.Autre);
 	    ResultSet rs = stmt.executeQuery();
 	    while (rs.next()) {
-		String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-			"" + ((double) (rs.getInt("balance")) / 100) };
+		String[] item =
+			{ rs.getString("trigramme"), rs.getString("name"),
+				rs.getString("first_name"),
+				"" + ((double) (rs.getInt("balance")) / 100) };
 		modele.addRow(item);
 	    }
 	}

@@ -122,17 +122,18 @@ public class AuthentificationDialog extends JDialog {
 	    Container contentPane = this.getContentPane();
 	    contentPane.add(pane);
 	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		    (parent.getHeight() - this.getHeight()) / 2);
 	    this.setResizable(false);
 	    this.setVisible(true);
 
 	    if (validation) {
 		String trigramme = champTrigramme.getText();
-		String cryptage = MD5Hex(champMDP.getText());
+		String cryptage = MD5Hex(champMDP.getPassword());
 		try {
 		    Statement stmt = parent.connexion.createStatement();
-		    ResultSet rs = stmt
-			    .executeQuery("Select accounts.id as admin_id, permissions FROM admins LEFT JOIN accounts on accounts.id = admins.id WHERE accounts.trigramme = '"
+		    ResultSet rs =
+			    stmt.executeQuery("Select accounts.id as admin_id, permissions FROM admins LEFT JOIN accounts on accounts.id = admins.id WHERE accounts.trigramme = '"
 				    + trigramme + "' AND passwd = '" + cryptage + "'");
 		    if (rs.next()) {
 			this.admin = rs.getInt("admin_id");
@@ -157,6 +158,14 @@ public class AuthentificationDialog extends JDialog {
 	    // this won't happen, we know Java has MD5!
 	}
 	return result;
+    }
+
+    public static String MD5Hex(char[] c) {
+	String init = "";
+	for (int i = c.length - 1; i >= 0; --i) {
+	    init = c[i] + init;
+	}
+	return MD5Hex(init);
     }
 
     public static String toHex(byte[] a) {

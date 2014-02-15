@@ -104,7 +104,8 @@ public class ClopesDialog extends JDialog {
 	SpinnerNumberModel modeleQuantite = new SpinnerNumberModel(1, 1, 20, 1);
 	champQuantite = new JSpinner(modeleQuantite);
 	champQuantite.setPreferredSize(new Dimension(150, 20));
-	((JSpinner.DefaultEditor) champQuantite.getEditor()).getTextField().addKeyListener(listener);
+	((JSpinner.DefaultEditor) champQuantite.getEditor()).getTextField()
+		.addKeyListener(listener);
 
 	okButton = new JButton("Valider");
 	okButton.setPreferredSize(new Dimension(100, 20));
@@ -127,7 +128,8 @@ public class ClopesDialog extends JDialog {
 
 	this.setContentPane(fond);
 	this.pack();
-	this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
 	this.setResizable(false);
 	this.setVisible(true);
 
@@ -135,7 +137,8 @@ public class ClopesDialog extends JDialog {
 
 	    String marque = (String) champMarque.getSelectedItem();
 	    int quantite = (Integer) champQuantite.getValue();
-	    ResultSet rs2 = stmt.executeQuery("SELECT prix FROM clopes WHERE marque='" + marque + "'");
+	    ResultSet rs2 =
+		    stmt.executeQuery("SELECT prix FROM clopes WHERE marque='" + marque + "'");
 	    int prix = 0;
 	    if (rs2.next()) {
 		prix = rs2.getInt("prix");
@@ -155,21 +158,29 @@ public class ClopesDialog extends JDialog {
 		    admin = authentification.admin;
 		}
 	    }
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (prix * quantite) + " WHERE id="
-		    + parent.trigrammeActif.id);
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (prix * quantite)
+		    + " WHERE id=" + parent.trigrammeActif.id);
 	    GregorianCalendar date = new GregorianCalendar();
 	    date.setTime(new Date());
-	    Transaction transaction = new Transaction(parent.trigrammeActif.id, -quantite * prix, quantite + " "
-		    + marque, admin, (int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
+	    Transaction transaction =
+		    new Transaction(parent.trigrammeActif.id, -quantite * prix, quantite + " "
+			    + marque, admin, (int) (date.getTimeInMillis() / 1000),
+			    parent.banqueBob.id);
 	    parent.dernieresActions.add(transaction);
-	    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (" + transaction.id
-		    + "," + transaction.price + ",'" + transaction.comment + "'," + transaction.admin + ","
-		    + transaction.date + "," + transaction.id2 + ")");
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (prix * quantite) + " WHERE id="
-		    + parent.banqueBob.id);
+	    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
+		    + transaction.id
+		    + ","
+		    + transaction.price
+		    + ",'"
+		    + transaction.comment
+		    + "',"
+		    + transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (prix * quantite)
+		    + " WHERE id=" + parent.banqueBob.id);
 	    stmt.closeOnCompletion();
 
-	    stmt.executeUpdate("UPDATE clopes SET quantite=quantite+" + quantite + " WHERE marque='" + marque + "'");
+	    stmt.executeUpdate("UPDATE clopes SET quantite=quantite+" + quantite
+		    + " WHERE marque='" + marque + "'");
 	}
 	parent.refresh();
     }

@@ -129,19 +129,22 @@ public class AdminCreationDialog extends JDialog {
 	Container contentPane = this.getContentPane();
 	contentPane.add(pane);
 	this.pack();
-	this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
 	this.setResizable(false);
 	this.setVisible(true);
 
 	if (validation) {
-	    String cryptage1 = MD5Hex(champMDP1.getText());
-	    String cryptage2 = MD5Hex(champMDP2.getText());
-	    if (!cryptage1.equals(cryptage2)) { throw new Exception("Les mots de passe ne correspondent pas"); }
+	    String cryptage1 = MD5Hex(champMDP1.getPassword());
+	    String cryptage2 = MD5Hex(champMDP2.getPassword());
+	    if (!cryptage1.equals(cryptage2)) { throw new Exception(
+		    "Les mots de passe ne correspondent pas"); }
 	    try {
 		Trigramme trigramme = new Trigramme(parent, champTrigramme.getText());
 		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("INSERT INTO admins (id,permissions,passwd) VALUES (" + trigramme.id + ","
-			+ champCategorie.getSelectedIndex() + ",'" + cryptage1 + "')");
+		stmt.executeUpdate("INSERT INTO admins (id,permissions,passwd) VALUES ("
+			+ trigramme.id + "," + champCategorie.getSelectedIndex() + ",'" + cryptage1
+			+ "')");
 	    } catch (Exception e) {
 		parent.afficherErreur(e);
 	    }
@@ -158,6 +161,14 @@ public class AdminCreationDialog extends JDialog {
 	    // this won't happen, we know Java has MD5!
 	}
 	return result;
+    }
+
+    public static String MD5Hex(char[] c) {
+	String init = "";
+	for (int i = c.length - 1; i >= 0; --i) {
+	    init = c[i] + init;
+	}
+	return MD5Hex(init);
     }
 
     private static String toHex(byte[] a) {

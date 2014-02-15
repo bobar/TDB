@@ -137,15 +137,14 @@ public class MainWindow extends JFrame {
 	    return false;
 	}
     };
-    /*
-     * DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() { private static final long serialVersionUID =
-     * 1L;
+    /* DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() { private static final
+     * long serialVersionUID = 1L;
      * 
-     * public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-     * int row, int column) { Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
-     * row, column); if (row % 2 == 0) { cell.setBackground(Color.red); } else { cell.setBackground(Color.white); }
-     * return cell; } };
-     */
+     * public Component getTableCellRendererComponent(JTable table, Object value, boolean
+     * isSelected, boolean hasFocus, int row, int column) { Component cell =
+     * super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); if (row
+     * % 2 == 0) { cell.setBackground(Color.red); } else { cell.setBackground(Color.white); } return
+     * cell; } }; */
     DefaultTableColumnModel modeleColonnes;
     JScrollPane historiqueScrollPane = new JScrollPane();
     JPanel historiquePane = new JPanel();
@@ -367,6 +366,9 @@ public class MainWindow extends JFrame {
 		getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 	absolutePath = absolutePath.substring(0, absolutePath.lastIndexOf("/"));
 	absolutePath = absolutePath.replaceAll("%20", " "); // Surely need to do this here
+	if(absolutePath.substring(absolutePath.length()-3).equals("bin")){
+	    absolutePath+="/.."; //Hack sordide pour l'éxécution dans Eclipse
+	}
 	return absolutePath;
     }
 
@@ -723,13 +725,11 @@ public class MainWindow extends JFrame {
 		trigrammeLabel.setForeground(Color.BLUE);
 	    }
 	    Statement stmt = connexion.createStatement();
-	    /*
-	     * ResultSet rs = stmt
-	     * .executeQuery("SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id=" +
-	     * trigrammeActif.id +
+	    /* ResultSet rs = stmt .executeQuery(
+	     * "SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
+	     * + trigrammeActif.id +
 	     * " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
-	     * + trigrammeActif.id + " ORDER BY date DESC LIMIT 50");
-	     */
+	     * + trigrammeActif.id + " ORDER BY date DESC LIMIT 50"); */
 	    ResultSet rs =
 		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions as tr "
@@ -746,16 +746,15 @@ public class MainWindow extends JFrame {
 			    + " WHERE tr.id2="
 			    + trigrammeActif.id + " ORDER BY date DESC LIMIT 50");
 	    while (rs.next()) {
-		/*
-		 * int adminId = rs.getInt("admin"); String adminTrig = ""; Statement stmt2 =
+		/* int adminId = rs.getInt("admin"); String adminTrig = ""; Statement stmt2 =
 		 * connexion.createStatement(); ResultSet rs2 =
-		 * stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId); if (rs2.next()) { adminTrig
-		 * = rs2.getString("trigramme"); } String banqueTrig = ""; Statement stmt3 =
-		 * connexion.createStatement(); ResultSet rs3 =
-		 * stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id=" + (rs.getInt("id") + rs.getInt("id2") -
-		 * trigrammeActif.id)); if (rs3.next()) { banqueTrig = rs3.getString("trigramme"); } if
-		 * (banqueTrig.equals("BOB")) { banqueTrig = ""; // Plus de lisibilité }
-		 */
+		 * stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId); if
+		 * (rs2.next()) { adminTrig = rs2.getString("trigramme"); } String banqueTrig = "";
+		 * Statement stmt3 = connexion.createStatement(); ResultSet rs3 =
+		 * stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id=" + (rs.getInt("id")
+		 * + rs.getInt("id2") - trigrammeActif.id)); if (rs3.next()) { banqueTrig =
+		 * rs3.getString("trigramme"); } if (banqueTrig.equals("BOB")) { banqueTrig = ""; //
+		 * Plus de lisibilité } */
 		String adminTrig = rs.getString("t3");
 		String banqueTrig = rs.getString("t2");
 		if (banqueTrig.equals("BOB")) {
@@ -859,13 +858,11 @@ public class MainWindow extends JFrame {
 
 	if (trigrammeActif != null) {
 	    Statement stmt = connexion.createStatement();
-	    /*
-	     * ResultSet rs =
-	     * stmt.executeQuery("SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
+	    /* ResultSet rs = stmt.executeQuery(
+	     * "SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
 	     * + trigrammeActif.id +
 	     * " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
-	     * + trigrammeActif.id + " ORDER BY date DESC");
-	     */
+	     * + trigrammeActif.id + " ORDER BY date DESC"); */
 	    ResultSet rs =
 		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions as tr "
@@ -882,16 +879,15 @@ public class MainWindow extends JFrame {
 			    + " WHERE tr.id2="
 			    + trigrammeActif.id + " ORDER BY date DESC");
 	    while (rs.next()) {
-		/*
-		 * int adminId = rs.getInt("admin"); String adminTrig = ""; Statement stmt2 =
+		/* int adminId = rs.getInt("admin"); String adminTrig = ""; Statement stmt2 =
 		 * connexion.createStatement(); ResultSet rs2 =
-		 * stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId); if (rs2.next()) { adminTrig
-		 * = rs2.getString("trigramme"); } String banqueTrig = ""; Statement stmt3 =
-		 * connexion.createStatement(); ResultSet rs3 =
-		 * stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id=" + (rs.getInt("id") + rs.getInt("id2") -
-		 * trigrammeActif.id)); if (rs3.next()) { banqueTrig = rs3.getString("trigramme"); } if
-		 * (banqueTrig.equals("BOB")) { banqueTrig = ""; // Plus de lisibilité }
-		 */
+		 * stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId); if
+		 * (rs2.next()) { adminTrig = rs2.getString("trigramme"); } String banqueTrig = "";
+		 * Statement stmt3 = connexion.createStatement(); ResultSet rs3 =
+		 * stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id=" + (rs.getInt("id")
+		 * + rs.getInt("id2") - trigrammeActif.id)); if (rs3.next()) { banqueTrig =
+		 * rs3.getString("trigramme"); } if (banqueTrig.equals("BOB")) { banqueTrig = ""; //
+		 * Plus de lisibilité } */
 		String adminTrig = rs.getString("t3");
 		String banqueTrig = rs.getString("t2");
 		if (banqueTrig.equals("BOB")) {

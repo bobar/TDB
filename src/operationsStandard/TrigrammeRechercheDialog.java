@@ -46,7 +46,8 @@ public class TrigrammeRechercheDialog extends JDialog {
     DefaultTableColumnModel modeleColonnes;
     JScrollPane resultatsScrollPane;
 
-    public class TrigrammeRechercheDialogListener implements ActionListener, KeyListener, MouseListener {
+    public class TrigrammeRechercheDialogListener implements ActionListener, KeyListener,
+	    MouseListener {
 
 	TrigrammeRechercheDialogListener() {}
 
@@ -78,7 +79,8 @@ public class TrigrammeRechercheDialog extends JDialog {
 	    } else if (arg0.getSource() == ouvrirButton) {
 		int ligneChoisie = resultats.getSelectedRow();
 		try {
-		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(ligneChoisie, 0)));
+		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
+			    ligneChoisie, 0)));
 		    dispose();
 		} catch (Exception e) {
 		    parent.afficherErreur(e);
@@ -96,7 +98,8 @@ public class TrigrammeRechercheDialog extends JDialog {
 	    if (arg0.getClickCount() == 2) {
 		int ligneChoisie = resultats.getSelectedRow();
 		try {
-		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(ligneChoisie, 0)));
+		    parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
+			    ligneChoisie, 0)));
 		    dispose();
 		} catch (Exception e) {
 		    parent.afficherErreur(e);
@@ -128,7 +131,8 @@ public class TrigrammeRechercheDialog extends JDialog {
 	resultats.repaint();
 
 	resultatsScrollPane = new JScrollPane(resultats);
-	resultatsScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	resultatsScrollPane
+		.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 	resultatsScrollPane.setPreferredSize(new Dimension(290, 340));
 
 	String[] header = { "Trigramme", "Nom", "Prénom" };
@@ -173,7 +177,8 @@ public class TrigrammeRechercheDialog extends JDialog {
 
 	this.setContentPane(fond);
 	this.pack();
-	this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
 	this.setResizable(false);
 	this.setVisible(true);
     }
@@ -183,11 +188,15 @@ public class TrigrammeRechercheDialog extends JDialog {
 	    modele.removeRow(i);
 	}
 	Statement stmt = parent.connexion.createStatement();
-	ResultSet rs = stmt.executeQuery("SELECT trigramme,name,first_name FROM accounts WHERE name LIKE '%"
-		+ champSaisie.getText() + "%' OR first_name LIKE '%" + champSaisie.getText() + "%'");
+	ResultSet rs =
+		stmt.executeQuery("SELECT trigramme,name,first_name FROM accounts WHERE name LIKE '%"
+			+ champSaisie.getText()
+			+ "%' OR first_name LIKE '%"
+			+ champSaisie.getText() + "%'");
 
 	while (rs.next()) {
-	    String[] item = { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name") };
+	    String[] item =
+		    { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name") };
 	    modele.addRow(item);
 	}
 	resultats.setModel(modele);

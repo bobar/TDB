@@ -17,7 +17,10 @@ public class Database {
 	String absolutePath =
 		getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 	absolutePath = absolutePath.substring(0, absolutePath.lastIndexOf("/"));
-	absolutePath = absolutePath.replaceAll("%20", " "); // Surely need to do this here
+	absolutePath = absolutePath.replaceAll("%20", "\\ "); // Surely need to do this here
+	if(absolutePath.substring(absolutePath.length()-3).equals("bin")){
+	    absolutePath+="/.."; //Hack sordide pour l'éxécution dans Eclipse
+	}
 	return absolutePath;
     }
 
