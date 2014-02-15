@@ -1,6 +1,7 @@
 .classpath
 .project
 TDB.jar
+src/TDB.config
 bin/*
 /bin
 *~
