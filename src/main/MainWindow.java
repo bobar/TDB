@@ -82,6 +82,7 @@ public class MainWindow extends JFrame {
     JMenuItem ouvrirTrigramme = new JMenuItem("Ouvrir un trigramme");
     JMenuItem fermerTrigramme = new JMenuItem("Fermer le trigramme");
     JMenuItem voirHistorique = new JMenuItem("Voir tout l'historique");
+    JMenuItem voirAncienHistorique = new JMenuItem("Voir ancien historique");
     JMenuItem rechercherTrigramme = new JMenuItem("Chercher un trigramme");
     JMenuItem debiterTrigramme = new JMenuItem("Débiter un trigramme");
     JMenuItem acheterClopes = new JMenuItem("Acheter des clopes");
@@ -312,6 +313,7 @@ public class MainWindow extends JFrame {
 	    String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
 	    prefs.put("dateResetHistorique", dateComplete);
 	    Statement stmt = connexion.createStatement();
+	    stmt.executeUpdate("INSERT INTO transactions_history SELECT * FROM transactions");
 	    stmt.executeUpdate("DELETE FROM transactions");
 	    refresh();
 	    JOptionPane.showMessageDialog(this, "Historiques réinitialisés", "",
@@ -366,8 +368,8 @@ public class MainWindow extends JFrame {
 		getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 	absolutePath = absolutePath.substring(0, absolutePath.lastIndexOf("/"));
 	absolutePath = absolutePath.replaceAll("%20", " "); // Surely need to do this here
-	if(absolutePath.substring(absolutePath.length()-3).equals("bin")){
-	    absolutePath+="/.."; //Hack sordide pour l'éxécution dans Eclipse
+	if (absolutePath.substring(absolutePath.length() - 3).equals("bin")) {
+	    absolutePath += "/.."; // Hack sordide pour l'éxécution dans Eclipse
 	}
 	return absolutePath;
     }
@@ -486,6 +488,9 @@ public class MainWindow extends JFrame {
 	voirHistorique.addActionListener(mainWindowListener);
 	voirHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
 		InputEvent.CTRL_DOWN_MASK));
+	voirAncienHistorique.addActionListener(mainWindowListener);
+	voirAncienHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
+		InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
 	rechercherTrigramme.addActionListener(mainWindowListener);
 	rechercherTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
 		InputEvent.CTRL_DOWN_MASK));
@@ -502,6 +507,7 @@ public class MainWindow extends JFrame {
 	menuStandard.add(ouvrirTrigramme);
 	menuStandard.add(fermerTrigramme);
 	menuStandard.add(voirHistorique);
+	menuStandard.add(voirAncienHistorique);
 	menuStandard.add(rechercherTrigramme);
 	menuStandard.add(debiterTrigramme);
 	menuStandard.add(acheterClopes);
@@ -873,6 +879,103 @@ public class MainWindow extends JFrame {
 			    + trigrammeActif.id
 			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions as tr "
+			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
+			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
+			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
+			    + " WHERE tr.id2="
+			    + trigrammeActif.id + " ORDER BY date DESC");
+	    while (rs.next()) {
+		/* int adminId = rs.getInt("admin"); String adminTrig = ""; Statement stmt2 =
+		 * connexion.createStatement(); ResultSet rs2 =
+		 * stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId); if
+		 * (rs2.next()) { adminTrig = rs2.getString("trigramme"); } String banqueTrig = "";
+		 * Statement stmt3 = connexion.createStatement(); ResultSet rs3 =
+		 * stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id=" + (rs.getInt("id")
+		 * + rs.getInt("id2") - trigrammeActif.id)); if (rs3.next()) { banqueTrig =
+		 * rs3.getString("trigramme"); } if (banqueTrig.equals("BOB")) { banqueTrig = ""; //
+		 * Plus de lisibilité } */
+		String adminTrig = rs.getString("t3");
+		String banqueTrig = rs.getString("t2");
+		if (banqueTrig.equals("BOB")) {
+		    banqueTrig = "";
+		}
+		GregorianCalendar date = new GregorianCalendar();
+		date.setTimeInMillis(((long) rs.getInt("date")) * 1000);
+		String jour = "", mois = "", annee = "", heure = "", minute = "";
+		if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
+		    jour = "" + date.get(Calendar.DAY_OF_MONTH);
+		} else {
+		    jour = "0" + date.get(Calendar.DAY_OF_MONTH);
+		}
+		if ((1 + date.get(Calendar.MONTH)) >= 10) {
+		    mois = "" + (1 + date.get(Calendar.MONTH));
+		} else {
+		    mois = "0" + (1 + date.get(Calendar.MONTH));
+		}
+		if (date.get(Calendar.YEAR) >= 10) {
+		    annee = "" + date.get(Calendar.YEAR);
+		} else {
+		    annee = "0" + date.get(Calendar.YEAR);
+		}
+		if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
+		    heure = "" + date.get(Calendar.HOUR_OF_DAY);
+		} else {
+		    heure = "0" + date.get(Calendar.HOUR);
+		}
+		if (date.get(Calendar.MINUTE) >= 10) {
+		    minute = "" + date.get(Calendar.MINUTE);
+		} else {
+		    minute = "0" + date.get(Calendar.MINUTE);
+		}
+		String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
+		String[] item =
+			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
+				rs.getString("c"), dateComplete };
+		modele.addRow(item);
+	    }
+	    infos.repaint();
+	    historique.setModel(modele);
+	    historique.repaint();
+	    this.repaint();
+	}
+    }
+    public void refreshOldHistorique() throws Exception {
+
+	// Cette fois, ca affiche l'historique de l'historique et l'historique
+	for (int i = modele.getRowCount() - 1; i >= 0; i--) {
+	    modele.removeRow(i);
+	}
+
+	if (trigrammeActif != null) {
+	    Statement stmt = connexion.createStatement();
+	    /* ResultSet rs = stmt.executeQuery(
+	     * "SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
+	     * + trigrammeActif.id +
+	     * " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
+	     * + trigrammeActif.id + " ORDER BY date DESC"); */
+	    ResultSet rs =
+		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " FROM transactions as tr "
+			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
+			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
+			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin " + " WHERE tr.id="
+			    + trigrammeActif.id
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " FROM transactions as tr "
+			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
+			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
+			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
+			    + " WHERE tr.id2="
+			    + trigrammeActif.id
+			    + " UNION SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " FROM transactions_history as tr "
+			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
+			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
+			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
+			    + " WHERE tr.id="
+			    + trigrammeActif.id
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " FROM transactions_history as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "

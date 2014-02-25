@@ -44,6 +44,10 @@ public class MainWindowListener implements KeyListener, ActionListener {
 		if (parent.trigrammeActif != null) {
 		    parent.refreshHistorique();
 		}
+	    } else if (action.getSource().equals(parent.voirAncienHistorique)) {
+		if (parent.trigrammeActif != null) {
+		    parent.refreshOldHistorique();
+		}
 	    } else if (action.getSource().equals(parent.debiterTrigramme)) {
 		if (parent.trigrammeActif == null) {
 		    TrigrammeDialog dialog = new TrigrammeDialog(parent, "");
