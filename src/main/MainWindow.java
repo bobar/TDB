@@ -385,7 +385,6 @@ public class MainWindow extends JFrame {
 	    // TDB.prefs.exportNode(System.out);
 	    String trigrammeBanque = "BOB";
 	    String absolutePath = TDB.getExecutionPath();
-	    // System.out.println(TDB.getExecutionPath());
 	    InputStream ips = new FileInputStream(absolutePath + "/src//TDB.config");
 	    InputStreamReader ipsr = new InputStreamReader(ips);
 	    BufferedReader br = new BufferedReader(ipsr);
@@ -416,9 +415,10 @@ public class MainWindow extends JFrame {
 	}
 	if (e.getClass() != TDBException.class) {
 	    try {
+		String absolutePath = this.getExecutionPath();
 		PrintWriter out =
 			new PrintWriter(new BufferedWriter(new FileWriter(
-				"/home/thierry/Bureau/logTDB", true)));
+				absolutePath + "//logTDB", true)));
 		out.println(e.getMessage());
 		GregorianCalendar date = new GregorianCalendar();
 		date.setTime(new Date());
