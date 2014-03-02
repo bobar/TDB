@@ -142,19 +142,19 @@ public class LogGroupeDialog extends JDialog {
 	if (authentification.droits >= AuthentificationDialog.Ami) {
 
 	    JLabel labelMontant = new JLabel("Montant : ");
-	    labelMontant.setPreferredSize(new Dimension(80, 20));
+	    labelMontant.setPreferredSize(new Dimension(110, 20));
 	    champMontant = new JTextField();
 	    champMontant.setPreferredSize(new Dimension(190, 20));
 	    champMontant.addKeyListener(listener);
 
 	    JLabel labelCommentaire = new JLabel("Commentaire : ");
-	    labelCommentaire.setPreferredSize(new Dimension(80, 20));
+	    labelCommentaire.setPreferredSize(new Dimension(110, 20));
 	    champCommentaire = new JTextField();
 	    champCommentaire.setPreferredSize(new Dimension(190, 20));
 	    champCommentaire.addKeyListener(listener);
 
 	    JLabel labelTrigramme = new JLabel("Sur : ");
-	    labelTrigramme.setPreferredSize(new Dimension(80, 20));
+	    labelTrigramme.setPreferredSize(new Dimension(110, 20));
 	    champTrigramme = new JTextField();
 	    champTrigramme.setPreferredSize(new Dimension(190, 20));
 	    champTrigramme.addKeyListener(listener);
@@ -176,7 +176,7 @@ public class LogGroupeDialog extends JDialog {
 	    pane.add(champTrigramme);
 	    pane.add(okButton);
 	    pane.add(cancelButton);
-	    pane.setPreferredSize(new Dimension(300, 110));
+	    pane.setPreferredSize(new Dimension(330, 110));
 
 	    this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
