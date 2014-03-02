@@ -63,15 +63,15 @@ public class TrigrammeRechercheDialog extends JDialog {
 	    }
 	}
 
-	public void keyReleased(KeyEvent arg0) {}
-
-	public void keyTyped(KeyEvent arg0) {
+	public void keyReleased(KeyEvent arg0) {
 	    try {
 		chargerListe();
 	    } catch (Exception e) {
 		parent.afficherErreur(e);
 	    }
 	}
+
+	public void keyTyped(KeyEvent arg0) {}
 
 	public void actionPerformed(ActionEvent arg0) {
 	    if (arg0.getSource() == fermerButton) {
@@ -133,16 +133,17 @@ public class TrigrammeRechercheDialog extends JDialog {
 	resultatsScrollPane = new JScrollPane(resultats);
 	resultatsScrollPane
 		.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-	resultatsScrollPane.setPreferredSize(new Dimension(290, 340));
+	resultatsScrollPane.setPreferredSize(new Dimension(390, 340));
 
-	String[] header = { "Trigramme", "Nom", "Prénom" };
+	String[] header = { "Trigramme", "Nom", "Prénom", "Surnom" };
 	modele.setColumnIdentifiers(header);
 
 	resultats.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	resultats.setModel(modele);
 	resultats.getColumnModel().getColumn(0).setPreferredWidth(65);
-	resultats.getColumnModel().getColumn(1).setPreferredWidth(60);
-	resultats.getColumnModel().getColumn(2).setPreferredWidth(50);
+	resultats.getColumnModel().getColumn(1).setPreferredWidth(70);
+	resultats.getColumnModel().getColumn(2).setPreferredWidth(60);
+	resultats.getColumnModel().getColumn(3).setPreferredWidth(80);
 	resultats.addMouseListener(listener);
 	resultats.repaint();
 
@@ -172,7 +173,7 @@ public class TrigrammeRechercheDialog extends JDialog {
 	fond.add(ouvrirButton);
 	fond.add(fermerButton);
 
-	fond.setPreferredSize(new Dimension(300, 450));
+	fond.setPreferredSize(new Dimension(400, 450));
 	fond.setOpaque(true);
 
 	this.setContentPane(fond);
@@ -189,14 +190,18 @@ public class TrigrammeRechercheDialog extends JDialog {
 	}
 	Statement stmt = parent.connexion.createStatement();
 	ResultSet rs =
-		stmt.executeQuery("SELECT trigramme,name,first_name FROM accounts WHERE name LIKE '%"
+		stmt.executeQuery("SELECT trigramme,name,first_name,nickname FROM accounts WHERE name LIKE '%"
 			+ champSaisie.getText()
 			+ "%' OR first_name LIKE '%"
-			+ champSaisie.getText() + "%'");
+			+ champSaisie.getText()
+			+ "%' OR nickname LIKE '%"
+			+ champSaisie.getText()
+			+ "%'");
 
 	while (rs.next()) {
 	    String[] item =
-		    { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name") };
+		    { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
+			    rs.getString("nickname") };
 	    modele.addRow(item);
 	}
 	resultats.setModel(modele);
