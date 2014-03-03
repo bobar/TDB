@@ -98,6 +98,7 @@ public class MainWindow extends JFrame {
     JMenuItem supprimerTrigramme = new JMenuItem("Supprimer un trigramme");
 
     JMenu menuTDB = new JMenu("Menu du TDB");
+    JMenuItem verifTotal = new JMenuItem("Vérifier somme trigrammes");
     JMenuItem voirBinets = new JMenuItem("Voir les binets");
     JMenuItem voirComptes = new JMenuItem("Voir des comptes");
     JMenuItem debiterFichier = new JMenuItem("Débiter depuis un fichier");
@@ -538,6 +539,7 @@ public class MainWindow extends JFrame {
 	menuGestion.add(modifierTrigramme);
 	menuGestion.add(supprimerTrigramme);
 
+	verifTotal.addActionListener(mainWindowListener);
 	voirBinets.addActionListener(mainWindowListener);
 	voirComptes.addActionListener(mainWindowListener);
 	debiterFichier.addActionListener(mainWindowListener);
@@ -546,6 +548,7 @@ public class MainWindow extends JFrame {
 	reinitialiserHistorique.addActionListener(mainWindowListener);
 	reinitialiserConso.addActionListener(mainWindowListener);
 
+	menuTDB.add(verifTotal);
 	menuTDB.add(voirBinets);
 	menuTDB.add(voirComptes);
 	menuTDB.add(debiterFichier);

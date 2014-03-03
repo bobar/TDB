@@ -20,6 +20,7 @@ import admin.DebitFichierDialog;
 import admin.LogGroupeDialog;
 import admin.MotDePasseDialog;
 import admin.PositivationDialog;
+import admin.VerifierTotalDialog;
 
 public class MainWindowListener implements KeyListener, ActionListener {
 
@@ -96,6 +97,9 @@ public class MainWindowListener implements KeyListener, ActionListener {
 		dialog.executer();
 	    } else if (action.getSource().equals(parent.supprimerTrigramme)) {
 		parent.supprimerTrigramme();
+	    } else if (action.getSource().equals(parent.verifTotal)) {
+		VerifierTotalDialog dialog = new VerifierTotalDialog(parent);
+		dialog.executer();
 	    } else if (action.getSource().equals(parent.voirBinets)) {
 		BinetsListeDialog dialog = new BinetsListeDialog(parent);
 		dialog.executer();
