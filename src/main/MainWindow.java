@@ -734,20 +734,15 @@ public class MainWindow extends JFrame {
 		trigrammeLabel.setForeground(Color.BLUE);
 	    }
 	    Statement stmt = connexion.createStatement();
-	    /* ResultSet rs = stmt .executeQuery(
-	     * "SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
-	     * + trigrammeActif.id +
-	     * " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
-	     * + trigrammeActif.id + " ORDER BY date DESC LIMIT 50"); */
 	    ResultSet rs =
-		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
 			    + " WHERE tr.id="
 			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
@@ -755,52 +750,15 @@ public class MainWindow extends JFrame {
 			    + " WHERE tr.id2="
 			    + trigrammeActif.id + " ORDER BY date DESC LIMIT 50");
 	    while (rs.next()) {
-		/* int adminId = rs.getInt("admin"); String adminTrig = ""; Statement stmt2 =
-		 * connexion.createStatement(); ResultSet rs2 =
-		 * stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId); if
-		 * (rs2.next()) { adminTrig = rs2.getString("trigramme"); } String banqueTrig = "";
-		 * Statement stmt3 = connexion.createStatement(); ResultSet rs3 =
-		 * stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id=" + (rs.getInt("id")
-		 * + rs.getInt("id2") - trigrammeActif.id)); if (rs3.next()) { banqueTrig =
-		 * rs3.getString("trigramme"); } if (banqueTrig.equals("BOB")) { banqueTrig = ""; //
-		 * Plus de lisibilité } */
 		String adminTrig = rs.getString("t3");
 		String banqueTrig = rs.getString("t2");
 		if (banqueTrig.equals("BOB")) {
 		    banqueTrig = "";
 		}
-		GregorianCalendar date = new GregorianCalendar();
-		date.setTimeInMillis(((long) rs.getInt("date")) * 1000);
-		String jour = "", mois = "", annee = "", heure = "", minute = "";
-		if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-		    jour = "" + date.get(Calendar.DAY_OF_MONTH);
-		} else {
-		    jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-		}
-		if ((1 + date.get(Calendar.MONTH)) >= 10) {
-		    mois = "" + (1 + date.get(Calendar.MONTH));
-		} else {
-		    mois = "0" + (1 + date.get(Calendar.MONTH));
-		}
-		if (date.get(Calendar.YEAR) >= 10) {
-		    annee = "" + date.get(Calendar.YEAR);
-		} else {
-		    annee = "0" + date.get(Calendar.YEAR);
-		}
-		if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-		    heure = "" + date.get(Calendar.HOUR_OF_DAY);
-		} else {
-		    heure = "0" + date.get(Calendar.HOUR);
-		}
-		if (date.get(Calendar.MINUTE) >= 10) {
-		    minute = "" + date.get(Calendar.MINUTE);
-		} else {
-		    minute = "0" + date.get(Calendar.MINUTE);
-		}
-		String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
+		String date = rs.getString("date").substring(0, rs.getString("date").length() - 5);
 		String[] item =
 			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
-				rs.getString("c"), dateComplete };
+				rs.getString("c"), date };
 		modele.addRow(item);
 	    }
 
@@ -867,20 +825,15 @@ public class MainWindow extends JFrame {
 
 	if (trigrammeActif != null) {
 	    Statement stmt = connexion.createStatement();
-	    /* ResultSet rs = stmt.executeQuery(
-	     * "SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
-	     * + trigrammeActif.id +
-	     * " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
-	     * + trigrammeActif.id + " ORDER BY date DESC"); */
 	    ResultSet rs =
-		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
 			    + " WHERE tr.id="
 			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
@@ -888,52 +841,15 @@ public class MainWindow extends JFrame {
 			    + " WHERE tr.id2="
 			    + trigrammeActif.id + " ORDER BY date DESC");
 	    while (rs.next()) {
-		/* int adminId = rs.getInt("admin"); String adminTrig = ""; Statement stmt2 =
-		 * connexion.createStatement(); ResultSet rs2 =
-		 * stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId); if
-		 * (rs2.next()) { adminTrig = rs2.getString("trigramme"); } String banqueTrig = "";
-		 * Statement stmt3 = connexion.createStatement(); ResultSet rs3 =
-		 * stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id=" + (rs.getInt("id")
-		 * + rs.getInt("id2") - trigrammeActif.id)); if (rs3.next()) { banqueTrig =
-		 * rs3.getString("trigramme"); } if (banqueTrig.equals("BOB")) { banqueTrig = ""; //
-		 * Plus de lisibilité } */
 		String adminTrig = rs.getString("t3");
 		String banqueTrig = rs.getString("t2");
 		if (banqueTrig.equals("BOB")) {
 		    banqueTrig = "";
 		}
-		GregorianCalendar date = new GregorianCalendar();
-		date.setTimeInMillis(((long) rs.getInt("date")) * 1000);
-		String jour = "", mois = "", annee = "", heure = "", minute = "";
-		if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-		    jour = "" + date.get(Calendar.DAY_OF_MONTH);
-		} else {
-		    jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-		}
-		if ((1 + date.get(Calendar.MONTH)) >= 10) {
-		    mois = "" + (1 + date.get(Calendar.MONTH));
-		} else {
-		    mois = "0" + (1 + date.get(Calendar.MONTH));
-		}
-		if (date.get(Calendar.YEAR) >= 10) {
-		    annee = "" + date.get(Calendar.YEAR);
-		} else {
-		    annee = "0" + date.get(Calendar.YEAR);
-		}
-		if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-		    heure = "" + date.get(Calendar.HOUR_OF_DAY);
-		} else {
-		    heure = "0" + date.get(Calendar.HOUR);
-		}
-		if (date.get(Calendar.MINUTE) >= 10) {
-		    minute = "" + date.get(Calendar.MINUTE);
-		} else {
-		    minute = "0" + date.get(Calendar.MINUTE);
-		}
-		String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
+		String date = rs.getString("date").substring(0, rs.getString("date").length() - 5);
 		String[] item =
 			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
-				rs.getString("c"), dateComplete };
+				rs.getString("c"), date };
 		modele.addRow(item);
 	    }
 	    infos.repaint();
@@ -951,33 +867,28 @@ public class MainWindow extends JFrame {
 
 	if (trigrammeActif != null) {
 	    Statement stmt = connexion.createStatement();
-	    /* ResultSet rs = stmt.executeQuery(
-	     * "SELECT price, id, id2, comment, admin, date FROM transactions WHERE transactions.id="
-	     * + trigrammeActif.id +
-	     * " UNION SELECT -price as price, id, id2, comment, admin, date FROM transactions WHERE transactions.id2="
-	     * + trigrammeActif.id + " ORDER BY date DESC"); */
 	    ResultSet rs =
-		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin " + " WHERE tr.id="
 			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
 			    + " WHERE tr.id2="
 			    + trigrammeActif.id
-			    + " UNION SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " UNION SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
 			    + " FROM transactions_history as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
 			    + " WHERE tr.id="
 			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
 			    + " FROM transactions_history as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
@@ -985,52 +896,15 @@ public class MainWindow extends JFrame {
 			    + " WHERE tr.id2="
 			    + trigrammeActif.id + " ORDER BY date DESC");
 	    while (rs.next()) {
-		/* int adminId = rs.getInt("admin"); String adminTrig = ""; Statement stmt2 =
-		 * connexion.createStatement(); ResultSet rs2 =
-		 * stmt2.executeQuery("SELECT trigramme FROM accounts WHERE id=" + adminId); if
-		 * (rs2.next()) { adminTrig = rs2.getString("trigramme"); } String banqueTrig = "";
-		 * Statement stmt3 = connexion.createStatement(); ResultSet rs3 =
-		 * stmt3.executeQuery("SELECT trigramme FROM accounts WHERE id=" + (rs.getInt("id")
-		 * + rs.getInt("id2") - trigrammeActif.id)); if (rs3.next()) { banqueTrig =
-		 * rs3.getString("trigramme"); } if (banqueTrig.equals("BOB")) { banqueTrig = ""; //
-		 * Plus de lisibilité } */
 		String adminTrig = rs.getString("t3");
 		String banqueTrig = rs.getString("t2");
 		if (banqueTrig.equals("BOB")) {
 		    banqueTrig = "";
 		}
-		GregorianCalendar date = new GregorianCalendar();
-		date.setTimeInMillis(((long) rs.getInt("date")) * 1000);
-		String jour = "", mois = "", annee = "", heure = "", minute = "";
-		if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-		    jour = "" + date.get(Calendar.DAY_OF_MONTH);
-		} else {
-		    jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-		}
-		if ((1 + date.get(Calendar.MONTH)) >= 10) {
-		    mois = "" + (1 + date.get(Calendar.MONTH));
-		} else {
-		    mois = "0" + (1 + date.get(Calendar.MONTH));
-		}
-		if (date.get(Calendar.YEAR) >= 10) {
-		    annee = "" + date.get(Calendar.YEAR);
-		} else {
-		    annee = "0" + date.get(Calendar.YEAR);
-		}
-		if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-		    heure = "" + date.get(Calendar.HOUR_OF_DAY);
-		} else {
-		    heure = "0" + date.get(Calendar.HOUR);
-		}
-		if (date.get(Calendar.MINUTE) >= 10) {
-		    minute = "" + date.get(Calendar.MINUTE);
-		} else {
-		    minute = "0" + date.get(Calendar.MINUTE);
-		}
-		String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
+		String date = rs.getString("date").substring(0, rs.getString("date").length() - 5);
 		String[] item =
 			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
-				rs.getString("c"), dateComplete };
+				rs.getString("c"), date };
 		modele.addRow(item);
 	    }
 	    infos.repaint();
