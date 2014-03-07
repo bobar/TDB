@@ -1,6 +1,6 @@
 ## Setup on Ubuntu
 ### Clone the repository
-- `$ git clone https://github.com/LeBoBar/TDB.git`
+- `$ git clone https://github.com/bobar/TDB.git`
 
 ### Install development packages
 - `$ sudo apt-get install openjdk-6-jre`
@@ -26,7 +26,7 @@ You should have a TDB.config file in src/ containing:
 
 ## Setup on Mac
 ### Clone the repository
-- `$ git clone https://github.com/LeBoBar/TDB.git`
+- `$ git clone https://github.com/bobar/TDB.git`
 
 ### Install development packages
 - `$ brew install ant`
