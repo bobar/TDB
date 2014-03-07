@@ -17,7 +17,7 @@ import admin.AuthentificationDialog;
 public class Export {
 
     MainWindow parent;
-    String chemin = "/home/thierry/Bureau/";
+    String chemin = "~/Bureau/";
 
     public Export(MainWindow parent) {
 	this.parent = parent;
