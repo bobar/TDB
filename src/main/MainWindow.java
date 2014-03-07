@@ -139,6 +139,7 @@ public class MainWindow extends JFrame {
 	    return false;
 	}
     };
+    //COMMENTED
     /* DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() { private static final
      * long serialVersionUID = 1L;
      * 
