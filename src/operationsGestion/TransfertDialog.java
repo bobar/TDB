@@ -149,7 +149,6 @@ public class TransfertDialog extends JDialog {
 			    + " WHERE id=" + trigramme1.id);
 		    GregorianCalendar date = new GregorianCalendar();
 		    date.setTime(new Date());
-		    // Statement stmt2 = parent.connexion.createStatement();
 		    Transaction transaction =
 			    new Transaction(trigramme1.id, -montant, commentaire,
 				    authentification.admin, (int) (date.getTimeInMillis() / 1000),
@@ -168,7 +167,6 @@ public class TransfertDialog extends JDialog {
 			    + ","
 			    + transaction.id2 + ")");
 
-		    // Statement stmt3 = parent.connexion.createStatement();
 		    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-montant)
 			    + " WHERE id=" + trigramme2.id);
 		    stmt.closeOnCompletion();
@@ -180,7 +178,6 @@ public class TransfertDialog extends JDialog {
 			    + " WHERE id=" + trigramme1.id);
 		    GregorianCalendar date = new GregorianCalendar();
 		    date.setTime(new Date());
-		    // Statement stmt2 = parent.connexion.createStatement();
 		    Transaction transaction =
 			    new Transaction(trigramme1.id, -montant, commentaire,
 				    authentification.admin, (int) (date.getTimeInMillis() / 1000),
@@ -198,8 +195,6 @@ public class TransfertDialog extends JDialog {
 			    + transaction.date
 			    + ","
 			    + transaction.id2 + ")");
-
-		    // Statement stmt3 = parent.connexion.createStatement();
 		    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
 			    + " WHERE id=" + trigramme2.id);
 		    stmt.closeOnCompletion();

@@ -157,9 +157,6 @@ public class MainWindowListener implements KeyListener, ActionListener {
 
     public void keyPressed(KeyEvent arg0) {
 	try {
-	    // System.out.println(KeyEvent.VK_A + " " + KeyEvent.VK_Z + " "
-	    // + (int) 'a' + " " + (int) 'z' + " " + (int) 'A' + " "
-	    // + (int) 'Z');
 	    if ((arg0.getKeyChar() >= 'a' && arg0.getKeyChar() <= 'z')
 		    || (arg0.getKeyChar() >= 'A' && arg0.getKeyChar() <= 'Z')) {
 		TrigrammeDialog dialog =

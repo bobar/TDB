@@ -63,8 +63,8 @@ public class MainWindow extends JFrame {
     public Trigramme trigrammeActif = null; // Le trigramme ouvert
     public Trigramme banqueBob = null; // Le trigramme banque du BôB
     public Trigramme banqueBinet = null; // Le trigramme banque binet
-    public boolean banqueBobActif = true; // True: banque=BôB;False:
-					  // banque=binet
+    public boolean banqueBobActif = true; // True : banque=BôB
+    					  // False : banque=binet
     public boolean modeAdministrateur = false; // True: mode
 					       // super-administrateur
     public Trigramme administrateur = null; // Le trig du super-admin
@@ -377,13 +377,13 @@ public class MainWindow extends JFrame {
 
     public static void main(String[] args) {
 	MainWindow TDB = new MainWindow();
+	//COMMENTED
 	// TDB.prefs.put("version", "TDB 3.0");
 	// TDB.prefs.put("auteur", "Thierry Deo");
 	// TDB.prefs.put("dateMAJ", "25/01/2013");
 	// TDB.prefs.put("dateResetTurnover", "25/01/2013 00:00");
 	// TDB.prefs.put("dateResetHistorique", "25/01/2013 00:00");
 	try {
-	    // TDB.prefs.exportNode(System.out);
 	    String trigrammeBanque = "BOB";
 	    String absolutePath = TDB.getExecutionPath();
 	    InputStream ips = new FileInputStream(absolutePath + "/src//TDB.config");
@@ -480,7 +480,6 @@ public class MainWindow extends JFrame {
 	tailleEcran.setSize(tailleEcran.getWidth() - 60, tailleEcran.getHeight());
 	// hack sordide, a cause du lanceur Unity a gauche
 	this.setSize(tailleEcran);
-	// this.setSize(1280, 768);
 
 	// Création de tous les menus
 	ouvrirTrigramme.addActionListener(mainWindowListener);
@@ -601,7 +600,6 @@ public class MainWindow extends JFrame {
 		.setPreferredWidth(historiqueScrollPane.getPreferredSize().width - 340);
 	historique.getColumnModel().getColumn(4).setPreferredWidth(140);
 	historique.setShowGrid(false);
-	// historique.setDefaultRenderer(String.class, renderer);
 	historique.repaint();
 
 	// Création du panneau d'infos de droite
@@ -810,7 +808,6 @@ public class MainWindow extends JFrame {
 	    photo.setIcon(null);
 	}
 	infos.repaint();
-	// historique.setDefaultRenderer(String.class, renderer);
 	historique.setModel(modele);
 	historique.repaint();
 	this.repaint();
