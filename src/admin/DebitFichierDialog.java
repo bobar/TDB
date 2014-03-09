@@ -174,6 +174,7 @@ public class DebitFichierDialog extends JDialog {
 		String ligne;
 
 		while ((ligne = br.readLine()) != null) {
+		    //TODO deviner le bon séparateur
 		    String[] valeurs = ligne.split(",");
 
 		    if (valeurs.length == 3) {
