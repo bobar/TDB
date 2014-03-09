@@ -254,7 +254,6 @@ public class TrigrammeModificationDialog extends JDialog {
 		this.setVisible(true);
 
 		if (validation) {
-		    System.out.println("zou");
 		    String nom = champNom.getText().toUpperCase();
 		    nom.replace(',', ';');
 		    String prenom = champPrenom.getText().toLowerCase();

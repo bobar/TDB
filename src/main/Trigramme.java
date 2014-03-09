@@ -5,8 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import admin.AuthentificationDialog;
 
 public class Trigramme {
@@ -127,11 +127,12 @@ public class Trigramme {
 	stmt2.setInt(12, turnover);
 	stmt2.executeUpdate();
 
-	GregorianCalendar date = new GregorianCalendar();
-	date.setTime(new Date());
+	Date date = new Date();
+	SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	String dateString = formater.format(date);
 	Transaction transaction =
-		new Transaction(id, balance, "Création de trigramme", admin,
-			(int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
+		new Transaction(id, balance, "Création de trigramme", admin, dateString,
+			parent.banqueBob.id);
 	stmt2 =
 		parent.connexion
 			.prepareStatement("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (?,?,?,?,?,?)");
@@ -139,7 +140,7 @@ public class Trigramme {
 	stmt2.setInt(2, transaction.price);
 	stmt2.setString(3, transaction.comment);
 	stmt2.setInt(4, transaction.admin);
-	stmt2.setInt(5, transaction.date);
+	stmt2.setString(5, transaction.date);
 	stmt2.setInt(6, transaction.id2);
 	stmt2.executeUpdate();
 
@@ -187,12 +188,13 @@ public class Trigramme {
 	    stmt2.setInt(9, id);
 	    stmt2.executeUpdate();
 
-	    GregorianCalendar date = new GregorianCalendar();
-	    date.setTime(new Date());
+	    Date date = new Date();
+	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    String dateString = formater.format(date);
 	    Transaction transaction =
 		    new Transaction(id, 0, "Modification du trigramme (ancien trigramme : "
-			    + rs.getString("trigramme") + ")", admin,
-			    (int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
+			    + rs.getString("trigramme") + ")", admin, dateString,
+			    parent.banqueBob.id);
 	    stmt2 =
 		    parent.connexion
 			    .prepareStatement("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (?,?,?,?,?,?)");
@@ -200,7 +202,7 @@ public class Trigramme {
 	    stmt2.setInt(2, transaction.price);
 	    stmt2.setString(3, transaction.comment);
 	    stmt2.setInt(4, transaction.admin);
-	    stmt2.setInt(5, transaction.date);
+	    stmt2.setString(5, transaction.date);
 	    stmt2.setInt(6, transaction.id2);
 	    stmt2.executeUpdate();
 	    stmt.closeOnCompletion();
@@ -225,11 +227,10 @@ public class Trigramme {
 	    }
 	    Statement stmt = parent.connexion.createStatement();
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + " WHERE id=" + id);
-	    GregorianCalendar date = new GregorianCalendar();
-	    date.setTime(new Date());
-	    Transaction transaction =
-		    new Transaction(id, -montant, "", 0, (int) (date.getTimeInMillis() / 1000),
-			    banqueId);
+	    Date date = new Date();
+	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    String dateString = formater.format(date);
+	    Transaction transaction = new Transaction(id, -montant, "", 0, dateString, banqueId);
 	    parent.dernieresActions.add(transaction);
 	    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
 		    + transaction.id
@@ -238,7 +239,7 @@ public class Trigramme {
 		    + ",'"
 		    + transaction.comment
 		    + "',"
-		    + transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
+		    + transaction.admin + ",'" + transaction.date + "'," + transaction.id2 + ")");
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id="
 		    + banqueId);
 	} else if (montant > 2000) {
@@ -249,11 +250,12 @@ public class Trigramme {
 		Statement stmt = parent.connexion.createStatement();
 		stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + " WHERE id="
 			+ id);
-		GregorianCalendar date = new GregorianCalendar();
-		date.setTime(new Date());
+		Date date = new Date();
+		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String dateString = formater.format(date);;
 		Transaction transaction =
-			new Transaction(id, -montant, "", authentification.admin,
-				(int) (date.getTimeInMillis() / 1000), banqueId);
+			new Transaction(id, -montant, "", authentification.admin, dateString,
+				banqueId);
 		parent.dernieresActions.add(transaction);
 		stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
 			+ transaction.id
@@ -263,9 +265,9 @@ public class Trigramme {
 			+ transaction.comment
 			+ "',"
 			+ transaction.admin
-			+ ","
+			+ ",'"
 			+ transaction.date
-			+ ","
+			+ "',"
 			+ transaction.id2
 			+ ")");
 
@@ -283,11 +285,12 @@ public class Trigramme {
 		Statement stmt = parent.connexion.createStatement();
 		stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-montant)
 			+ ", turnover=turnover+" + (-montant) + " WHERE id=" + id);
-		GregorianCalendar date = new GregorianCalendar();
-		date.setTime(new Date());
+		Date date = new Date();
+		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String dateString = formater.format(date);
 		Transaction transaction =
-			new Transaction(id, montant, "", authentification.admin,
-				(int) (date.getTimeInMillis() / 1000), parent.banqueBob.id);
+			new Transaction(id, montant, "", authentification.admin, dateString,
+				parent.banqueBob.id);
 		parent.dernieresActions.add(transaction);
 		stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
 			+ transaction.id
@@ -297,9 +300,9 @@ public class Trigramme {
 			+ transaction.comment
 			+ "',"
 			+ transaction.admin
-			+ ","
+			+ ",'"
 			+ transaction.date
-			+ ","
+			+ "',"
 			+ transaction.id2
 			+ ")");
 
@@ -324,15 +327,15 @@ public class Trigramme {
 	Statement stmt = connexion.createStatement();
 	stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
 		+ ", turnover=turnover+" + montant + " WHERE id=" + id);
-	GregorianCalendar date = new GregorianCalendar();
-	date.setTime(new Date());
+	Date date = new Date();
+	SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	String dateString = formater.format(date);;
 	Transaction transaction =
-		new Transaction(id, montant, commentaire, admin,
-			(int) (date.getTimeInMillis() / 1000), banqueId);
+		new Transaction(id, montant, commentaire, admin, dateString, banqueId);
 	parent.dernieresActions.add(transaction);
 	stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
 		+ transaction.id + "," + transaction.price + ",'" + transaction.comment + "',"
-		+ transaction.admin + "," + transaction.date + "," + transaction.id2 + ")");
+		+ transaction.admin + ",'" + transaction.date + "'," + transaction.id2 + ")");
 
 	stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
 		+ ", turnover=turnover-" + montant + " WHERE id=" + banqueId);

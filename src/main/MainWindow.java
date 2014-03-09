@@ -734,14 +734,14 @@ public class MainWindow extends JFrame {
 	    }
 	    Statement stmt = connexion.createStatement();
 	    ResultSet rs =
-		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
+		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
 			    + " WHERE tr.id="
 			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
@@ -824,14 +824,14 @@ public class MainWindow extends JFrame {
 	if (trigrammeActif != null) {
 	    Statement stmt = connexion.createStatement();
 	    ResultSet rs =
-		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
+		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
 			    + " WHERE tr.id="
 			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
@@ -866,27 +866,27 @@ public class MainWindow extends JFrame {
 	if (trigrammeActif != null) {
 	    Statement stmt = connexion.createStatement();
 	    ResultSet rs =
-		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
+		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin " + " WHERE tr.id="
 			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
 			    + " WHERE tr.id2="
 			    + trigrammeActif.id
-			    + " UNION SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
+			    + " UNION SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions_history as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
 			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
 			    + " WHERE tr.id="
 			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,FROM_UNIXTIME(date) as date "
+			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
 			    + " FROM transactions_history as tr "
 			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
 			    + " JOIN accounts as ac2 ON ac2.id=tr.id "

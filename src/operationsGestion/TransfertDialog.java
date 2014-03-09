@@ -7,8 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -147,12 +147,12 @@ public class TransfertDialog extends JDialog {
 		    Statement stmt = parent.connexion.createStatement();
 		    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-montant)
 			    + " WHERE id=" + trigramme1.id);
-		    GregorianCalendar date = new GregorianCalendar();
-		    date.setTime(new Date());
+		    Date date = new Date();
+		    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		    String dateString = formater.format(date);
 		    Transaction transaction =
 			    new Transaction(trigramme1.id, -montant, commentaire,
-				    authentification.admin, (int) (date.getTimeInMillis() / 1000),
-				    trigramme2.id);
+				    authentification.admin, dateString, trigramme2.id);
 		    parent.dernieresActions.add(transaction);
 		    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
 			    + transaction.id
@@ -162,9 +162,9 @@ public class TransfertDialog extends JDialog {
 			    + transaction.comment
 			    + "',"
 			    + transaction.admin
-			    + ","
+			    + ",'"
 			    + transaction.date
-			    + ","
+			    + "',"
 			    + transaction.id2 + ")");
 
 		    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-montant)
@@ -176,12 +176,12 @@ public class TransfertDialog extends JDialog {
 		    Statement stmt = parent.connexion.createStatement();
 		    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
 			    + " WHERE id=" + trigramme1.id);
-		    GregorianCalendar date = new GregorianCalendar();
-		    date.setTime(new Date());
+		    Date date = new Date();
+		    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		    String dateString = formater.format(date);
 		    Transaction transaction =
 			    new Transaction(trigramme1.id, -montant, commentaire,
-				    authentification.admin, (int) (date.getTimeInMillis() / 1000),
-				    trigramme2.id);
+				    authentification.admin, dateString, trigramme2.id);
 		    parent.dernieresActions.add(transaction);
 		    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
 			    + transaction.id
@@ -191,9 +191,9 @@ public class TransfertDialog extends JDialog {
 			    + transaction.comment
 			    + "',"
 			    + transaction.admin
-			    + ","
+			    + ",'"
 			    + transaction.date
-			    + ","
+			    + "',"
 			    + transaction.id2 + ")");
 		    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
 			    + " WHERE id=" + trigramme2.id);
@@ -205,5 +205,4 @@ public class TransfertDialog extends JDialog {
 	    throw new TDBException("Vous n'avez pas les droits");
 	}
     }
-
 }

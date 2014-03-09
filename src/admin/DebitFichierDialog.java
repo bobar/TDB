@@ -17,8 +17,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -284,11 +284,12 @@ public class DebitFichierDialog extends JDialog {
 			    Statement stmt = parent.connexion.createStatement();
 			    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
 				    + " WHERE id=" + trigramme.id);
-			    GregorianCalendar date = new GregorianCalendar();
-			    date.setTime(new Date());
+			    Date date = new Date();
+			    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			    String dateString = formater.format(date);
 			    Transaction transaction =
 				    new Transaction(trigramme.id, -montant, "", adminId,
-					    (int) (date.getTimeInMillis() / 1000), banqueId);
+					    dateString, banqueId);
 			    parent.dernieresActions.add(transaction);
 			    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
 				    + transaction.id
@@ -298,8 +299,8 @@ public class DebitFichierDialog extends JDialog {
 				    + transaction.comment
 				    + "',"
 				    + transaction.admin
-				    + ","
-				    + transaction.date + "," + transaction.id2 + ")");
+				    + ",'"
+				    + transaction.date + "'," + transaction.id2 + ")");
 			    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
 				    + " WHERE id=" + banqueId);
 			} else {
