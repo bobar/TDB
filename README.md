@@ -48,3 +48,6 @@ You should have a TDB.config file in src/ containing:
 
 ### Copy the database
 - Find a copy of the datase, create a tdb database and import data
+
+### Install Eclipse
+- Change encoding to UTF-8 (Eclipse/Préférences/Général/Workspace)
