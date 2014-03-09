@@ -331,7 +331,7 @@ public class MainWindow extends JFrame {
 	    Statement stmt = connexion.createStatement();
 	    stmt.executeUpdate("DELETE FROM transactions WHERE id=" + transaction.id
 		    + " AND price=" + transaction.price + " AND admin=" + transaction.admin
-		    + " AND date=" + transaction.date + " AND id2=" + transaction.id2);
+		    + " AND date='" + transaction.date + "' AND id2=" + transaction.id2);
 	    if (transaction.price < 0) {
 		Statement stmt2 = connexion.createStatement();
 		stmt2.executeUpdate("UPDATE accounts SET balance=balance+" + (-transaction.price)
