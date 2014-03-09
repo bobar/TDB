@@ -468,7 +468,7 @@ public class MainWindow extends JFrame {
 
     public void afficherMythe() {
 	JOptionPane.showMessageDialog(this,
-		"Plap zde mythe" + "\nAuteur : " + prefs.get("auteur", "Thierry Deo")
+		"Plap zdé mythe" + "\nAuteur : " + prefs.get("auteur", "Thierry Deo")
 			+ "\n\nReset chiffres d'affaires : " + prefs.get("dateResetTurnover", "")
 			+ "\nReset historiques : " + prefs.get("dateResetHistorique", ""), "Mythe",
 		JOptionPane.INFORMATION_MESSAGE);
