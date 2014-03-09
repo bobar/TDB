@@ -6,9 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -141,64 +138,12 @@ public class TransfertDialog extends JDialog {
 	    if (validation) {
 		int montant = (int) (100 * Double.parseDouble(champMontant.getText()));
 		String commentaire = champCommentaire.getText();
-		if (montant < 0) {
-		    Trigramme trigramme1 = new Trigramme(parent, champTrigramme1.getText());
-		    Trigramme trigramme2 = new Trigramme(parent, champTrigramme2.getText());
-		    Statement stmt = parent.connexion.createStatement();
-		    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-montant)
-			    + " WHERE id=" + trigramme1.id);
-		    Date date = new Date();
-		    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		    String dateString = formater.format(date);
-		    Transaction transaction =
-			    new Transaction(trigramme1.id, -montant, commentaire,
-				    authentification.admin, dateString, trigramme2.id);
-		    parent.dernieresActions.add(transaction);
-		    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-			    + transaction.id
-			    + ","
-			    + transaction.price
-			    + ",'"
-			    + transaction.comment
-			    + "',"
-			    + transaction.admin
-			    + ",'"
-			    + transaction.date
-			    + "',"
-			    + transaction.id2 + ")");
-
-		    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-montant)
-			    + " WHERE id=" + trigramme2.id);
-		    stmt.closeOnCompletion();
-		} else {
-		    Trigramme trigramme1 = new Trigramme(parent, champTrigramme1.getText());
-		    Trigramme trigramme2 = new Trigramme(parent, champTrigramme2.getText());
-		    Statement stmt = parent.connexion.createStatement();
-		    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
-			    + " WHERE id=" + trigramme1.id);
-		    Date date = new Date();
-		    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		    String dateString = formater.format(date);
-		    Transaction transaction =
-			    new Transaction(trigramme1.id, -montant, commentaire,
-				    authentification.admin, dateString, trigramme2.id);
-		    parent.dernieresActions.add(transaction);
-		    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-			    + transaction.id
-			    + ","
-			    + transaction.price
-			    + ",'"
-			    + transaction.comment
-			    + "',"
-			    + transaction.admin
-			    + ",'"
-			    + transaction.date
-			    + "',"
-			    + transaction.id2 + ")");
-		    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
-			    + " WHERE id=" + trigramme2.id);
-		    stmt.closeOnCompletion();
-		}
+		Trigramme trigramme1 = new Trigramme(parent, champTrigramme1.getText());
+		Trigramme trigramme2 = new Trigramme(parent, champTrigramme2.getText());
+		Transaction transaction =
+			new Transaction(trigramme1.id, -montant, commentaire,
+				authentification.admin, null, trigramme2.id);
+		transaction.WriteToDB(parent.connexion);
 	    }
 	    parent.refresh();
 	} else {

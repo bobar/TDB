@@ -8,8 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -191,9 +189,6 @@ public class LogGroupeDialog extends JDialog {
 	    if (validation) {
 
 		String commentaire = champCommentaire.getText();
-		Date date = new Date();
-		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String dateString = formater.format(date);
 		String trig = champTrigramme.getText().toUpperCase();
 		trig.replace(" ", ",");
 		trig.replace(";", ",");
@@ -222,24 +217,10 @@ public class LogGroupeDialog extends JDialog {
 		if (montant > 0) {
 		    for (int i = 0; i < trigrammes.length; i++) {
 			Trigramme trigramme = new Trigramme(parent, trigrammes[i]);
-			Statement stmt = parent.connexion.createStatement();
-			stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
-				+ " WHERE id=" + trigramme.id);
 			Transaction transaction =
 				new Transaction(trigramme.id, -montant, commentaire,
-					authentification.admin, dateString, parent.banqueBob.id);
-			stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-				+ transaction.id
-				+ ","
-				+ transaction.price
-				+ ",'"
-				+ transaction.comment
-				+ "',"
-				+ transaction.admin
-				+ ",'"
-				+ transaction.date + "'," + transaction.id2 + ")");
-			stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
-				+ " WHERE id=" + parent.banqueBob.id);
+					authentification.admin, null, parent.banqueBob.id);
+			transaction.WriteToDB(parent.connexion);
 		    }
 		} else {
 		    throw new TDBException("Montant négatif");

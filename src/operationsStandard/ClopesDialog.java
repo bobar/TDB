@@ -7,8 +7,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -158,27 +156,11 @@ public class ClopesDialog extends JDialog {
 		    admin = authentification.admin;
 		}
 	    }
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (prix * quantite)
-		    + " WHERE id=" + parent.trigrammeActif.id);
-	    Date date = new Date();
-	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    String dateString = formater.format(date);
 	    Transaction transaction =
 		    new Transaction(parent.trigrammeActif.id, -quantite * prix, quantite + " "
-			    + marque, admin, dateString, parent.banqueBob.id);
+			    + marque, admin, null, parent.banqueBob.id);
 	    parent.dernieresActions.add(transaction);
-	    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-		    + transaction.id
-		    + ","
-		    + transaction.price
-		    + ",'"
-		    + transaction.comment
-		    + "',"
-		    + transaction.admin + ",'" + transaction.date + "'," + transaction.id2 + ")");
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (prix * quantite)
-		    + " WHERE id=" + parent.banqueBob.id);
-	    stmt.closeOnCompletion();
-
+	    transaction.WriteToDB(parent.connexion);
 	    stmt.executeUpdate("UPDATE clopes SET quantite=quantite+" + quantite
 		    + " WHERE marque='" + marque + "'");
 	}

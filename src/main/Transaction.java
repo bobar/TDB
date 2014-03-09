@@ -28,16 +28,22 @@ public class Transaction {
 	this.id2 = id2;
     }
 
-    public boolean WriteToDB(Connection connexion) throws Exception {
+    public void WriteToDB(Connection connexion) throws Exception {
 	Statement stmt = connexion.createStatement();
-	if (price >= 0) {
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + " WHERE id=" + id);
-	} else {
+	if (price > 0) {
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price + " WHERE id=" + id);
+	} else if (price < 0) {
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-price) + " WHERE id="
+		    + id);
 	}
 	stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-		+ id + "," + price + ",'" + comment + "'," + admin + "," + date + "," + id2 + ")");
-	return false;
+		+ id + "," + price + ",'" + comment + "'," + admin + ",'" + date + "'," + id2 + ")");
+	if (price > 0) {
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + " WHERE id=" + id2);
+	} else if (price < 0) {
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-price) + " WHERE id="
+		    + id2);
+	}
     }
 
 }

@@ -82,10 +82,10 @@ public class TrigrammeModificationDialog extends JDialog {
 					    + champTrigramme.getText() + "'");
 			    rs.first();
 			    if (rs.getInt("c") == 0) {
-				validation = true;
+				//validation = true;
 				champTrigramme.setBackground(Color.GREEN);
 			    } else {
-				validation = false;
+				//validation = false;
 				champTrigramme.setBackground(Color.RED);
 			    }
 
@@ -156,6 +156,7 @@ public class TrigrammeModificationDialog extends JDialog {
 		champTrigramme = new JTextField(parent.trigrammeActif.trigramme);
 		champTrigramme.setPreferredSize(new Dimension(150, 20));
 		champTrigramme.addKeyListener(listener);
+		champTrigramme.setBackground(Color.GREEN);
 
 		JLabel labelNom = new JLabel("Nom : ");
 		labelNom.setPreferredSize(new Dimension(120, 20));

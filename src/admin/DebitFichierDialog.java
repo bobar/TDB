@@ -16,9 +16,6 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -174,7 +171,7 @@ public class DebitFichierDialog extends JDialog {
 		String ligne;
 
 		while ((ligne = br.readLine()) != null) {
-		    //TODO deviner le bon séparateur
+		    // TODO deviner le bon séparateur
 		    String[] valeurs = ligne.split(",");
 
 		    if (valeurs.length == 3) {
@@ -282,28 +279,10 @@ public class DebitFichierDialog extends JDialog {
 			    if (!parent.banqueBobActif) {
 				banqueId = parent.banqueBinet.id;
 			    }
-			    Statement stmt = parent.connexion.createStatement();
-			    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
-				    + " WHERE id=" + trigramme.id);
-			    Date date = new Date();
-			    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			    String dateString = formater.format(date);
 			    Transaction transaction =
-				    new Transaction(trigramme.id, -montant, "", adminId,
-					    dateString, banqueId);
-			    parent.dernieresActions.add(transaction);
-			    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-				    + transaction.id
-				    + ","
-				    + transaction.price
-				    + ",'"
-				    + transaction.comment
-				    + "',"
-				    + transaction.admin
-				    + ",'"
-				    + transaction.date + "'," + transaction.id2 + ")");
-			    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
-				    + " WHERE id=" + banqueId);
+				    new Transaction(trigramme.id, -montant, "", adminId, null,
+					    banqueId);
+			    transaction.WriteToDB(parent.connexion);
 			} else {
 			    out.println(modele.getValueAt(i, 1) + "," + modele.getValueAt(i, 2)
 				    + "," + modele.getValueAt(i, 3) + "," + modele.getValueAt(i, 4));

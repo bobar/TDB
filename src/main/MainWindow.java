@@ -409,6 +409,7 @@ public class MainWindow extends JFrame {
     }
 
     public void afficherErreur(Exception e) {
+	e.printStackTrace();
 	JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 	if (e.getClass() == SQLException.class) {
 	    try {

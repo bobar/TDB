@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import admin.AuthentificationDialog;
 
 public class Trigramme {
@@ -123,29 +121,14 @@ public class Trigramme {
 	}
 	stmt2.setString(9, mail);
 	stmt2.setString(10, picture);
-	stmt2.setInt(11, balance);
+	stmt2.setInt(11, 0);
 	stmt2.setInt(12, turnover);
 	stmt2.executeUpdate();
 
-	Date date = new Date();
-	SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	String dateString = formater.format(date);
 	Transaction transaction =
-		new Transaction(id, balance, "Création de trigramme", admin, dateString,
+		new Transaction(id, balance, "Création de trigramme", admin, null,
 			parent.banqueBob.id);
-	stmt2 =
-		parent.connexion
-			.prepareStatement("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (?,?,?,?,?,?)");
-	stmt2.setInt(1, transaction.id);
-	stmt2.setInt(2, transaction.price);
-	stmt2.setString(3, transaction.comment);
-	stmt2.setInt(4, transaction.admin);
-	stmt2.setString(5, transaction.date);
-	stmt2.setInt(6, transaction.id2);
-	stmt2.executeUpdate();
-
-	stmt.executeUpdate("UPDATE accounts SET balance=balance-" + balance
-		+ " ,turnover=turnover-" + turnover + " WHERE id=" + parent.banqueBob.id);
+	transaction.WriteToDB(parent.connexion);
 	parent.setTrigrammeActif(new Trigramme(parent, trigramme));
     }
 
@@ -188,24 +171,10 @@ public class Trigramme {
 	    stmt2.setInt(9, id);
 	    stmt2.executeUpdate();
 
-	    Date date = new Date();
-	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    String dateString = formater.format(date);
 	    Transaction transaction =
 		    new Transaction(id, 0, "Modification du trigramme (ancien trigramme : "
-			    + rs.getString("trigramme") + ")", admin, dateString,
-			    parent.banqueBob.id);
-	    stmt2 =
-		    parent.connexion
-			    .prepareStatement("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (?,?,?,?,?,?)");
-	    stmt2.setInt(1, transaction.id);
-	    stmt2.setInt(2, transaction.price);
-	    stmt2.setString(3, transaction.comment);
-	    stmt2.setInt(4, transaction.admin);
-	    stmt2.setString(5, transaction.date);
-	    stmt2.setInt(6, transaction.id2);
-	    stmt2.executeUpdate();
-	    stmt.closeOnCompletion();
+			    + rs.getString("trigramme") + ")", admin, null, parent.banqueBob.id);
+	    transaction.WriteToDB(parent.connexion);
 	} else {
 	    throw new TDBException("Trigramme inexistant");
 	}
@@ -225,54 +194,20 @@ public class Trigramme {
 	    if (!parent.banqueBobActif) {
 		banqueId = parent.banqueBinet.id;
 	    }
-	    Statement stmt = parent.connexion.createStatement();
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + " WHERE id=" + id);
-	    Date date = new Date();
-	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    String dateString = formater.format(date);
-	    Transaction transaction = new Transaction(id, -montant, "", 0, dateString, banqueId);
+	    Transaction transaction = new Transaction(id, -montant, "", 0, null, banqueId);
 	    parent.dernieresActions.add(transaction);
-	    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-		    + transaction.id
-		    + ","
-		    + transaction.price
-		    + ",'"
-		    + transaction.comment
-		    + "',"
-		    + transaction.admin + ",'" + transaction.date + "'," + transaction.id2 + ")");
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id="
-		    + banqueId);
+	    transaction.WriteToDB(parent.connexion);
 	} else if (montant > 2000) {
 	    AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	    authentification.executer();
 	    if (authentification.droits >= AuthentificationDialog.Ami) {
 		int banqueId = parent.banqueBob.id;
-		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant + " WHERE id="
-			+ id);
-		Date date = new Date();
-		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String dateString = formater.format(date);;
+		if (!parent.banqueBobActif) {
+		    banqueId = parent.banqueBinet.id;
+		}
 		Transaction transaction =
-			new Transaction(id, -montant, "", authentification.admin, dateString,
-				banqueId);
-		parent.dernieresActions.add(transaction);
-		stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-			+ transaction.id
-			+ ","
-			+ transaction.price
-			+ ",'"
-			+ transaction.comment
-			+ "',"
-			+ transaction.admin
-			+ ",'"
-			+ transaction.date
-			+ "',"
-			+ transaction.id2 + ")");
-
-		stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id="
-			+ banqueId);
-		stmt.closeOnCompletion();
+			new Transaction(id, -montant, "", authentification.admin, null, banqueId);
+		transaction.WriteToDB(parent.connexion);
 	    } else {
 		throw new TDBException("Vous n'avez pas les droits");
 	    }
@@ -280,33 +215,10 @@ public class Trigramme {
 	    AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	    authentification.executer();
 	    if (authentification.droits >= AuthentificationDialog.Ami) {
-		int banqueId = parent.banqueBob.id;
-		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-montant)
-			+ ", turnover=turnover+" + (-montant) + " WHERE id=" + id);
-		Date date = new Date();
-		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String dateString = formater.format(date);
 		Transaction transaction =
-			new Transaction(id, montant, "", authentification.admin, dateString,
+			new Transaction(id, montant, "", authentification.admin, null,
 				parent.banqueBob.id);
-		parent.dernieresActions.add(transaction);
-		stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-			+ transaction.id
-			+ ","
-			+ transaction.price
-			+ ",'"
-			+ transaction.comment
-			+ "',"
-			+ transaction.admin
-			+ ",'"
-			+ transaction.date
-			+ "',"
-			+ transaction.id2 + ")");
-
-		stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-montant)
-			+ ", turnover=turnover-" + (-montant) + " WHERE id=" + banqueId);
-		stmt.closeOnCompletion();
+		transaction.WriteToDB(parent.connexion);
 	    } else {
 		throw new TDBException("Vous n'avez pas les droits");
 	    }
@@ -322,22 +234,9 @@ public class Trigramme {
 	if (Math.abs(montant) > 100000) { throw new TDBException(
 		"Opération annulée car le montant est trop élevé"); }
 	int banqueId = parent.banqueBob.id;
-	Statement stmt = connexion.createStatement();
-	stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant
-		+ ", turnover=turnover+" + montant + " WHERE id=" + id);
-	Date date = new Date();
-	SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	String dateString = formater.format(date);;
-	Transaction transaction =
-		new Transaction(id, montant, commentaire, admin, dateString, banqueId);
-	parent.dernieresActions.add(transaction);
-	stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-		+ transaction.id + "," + transaction.price + ",'" + transaction.comment + "',"
-		+ transaction.admin + ",'" + transaction.date + "'," + transaction.id2 + ")");
 
-	stmt.executeUpdate("UPDATE accounts SET balance=balance-" + montant
-		+ ", turnover=turnover-" + montant + " WHERE id=" + banqueId);
-	stmt.closeOnCompletion();
+	Transaction transaction = new Transaction(id, montant, commentaire, admin, null, banqueId);
+	transaction.WriteToDB(parent.connexion);
 	parent.trigrammeActif = new Trigramme(parent, parent.trigrammeActif.trigramme);
 	parent.refresh();
     }
