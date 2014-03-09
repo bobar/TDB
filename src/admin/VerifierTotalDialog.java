@@ -103,11 +103,15 @@ public class VerifierTotalDialog extends JDialog {
 
 	    Statement stmt = parent.connexion.createStatement();
 	    ResultSet rs = stmt.executeQuery("SELECT SUM(balance) as tot FROM accounts");
-	    if (rs.next()) totalActuel = Integer.parseInt(rs.getString("tot"));
+	    if (rs.next()) {
+		totalActuel = Integer.parseInt(rs.getString("tot"));
+	    }
 	    rs =
 		    stmt.executeQuery("SELECT balance FROM accounts WHERE trigramme='"
 			    + parent.banqueBob.trigramme + "'");
-	    if (rs.next()) bobActuel = Integer.parseInt(rs.getString("balance"));
+	    if (rs.next()) {
+		bobActuel = Integer.parseInt(rs.getString("balance"));
+	    }
 	    bobIdeal = bobActuel - totalActuel;
 
 	    JLabel labelTotal = new JLabel("Total : ");

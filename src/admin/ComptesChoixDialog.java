@@ -78,13 +78,15 @@ public class ComptesChoixDialog extends JDialog {
 	public void keyTyped(KeyEvent arg0) {}
 
 	public void actionPerformed(ActionEvent arg0) {
-	    if (arg0.getSource() == okButton) try {
-		dispose();
-		ComptesListeDialog dialog = new ComptesListeDialog(parent);
-		dialog.executer();
-		dialog.chargerListe();
-	    } catch (Exception e) {
-		parent.parent.afficherErreur(e);
+	    if (arg0.getSource() == okButton) {
+		try {
+		    dispose();
+		    ComptesListeDialog dialog = new ComptesListeDialog(parent);
+		    dialog.executer();
+		    dialog.chargerListe();
+		} catch (Exception e) {
+		    parent.parent.afficherErreur(e);
+		}
 	    }
 	    if (arg0.getSource() == fermerButton) {
 		dispose();

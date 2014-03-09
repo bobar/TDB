@@ -64,7 +64,7 @@ public class MainWindow extends JFrame {
     public Trigramme banqueBob = null; // Le trigramme banque du BôB
     public Trigramme banqueBinet = null; // Le trigramme banque binet
     public boolean banqueBobActif = true; // True : banque=BôB
-    					  // False : banque=binet
+					  // False : banque=binet
     public boolean modeAdministrateur = false; // True: mode
 					       // super-administrateur
     public Trigramme administrateur = null; // Le trig du super-admin
@@ -139,7 +139,7 @@ public class MainWindow extends JFrame {
 	    return false;
 	}
     };
-    //COMMENTED
+    // COMMENTED
     /* DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() { private static final
      * long serialVersionUID = 1L;
      * 
@@ -378,7 +378,7 @@ public class MainWindow extends JFrame {
 
     public static void main(String[] args) {
 	MainWindow TDB = new MainWindow();
-	//COMMENTED
+	// COMMENTED
 	// TDB.prefs.put("version", "TDB 3.0");
 	// TDB.prefs.put("auteur", "Thierry Deo");
 	// TDB.prefs.put("dateMAJ", "25/01/2013");
@@ -396,8 +396,9 @@ public class MainWindow extends JFrame {
 		    int pos = ligne.indexOf('=');
 		    String debut = ligne.substring(0, pos).trim();
 		    String fin = ligne.substring(pos + 1, ligne.length()).trim();
-		    if (debut.equals("trigrammeBanque") && fin.length() == 3)
+		    if (debut.equals("trigrammeBanque") && fin.length() == 3) {
 			trigrammeBanque = fin;
+		    }
 		}
 	    }
 	    br.close();
@@ -609,8 +610,11 @@ public class MainWindow extends JFrame {
 	infos.setLayout(new FlowLayout(SwingConstants.CENTER));
 	infos.setBackground(null);
 
-	if (trigrammeBanque.equals("BOB")) bobBanqueBouton = new JButton("BôB");
-	else bobBanqueBouton = new JButton(trigrammeBanque);
+	if (trigrammeBanque.equals("BOB")) {
+	    bobBanqueBouton = new JButton("BôB");
+	} else {
+	    bobBanqueBouton = new JButton(trigrammeBanque);
+	}
 	bobBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
 	bobBanqueBouton.setPreferredSize(new Dimension(
 		(int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));

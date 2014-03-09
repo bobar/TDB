@@ -268,8 +268,7 @@ public class Trigramme {
 			+ ",'"
 			+ transaction.date
 			+ "',"
-			+ transaction.id2
-			+ ")");
+			+ transaction.id2 + ")");
 
 		stmt.executeUpdate("UPDATE accounts SET balance=balance+" + montant + " WHERE id="
 			+ banqueId);
@@ -303,8 +302,7 @@ public class Trigramme {
 			+ ",'"
 			+ transaction.date
 			+ "',"
-			+ transaction.id2
-			+ ")");
+			+ transaction.id2 + ")");
 
 		stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-montant)
 			+ ", turnover=turnover-" + (-montant) + " WHERE id=" + banqueId);
