@@ -136,7 +136,7 @@ public class TrigrammeCreationDialog extends JDialog {
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
 
-	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 
 	    JLabel labelTrigramme = new JLabel("Trigramme : ");
 	    labelTrigramme.setPreferredSize(new Dimension(120, 20));

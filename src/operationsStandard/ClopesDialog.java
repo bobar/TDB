@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import main.Admin;
 import main.MainWindow;
 import main.TDBException;
 import main.Transaction;
@@ -143,14 +144,14 @@ public class ClopesDialog extends JDialog {
 	    }
 	    if (prix == 0) { throw new TDBException("Problème d`accès à la base des clopes"); }
 
-	    int admin = 0;
+	    Admin admin = null;
 	    if (quantite * prix > 2000
 		    || (parent.trigrammeActif.status != Trigramme.XPlatal && parent.trigrammeActif.balance < quantite
 			    * prix)) {
 		AuthentificationDialog authentification = new AuthentificationDialog(parent);
 		authentification.executer();
 
-		if (authentification.droits < AuthentificationDialog.Ami) {
+		if (authentification.admin.ami()) {
 		    throw new TDBException("vous n`avez pas les droits");
 		} else {
 		    admin = authentification.admin;

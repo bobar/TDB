@@ -73,7 +73,7 @@ public class CreditDialog extends JDialog {
 
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
-	if (authentification.droits >= AuthentificationDialog.Ami) {
+	if (authentification.admin.ami()) {
 	    champMontant = new JTextField();
 	    champMontant.setPreferredSize(new Dimension(180, 20));
 	    champMontant.addKeyListener(listener);

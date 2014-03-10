@@ -105,7 +105,7 @@ public class ComptesChoixDialog extends JDialog {
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
 
-	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 
 	    this.addKeyListener(listener);
 

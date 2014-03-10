@@ -10,15 +10,19 @@ public class Transaction {
     public int id;
     public int price;
     public String comment;
-    public int admin;
+    public int admin_id;
     public String date;
     public int id2;
 
-    public Transaction(int id, int price, String comment, int admin, String date, int id2) {
+    public Transaction(int id, int price, String comment, Admin admin, String date, int id2) {
 	this.id = id;
 	this.price = price;
 	this.comment = comment;
-	this.admin = admin;
+	if (admin == null) {
+	    this.admin_id = 0;
+	} else {
+	    this.admin_id = admin.id;
+	}
 	if (date == null) {
 	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    this.date = formater.format(new Date());
@@ -37,7 +41,8 @@ public class Transaction {
 		    + id);
 	}
 	stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
-		+ id + "," + price + ",'" + comment + "'," + admin + ",'" + date + "'," + id2 + ")");
+		+ id + "," + price + ",'" + comment + "'," + admin_id + ",'" + date + "'," + id2
+		+ ")");
 	if (price > 0) {
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + " WHERE id=" + id2);
 	} else if (price < 0) {

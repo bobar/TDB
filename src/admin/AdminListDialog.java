@@ -17,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
+import main.Admin;
 import main.MainWindow;
 import main.TDBException;
 import main.Trigramme;
@@ -69,15 +70,7 @@ public class AdminListDialog extends JDialog {
 		    if (ligneChoisie == -1) { throw new TDBException("Pas d'admin sélectionné"); }
 		    int permissions = 0;
 		    String perms = (String) listeAdmin.getValueAt(ligneChoisie, 3);
-		    if (perms.equals("BôBarman")) {
-			permissions = 3;
-		    } else if (perms.equals("Ex-BôBarman")) {
-			permissions = 2;
-		    } else if (perms.equals("Ami du BôB")) {
-			permissions = 1;
-		    } else {
-			permissions = 0;
-		    }
+		    permissions = Admin.status.indexOf(perms);
 		    AdminModificationDialog dialog =
 			    new AdminModificationDialog(parent, (String) listeAdmin.getValueAt(
 				    ligneChoisie, 0), permissions);
@@ -94,8 +87,9 @@ public class AdminListDialog extends JDialog {
 					    + ")", "Confirmation", JOptionPane.OK_CANCEL_OPTION,
 				    JOptionPane.QUESTION_MESSAGE, null);
 		    if (confirmation == JOptionPane.OK_OPTION) {
-			Statement stmt = parent.connexion.createStatement();
-			stmt.executeUpdate("DELETE FROM admins WHERE id=" + trigramme.id);
+			Admin admin =
+				new Admin(parent, (String) listeAdmin.getValueAt(ligneChoisie, 0));
+			admin.supprimer();
 		    }
 		} else if (arg0.getSource() == fermerButton) {
 		    dispose();
@@ -117,7 +111,7 @@ public class AdminListDialog extends JDialog {
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
 
-	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 	    this.addKeyListener(listener);
 
 	    listeAdmin = new JTable();
@@ -175,7 +169,7 @@ public class AdminListDialog extends JDialog {
 		    stmt.executeQuery("SELECT admins.id,permissions,trigramme,name,first_name FROM admins INNER JOIN accounts ON admins.id=accounts.id ORDER BY permissions DESC,name ASC");
 
 	    while (rs.next()) {
-		String perms = Trigramme.adminCategoriesList[rs.getInt("permissions")];
+		String perms = Admin.status_array[rs.getInt("permissions")];
 		String[] item =
 			{ rs.getString("trigramme"), rs.getString("name"),
 				rs.getString("first_name"), perms };
@@ -203,7 +197,7 @@ public class AdminListDialog extends JDialog {
 		stmt.executeQuery("SELECT admins.id,permissions,trigramme,name,first_name FROM admins INNER JOIN accounts ON admins.id=accounts.id ORDER BY permissions DESC,name ASC");
 
 	while (rs.next()) {
-	    String perms = Trigramme.adminCategoriesList[rs.getInt("permissions")];
+	    String perms = Admin.status_array[rs.getInt("permissions")];
 	    String[] item =
 		    { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
 			    perms };

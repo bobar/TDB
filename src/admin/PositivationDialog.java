@@ -71,7 +71,7 @@ public class PositivationDialog extends JDialog {
 	AuthentificationDialog authentification = new AuthentificationDialog(this.parent);
 	authentification.executer();
 
-	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 	    champPromo = new JTextField();
 	    champPromo.setPreferredSize(new Dimension(180, 20));
 	    champPromo.addKeyListener(listener);

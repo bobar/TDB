@@ -17,8 +17,6 @@ public class Trigramme {
     public static final int Autre = 5;
     public static final String[] categoriesList = { "X Platalien", "X Ancien", "Binet",
 	    "Personnel", "Etudiant non X", "Autre" };
-    public static final String[] adminCategoriesList = { "Pékin", "Ami du BôB", "Ex-BôBarman",
-	    "BôBarman" };
 
     public MainWindow parent;
     public int id;
@@ -93,7 +91,7 @@ public class Trigramme {
 	}
     }
 
-    public void creer(int admin) throws Exception {
+    public void creer(Admin admin) throws Exception {
 
 	Statement stmt = parent.connexion.createStatement();
 	ResultSet rs = stmt.executeQuery("SELECT MAX(id) as maxid FROM accounts");
@@ -148,7 +146,7 @@ public class Trigramme {
 	}
     }
 
-    public void modifier(int id, int admin) throws Exception {
+    public void modifier(int id, Admin admin) throws Exception {
 	Statement stmt = parent.connexion.createStatement();
 	ResultSet rs = stmt.executeQuery("SELECT trigramme FROM accounts WHERE id=" + id);
 
@@ -187,26 +185,27 @@ public class Trigramme {
 	    if (balance - montant < 0 && status != Trigramme.XPlatal) {
 		AuthentificationDialog authentification = new AuthentificationDialog(parent);
 		authentification.executer();
-		if (authentification.droits < AuthentificationDialog.Ami) { throw new TDBException(
+		if (!authentification.admin.ami()) { throw new TDBException(
 			"Vous n'avez pas les droits de faire passer cette personne en négatif"); }
 	    }
 	    int banqueId = parent.banqueBob.id;
 	    if (!parent.banqueBobActif) {
 		banqueId = parent.banqueBinet.id;
 	    }
-	    Transaction transaction = new Transaction(id, -montant, "", 0, null, banqueId);
+	    Transaction transaction = new Transaction(id, -montant, "", null, null, banqueId);
 	    parent.dernieresActions.add(transaction);
 	    transaction.WriteToDB(parent.connexion);
 	} else if (montant > 2000) {
 	    AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	    authentification.executer();
-	    if (authentification.droits >= AuthentificationDialog.Ami) {
+	    if (authentification.admin.ami()) {
 		int banqueId = parent.banqueBob.id;
 		if (!parent.banqueBobActif) {
 		    banqueId = parent.banqueBinet.id;
 		}
 		Transaction transaction =
 			new Transaction(id, -montant, "", authentification.admin, null, banqueId);
+		parent.dernieresActions.add(transaction);
 		transaction.WriteToDB(parent.connexion);
 	    } else {
 		throw new TDBException("Vous n'avez pas les droits");
@@ -214,10 +213,11 @@ public class Trigramme {
 	} else {
 	    AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	    authentification.executer();
-	    if (authentification.droits >= AuthentificationDialog.Ami) {
+	    if (authentification.admin.ami()) {
 		Transaction transaction =
 			new Transaction(id, montant, "", authentification.admin, null,
 				parent.banqueBob.id);
+		parent.dernieresActions.add(transaction);
 		transaction.WriteToDB(parent.connexion);
 	    } else {
 		throw new TDBException("Vous n'avez pas les droits");
@@ -229,7 +229,7 @@ public class Trigramme {
 
     }
 
-    public void crediter(Connection connexion, int montant, String commentaire, int admin)
+    public void crediter(Connection connexion, int montant, String commentaire, Admin admin)
 	    throws Exception {
 	if (Math.abs(montant) > 100000) { throw new TDBException(
 		"Opération annulée car le montant est trop élevé"); }
@@ -244,7 +244,7 @@ public class Trigramme {
     public void supprimer() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
-	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 	    if (parent.trigrammeActif.balance == 0) {
 		Statement stmt = parent.connexion.createStatement();
 		stmt.executeUpdate("DELETE FROM accounts WHERE id=" + id);

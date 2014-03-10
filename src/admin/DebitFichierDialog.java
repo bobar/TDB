@@ -29,6 +29,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import main.Admin;
 import main.MainWindow;
 import main.TDBException;
 import main.Transaction;
@@ -134,9 +135,9 @@ public class DebitFichierDialog extends JDialog {
 
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
-	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 	    int banqueId = parent.trigrammeActif.id;
-	    int adminId = authentification.admin;
+	    Admin adminId = authentification.admin;
 
 	    JFileChooser chooser = new JFileChooser();
 	    chooser.setFileFilter(new csvFileFilter());

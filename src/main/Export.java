@@ -86,7 +86,7 @@ public class Export {
 	AuthentificationDialog authentification = new AuthentificationDialog(this.parent);
 	authentification.executer();
 
-	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 	    JFileChooser chooser = new JFileChooser();
 	    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	    int returnVal = chooser.showOpenDialog(parent);

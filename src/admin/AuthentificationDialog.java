@@ -8,8 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -17,18 +15,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.WindowConstants;
+import main.Admin;
 import main.MainWindow;
-import main.TDBException;
 import main.TrigrammeTextField;
 
 public class AuthentificationDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
-
-    public static final int Pekin = 0;
-    public static final int Ami = 1;
-    public static final int ExBoBarman = 2;
-    public static final int BoBarman = 3;
 
     MainWindow parent;
     AuthentificationDialogListener listener = new AuthentificationDialogListener();
@@ -38,8 +31,7 @@ public class AuthentificationDialog extends JDialog {
     JButton okButton;
     JButton cancelButton;
 
-    public int admin = 0;
-    public int droits = -1;
+    public Admin admin;
     boolean validation = false;
 
     public class AuthentificationDialogListener implements KeyListener, ActionListener {
@@ -84,8 +76,7 @@ public class AuthentificationDialog extends JDialog {
     public void executer() throws Exception {
 
 	if (parent.modeAdministrateur) {
-	    this.admin = parent.administrateur.id;
-	    this.droits = 3;
+	    this.admin = parent.administrateur;
 	} else {
 	    JLabel labelTrigramme = new JLabel("Trigramme : ");
 	    labelTrigramme.setPreferredSize(new Dimension(120, 20));
@@ -131,16 +122,7 @@ public class AuthentificationDialog extends JDialog {
 		String trigramme = champTrigramme.getText();
 		String cryptage = MD5Hex(champMDP.getPassword());
 		try {
-		    Statement stmt = parent.connexion.createStatement();
-		    ResultSet rs =
-			    stmt.executeQuery("Select accounts.id as admin_id, permissions FROM admins LEFT JOIN accounts on accounts.id = admins.id WHERE accounts.trigramme = '"
-				    + trigramme + "' AND passwd = '" + cryptage + "'");
-		    if (rs.next()) {
-			this.admin = rs.getInt("admin_id");
-			this.droits = rs.getInt("permissions");
-		    } else {
-			throw new TDBException("Erreur d'authentification");
-		    }
+		    admin = new Admin(parent, trigramme, cryptage);
 		} catch (Exception e) {
 		    parent.afficherErreur(e);
 		}

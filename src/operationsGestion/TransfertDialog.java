@@ -75,7 +75,7 @@ public class TransfertDialog extends JDialog {
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
 
-	if (authentification.droits >= AuthentificationDialog.Ami) {
+	if (authentification.admin.ami()) {
 
 	    JLabel labelTrigramme1 = new JLabel("De : ");
 	    labelTrigramme1.setPreferredSize(new Dimension(120, 20));

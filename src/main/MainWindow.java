@@ -67,7 +67,7 @@ public class MainWindow extends JFrame {
 					  // False : banque=binet
     public boolean modeAdministrateur = false; // True: mode
 					       // super-administrateur
-    public Trigramme administrateur = null; // Le trig du super-admin
+    public Admin administrateur = null; // Le trig du super-admin
     public Connection connexion; // Pour la base de données, les autres
 				 // fonctions en ont besoin
     public Stack<Transaction> dernieresActions;
@@ -189,9 +189,9 @@ public class MainWindow extends JFrame {
     public void ouvrirModeAdmin() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
-	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 	    modeAdministrateur = true;
-	    administrateur = new Trigramme(this, authentification.admin);
+	    administrateur = authentification.admin;
 	}
 	this.refresh();
     }
@@ -205,14 +205,10 @@ public class MainWindow extends JFrame {
     public void ouvrirBanqueBinet() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
-	if (authentification.droits >= AuthentificationDialog.ExBoBarman) {
-	    if (trigrammeActif == null) {
+	if (authentification.admin.exBoBarman()) {
+	    if (trigrammeActif == null || trigrammeActif.status != 2) {
 		TrigrammeDialog dialog = new TrigrammeDialog(this, "");
 		dialog.executer();
-	    } else if (trigrammeActif.status != 2) {
-		TrigrammeDialog dialog = new TrigrammeDialog(this, "");
-		dialog.executer();
-
 	    }
 	    if (trigrammeActif.status != 2) { throw new TDBException(
 		    "Le trigramme n'est pas un compte binet"); }
@@ -227,7 +223,7 @@ public class MainWindow extends JFrame {
     public void fermerBanqueBinet() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
-	if (authentification.droits >= AuthentificationDialog.ExBoBarman) {
+	if (authentification.admin.exBoBarman()) {
 	    banqueBinet = null;
 	    banqueBobActif = true;
 	} else {
@@ -239,7 +235,7 @@ public class MainWindow extends JFrame {
     public void reinitialiserTurnover() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
-	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 	    GregorianCalendar date = new GregorianCalendar();
 	    date.setTime(new Date());
 	    String jour = "", mois = "", annee = "", heure = "", minute = "";
@@ -283,7 +279,7 @@ public class MainWindow extends JFrame {
     public void reinitialiserHistorique() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
-	if (authentification.droits == AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 	    GregorianCalendar date = new GregorianCalendar();
 	    date.setTime(new Date());
 	    String jour = "", mois = "", annee = "", heure = "", minute = "";
@@ -330,7 +326,7 @@ public class MainWindow extends JFrame {
 	    Transaction transaction = dernieresActions.pop();
 	    Statement stmt = connexion.createStatement();
 	    stmt.executeUpdate("DELETE FROM transactions WHERE id=" + transaction.id
-		    + " AND price=" + transaction.price + " AND admin=" + transaction.admin
+		    + " AND price=" + transaction.price + " AND admin=" + transaction.admin_id
 		    + " AND date='" + transaction.date + "' AND id2=" + transaction.id2);
 	    if (transaction.price < 0) {
 		Statement stmt2 = connexion.createStatement();

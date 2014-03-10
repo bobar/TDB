@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.sql.Statement;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -14,8 +13,8 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+import main.Admin;
 import main.MainWindow;
-import main.Trigramme;
 import main.TrigrammeTextField;
 
 public class AdminModificationDialog extends JDialog {
@@ -86,7 +85,7 @@ public class AdminModificationDialog extends JDialog {
 	JLabel labelCategorie = new JLabel("Catégorie : ");
 	labelCategorie.setPreferredSize(new Dimension(120, 20));
 
-	champCategorie = new JComboBox<String>(Trigramme.adminCategoriesList);
+	champCategorie = new JComboBox<String>(Admin.status_array);
 	champCategorie.setPreferredSize(new Dimension(150, 20));
 	champCategorie.setSelectedIndex(permissions);
 	champCategorie.addKeyListener(listener);
@@ -120,10 +119,8 @@ public class AdminModificationDialog extends JDialog {
 
 	if (validation) {
 	    try {
-		Trigramme trigramme = new Trigramme(parent, champTrigramme.getText());
-		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("UPDATE admins SET permissions="
-			+ champCategorie.getSelectedIndex() + " WHERE id=" + trigramme.id);
+		Admin admin = new Admin(parent, champTrigramme.getText());
+		admin.setPerms(champCategorie.getSelectedIndex());
 	    } catch (Exception e) {
 		parent.afficherErreur(e);
 	    }

@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Statement;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -77,7 +76,7 @@ public class MotDePasseDialog extends JDialog {
 
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
-	if (authentification.droits >= AuthentificationDialog.Pekin) {
+	if (authentification.admin.pekin()) {
 	    JLabel labelMDP1 = new JLabel("Mot de passe : ");
 	    labelMDP1.setPreferredSize(new Dimension(120, 20));
 	    champMDP1 = new JPasswordField();
@@ -122,9 +121,7 @@ public class MotDePasseDialog extends JDialog {
 		if (!mdp1.equals(mdp2)) {
 		    throw new Exception("Les mots de passe ne correspondent pas");
 		} else {
-		    Statement stmt = parent.connexion.createStatement();
-		    stmt.executeUpdate("UPDATE admins SET passwd='" + mdp1 + "' WHERE id="
-			    + authentification.admin);
+		    authentification.admin.setPasswd(mdp1);
 		    JOptionPane.showMessageDialog(this, "Mot de passe changé", "",
 			    JOptionPane.INFORMATION_MESSAGE);
 		}

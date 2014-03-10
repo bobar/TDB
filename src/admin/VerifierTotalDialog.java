@@ -99,7 +99,7 @@ public class VerifierTotalDialog extends JDialog {
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
 
-	if (authentification.droits >= AuthentificationDialog.BoBarman) {
+	if (authentification.admin.BoBarman()) {
 
 	    Statement stmt = parent.connexion.createStatement();
 	    ResultSet rs = stmt.executeQuery("SELECT SUM(balance) as tot FROM accounts");

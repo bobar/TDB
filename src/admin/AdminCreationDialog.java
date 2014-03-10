@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Statement;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -17,8 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.WindowConstants;
+import main.Admin;
 import main.MainWindow;
-import main.Trigramme;
 import main.TrigrammeTextField;
 
 public class AdminCreationDialog extends JDialog {
@@ -85,7 +84,7 @@ public class AdminCreationDialog extends JDialog {
 	JLabel labelCategorie = new JLabel("Catégorie : ");
 	labelCategorie.setPreferredSize(new Dimension(120, 20));
 
-	champCategorie = new JComboBox<String>(Trigramme.adminCategoriesList);
+	champCategorie = new JComboBox<String>(Admin.status_array);
 	champCategorie.setPreferredSize(new Dimension(150, 20));
 	champCategorie.addKeyListener(listener);
 
@@ -140,11 +139,8 @@ public class AdminCreationDialog extends JDialog {
 	    if (!cryptage1.equals(cryptage2)) { throw new Exception(
 		    "Les mots de passe ne correspondent pas"); }
 	    try {
-		Trigramme trigramme = new Trigramme(parent, champTrigramme.getText());
-		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("INSERT INTO admins (id,permissions,passwd) VALUES ("
-			+ trigramme.id + "," + champCategorie.getSelectedIndex() + ",'" + cryptage1
-			+ "')");
+		Admin new_admin = new Admin(parent,champTrigramme.getText(),champCategorie.getSelectedIndex(),cryptage1);
+		new_admin.creer();
 	    } catch (Exception e) {
 		parent.afficherErreur(e);
 	    }
