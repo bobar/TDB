@@ -51,4 +51,23 @@ public class Transaction {
 	}
     }
 
+    public void annuler(Connection connexion) throws Exception {
+	Statement stmt = connexion.createStatement();
+	if (price > 0) {
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + " WHERE id=" + id);
+	} else if (price < 0) {
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-price) + " WHERE id="
+		    + id);
+	}
+	stmt.executeUpdate("DELETE FROM transactions WHERE id=" + id + " AND price=" + price
+		+ " AND comment='" + comment + "' AND admin=" + admin_id + " AND date='" + date
+		+ "' AND id2=" + id2);
+	if (price > 0) {
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price + " WHERE id=" + id2);
+	} else if (price < 0) {
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-price) + " WHERE id="
+		    + id2);
+	}
+    }
+
 }

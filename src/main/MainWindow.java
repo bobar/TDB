@@ -324,28 +324,7 @@ public class MainWindow extends JFrame {
     public void annuler() throws Exception {
 	if (!dernieresActions.empty()) {
 	    Transaction transaction = dernieresActions.pop();
-	    Statement stmt = connexion.createStatement();
-	    stmt.executeUpdate("DELETE FROM transactions WHERE id=" + transaction.id
-		    + " AND price=" + transaction.price + " AND admin=" + transaction.admin_id
-		    + " AND date='" + transaction.date + "' AND id2=" + transaction.id2);
-	    if (transaction.price < 0) {
-		Statement stmt2 = connexion.createStatement();
-		stmt2.executeUpdate("UPDATE accounts SET balance=balance+" + (-transaction.price)
-			+ " WHERE id=" + transaction.id);
-		Statement stmt3 = connexion.createStatement();
-		stmt3.executeUpdate("UPDATE accounts SET balance=balance-" + (-transaction.price)
-			+ ",turnover=turnover-" + (-transaction.price) + " WHERE id="
-			+ transaction.id2);
-
-	    } else {
-		Statement stmt2 = connexion.createStatement();
-		stmt2.executeUpdate("UPDATE accounts SET balance=balance-" + (transaction.price)
-			+ ",turnover=turnover-" + (transaction.price) + " WHERE id="
-			+ transaction.id);
-		Statement stmt3 = connexion.createStatement();
-		stmt3.executeUpdate("UPDATE accounts SET balance=balance-" + (transaction.price)
-			+ " WHERE id=" + transaction.id2);
-	    }
+	    transaction.annuler(connexion);
 	    this.refresh();
 	}
     }
@@ -755,7 +734,9 @@ public class MainWindow extends JFrame {
 		if (banqueTrig.equals("BOB")) {
 		    banqueTrig = "";
 		}
-		String date = rs.getString("date").substring(0, rs.getString("date").length() - 5);
+		String date =
+			rs.getString("date").substring(0,
+				Math.min(16, rs.getString("date").length()));
 		String[] item =
 			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
 				rs.getString("c"), date };
@@ -845,7 +826,9 @@ public class MainWindow extends JFrame {
 		if (banqueTrig.equals("BOB")) {
 		    banqueTrig = "";
 		}
-		String date = rs.getString("date").substring(0, rs.getString("date").length() - 5);
+		String date =
+			rs.getString("date").substring(0,
+				Math.min(16, rs.getString("date").length()));
 		String[] item =
 			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
 				rs.getString("c"), date };
@@ -900,7 +883,9 @@ public class MainWindow extends JFrame {
 		if (banqueTrig.equals("BOB")) {
 		    banqueTrig = "";
 		}
-		String date = rs.getString("date").substring(0, rs.getString("date").length() - 5);
+		String date =
+			rs.getString("date").substring(0,
+				Math.min(16, rs.getString("date").length()));
 		String[] item =
 			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
 				rs.getString("c"), date };
