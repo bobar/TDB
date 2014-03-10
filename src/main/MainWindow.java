@@ -22,9 +22,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Stack;
 import java.util.prefs.Preferences;
 import javax.imageio.ImageIO;
@@ -236,36 +235,9 @@ public class MainWindow extends JFrame {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
 	if (authentification.admin.BoBarman()) {
-	    GregorianCalendar date = new GregorianCalendar();
-	    date.setTime(new Date());
-	    String jour = "", mois = "", annee = "", heure = "", minute = "";
-	    if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-		jour = "" + date.get(Calendar.DAY_OF_MONTH);
-	    } else {
-		jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-	    }
-	    if ((1 + date.get(Calendar.MONTH)) >= 10) {
-		mois = "" + (1 + date.get(Calendar.MONTH));
-	    } else {
-		mois = "0" + (1 + date.get(Calendar.MONTH));
-	    }
-	    if (date.get(Calendar.YEAR) >= 10) {
-		annee = "" + date.get(Calendar.YEAR);
-	    } else {
-		annee = "0" + date.get(Calendar.YEAR);
-	    }
-	    if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-		heure = "" + date.get(Calendar.HOUR_OF_DAY);
-	    } else {
-		heure = "0" + date.get(Calendar.HOUR);
-	    }
-	    if (date.get(Calendar.MINUTE) >= 10) {
-		minute = "" + date.get(Calendar.MINUTE);
-	    } else {
-		minute = "0" + date.get(Calendar.MINUTE);
-	    }
-	    String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
-	    prefs.put("dateResetTurnover", dateComplete);
+	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    String date = formater.format(new Date());
+	    prefs.put("dateResetTurnover", date);
 	    Statement stmt = connexion.createStatement();
 	    stmt.executeUpdate("UPDATE accounts SET turnover=+balance");
 	    refresh();
@@ -280,36 +252,9 @@ public class MainWindow extends JFrame {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
 	if (authentification.admin.BoBarman()) {
-	    GregorianCalendar date = new GregorianCalendar();
-	    date.setTime(new Date());
-	    String jour = "", mois = "", annee = "", heure = "", minute = "";
-	    if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-		jour = "" + date.get(Calendar.DAY_OF_MONTH);
-	    } else {
-		jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-	    }
-	    if ((1 + date.get(Calendar.MONTH)) >= 10) {
-		mois = "" + (1 + date.get(Calendar.MONTH));
-	    } else {
-		mois = "0" + (1 + date.get(Calendar.MONTH));
-	    }
-	    if (date.get(Calendar.YEAR) >= 10) {
-		annee = "" + date.get(Calendar.YEAR);
-	    } else {
-		annee = "0" + date.get(Calendar.YEAR);
-	    }
-	    if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-		heure = "" + date.get(Calendar.HOUR_OF_DAY);
-	    } else {
-		heure = "0" + date.get(Calendar.HOUR);
-	    }
-	    if (date.get(Calendar.MINUTE) >= 10) {
-		minute = "" + date.get(Calendar.MINUTE);
-	    } else {
-		minute = "0" + date.get(Calendar.MINUTE);
-	    }
-	    String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
-	    prefs.put("dateResetHistorique", dateComplete);
+	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    String date = formater.format(new Date());
+	    prefs.put("dateResetHistorique", date);
 	    Statement stmt = connexion.createStatement();
 	    stmt.executeUpdate("INSERT INTO transactions_history SELECT * FROM transactions");
 	    stmt.executeUpdate("DELETE FROM transactions");
@@ -399,36 +344,9 @@ public class MainWindow extends JFrame {
 			new PrintWriter(new BufferedWriter(new FileWriter(
 				absolutePath + "//logTDB", true)));
 		out.println(e.getMessage());
-		GregorianCalendar date = new GregorianCalendar();
-		date.setTime(new Date());
-		String jour = "", mois = "", annee = "", heure = "", minute = "";
-		if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-		    jour = "" + date.get(Calendar.DAY_OF_MONTH);
-		} else {
-		    jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-		}
-		if ((1 + date.get(Calendar.MONTH)) >= 10) {
-		    mois = "" + (1 + date.get(Calendar.MONTH));
-		} else {
-		    mois = "0" + (1 + date.get(Calendar.MONTH));
-		}
-		if (date.get(Calendar.YEAR) >= 10) {
-		    annee = "" + date.get(Calendar.YEAR);
-		} else {
-		    annee = "0" + date.get(Calendar.YEAR);
-		}
-		if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-		    heure = "" + date.get(Calendar.HOUR_OF_DAY);
-		} else {
-		    heure = "0" + date.get(Calendar.HOUR);
-		}
-		if (date.get(Calendar.MINUTE) >= 10) {
-		    minute = "" + date.get(Calendar.MINUTE);
-		} else {
-		    minute = "0" + date.get(Calendar.MINUTE);
-		}
-		String dateComplete = jour + "/" + mois + "/" + annee + " " + heure + ":" + minute;
-		out.println(dateComplete);
+		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String date = formater.format(new Date());
+		out.println(date);
 		out.println();
 		for (StackTraceElement zou : e.getStackTrace()) {
 		    out.println(zou);

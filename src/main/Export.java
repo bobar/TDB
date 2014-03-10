@@ -5,9 +5,8 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -30,37 +29,9 @@ public class Export {
 	int returnVal = chooser.showOpenDialog(parent);
 	if (returnVal == JFileChooser.APPROVE_OPTION) {
 	    chemin = chooser.getSelectedFile().getPath();
-
-	    GregorianCalendar date = new GregorianCalendar();
-	    date.setTime(new Date());
-	    String jour = "", mois = "", annee = "", heure = "", minute = "";
-	    if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-		jour = "" + date.get(Calendar.DAY_OF_MONTH);
-	    } else {
-		jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-	    }
-	    if ((1 + date.get(Calendar.MONTH)) >= 10) {
-		mois = "" + (1 + date.get(Calendar.MONTH));
-	    } else {
-		mois = "0" + (1 + date.get(Calendar.MONTH));
-	    }
-	    if (date.get(Calendar.YEAR) >= 10) {
-		annee = "" + date.get(Calendar.YEAR);
-	    } else {
-		annee = "0" + date.get(Calendar.YEAR);
-	    }
-	    if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-		heure = "" + date.get(Calendar.HOUR_OF_DAY);
-	    } else {
-		heure = "0" + date.get(Calendar.HOUR);
-	    }
-	    if (date.get(Calendar.MINUTE) >= 10) {
-		minute = "" + date.get(Calendar.MINUTE);
-	    } else {
-		minute = "0" + date.get(Calendar.MINUTE);
-	    }
-	    String dateComplete = annee + "-" + mois + "-" + jour + "_" + heure + "h" + minute;
-	    String fichier = chemin + "/positivation_" + dateComplete + ".csv";
+	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+	    String date = formater.format(new Date());
+	    String fichier = chemin + "/positivation_" + date + ".csv";
 	    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
 
 	    PreparedStatement stmt =
@@ -92,52 +63,21 @@ public class Export {
 	    int returnVal = chooser.showOpenDialog(parent);
 	    if (returnVal == JFileChooser.APPROVE_OPTION) {
 		chemin = chooser.getSelectedFile().getPath();
-
-		GregorianCalendar date = new GregorianCalendar();
-		date.setTime(new Date());
-		String jour = "", mois = "", annee = "", heure = "", minute = "";
-		if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-		    jour = "" + date.get(Calendar.DAY_OF_MONTH);
-		} else {
-		    jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-		}
-		if ((1 + date.get(Calendar.MONTH)) >= 10) {
-		    mois = "" + (1 + date.get(Calendar.MONTH));
-		} else {
-		    mois = "0" + (1 + date.get(Calendar.MONTH));
-		}
-		if (date.get(Calendar.YEAR) >= 10) {
-		    annee = "" + date.get(Calendar.YEAR);
-		} else {
-		    annee = "0" + date.get(Calendar.YEAR);
-		}
-		if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-		    heure = "" + date.get(Calendar.HOUR_OF_DAY);
-		} else {
-		    heure = "0" + date.get(Calendar.HOUR);
-		}
-		if (date.get(Calendar.MINUTE) >= 10) {
-		    minute = "" + date.get(Calendar.MINUTE);
-		} else {
-		    minute = "0" + date.get(Calendar.MINUTE);
-		}
-		String dateComplete = annee + "-" + mois + "-" + jour + "_" + heure + "h" + minute;
-		String fichier = chemin + "/transactions_" + dateComplete + ".csv";
+		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String date = formater.format(new Date());
+		String fichier = chemin + "/transactions_" + date + ".csv";
 		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
-
 		PreparedStatement stmt =
 			parent.connexion
 				.prepareStatement("SELECT * FROM transactions ORDER BY date DESC");
 		ResultSet rs = stmt.executeQuery();
-
 		while (rs.next()) {
 		    out.println(rs.getInt("id") + "," + rs.getInt("price") + ","
 			    + rs.getString("comment") + "," + rs.getInt("id") + ","
 			    + rs.getInt("date") + "," + rs.getInt("id2"));
 		}
 		out.close();
-
-		fichier = chemin + "/accounts_" + dateComplete + ".csv";
+		fichier = chemin + "/accounts_" + date + ".csv";
 		stmt = parent.connexion.prepareStatement("SELECT * FROM accounts ORDER BY id DESC");
 		rs = stmt.executeQuery();
 		out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
@@ -150,8 +90,7 @@ public class Export {
 			    + rs.getString("turnover"));
 		}
 		out.close();
-
-		fichier = chemin + "/admins_" + dateComplete + ".csv";
+		fichier = chemin + "/admins_" + date + ".csv";
 		stmt = parent.connexion.prepareStatement("SELECT * FROM admins ORDER BY id DESC");
 		rs = stmt.executeQuery();
 		out.close();
@@ -161,8 +100,7 @@ public class Export {
 			    + rs.getString("passwd"));
 		}
 		out.close();
-
-		fichier = chemin + "/clopes_" + dateComplete + ".csv";
+		fichier = chemin + "/clopes_" + date + ".csv";
 		stmt = parent.connexion.prepareStatement("SELECT * FROM clopes ORDER BY marque");
 		rs = stmt.executeQuery();
 		out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
@@ -171,7 +109,6 @@ public class Export {
 			    + rs.getInt("quantite"));
 		}
 		out.close();
-
 		JOptionPane.showConfirmDialog(parent, "Fichiers sauvegardés dans " + chemin, "",
 			JOptionPane.PLAIN_MESSAGE);
 	    }
@@ -193,39 +130,10 @@ public class Export {
 			    JOptionPane.QUESTION_MESSAGE);
 
 	    TableModel modele = table.getModel();
-
-	    GregorianCalendar date = new GregorianCalendar();
-	    date.setTime(new Date());
-	    String jour = "", mois = "", annee = "", heure = "", minute = "";
-	    if (date.get(Calendar.DAY_OF_MONTH) >= 10) {
-		jour = "" + date.get(Calendar.DAY_OF_MONTH);
-	    } else {
-		jour = "0" + date.get(Calendar.DAY_OF_MONTH);
-	    }
-	    if ((1 + date.get(Calendar.MONTH)) >= 10) {
-		mois = "" + (1 + date.get(Calendar.MONTH));
-	    } else {
-		mois = "0" + (1 + date.get(Calendar.MONTH));
-	    }
-	    if (date.get(Calendar.YEAR) >= 10) {
-		annee = "" + date.get(Calendar.YEAR);
-	    } else {
-		annee = "0" + date.get(Calendar.YEAR);
-	    }
-	    if (date.get(Calendar.HOUR_OF_DAY) >= 10) {
-		heure = "" + date.get(Calendar.HOUR_OF_DAY);
-	    } else {
-		heure = "0" + date.get(Calendar.HOUR);
-	    }
-	    if (date.get(Calendar.MINUTE) >= 10) {
-		minute = "" + date.get(Calendar.MINUTE);
-	    } else {
-		minute = "0" + date.get(Calendar.MINUTE);
-	    }
-	    String dateComplete = annee + "-" + mois + "-" + jour + "_" + heure + "h" + minute;
-	    String fichier = chemin + "/" + titre + "_" + dateComplete + ".csv";
+	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    String date = formater.format(new Date());
+	    String fichier = chemin + "/" + titre + "_" + date + ".csv";
 	    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
-
 	    int nbLignes = modele.getRowCount();
 	    int nbColonnes = modele.getColumnCount();
 	    for (int i = 0; i < nbLignes; i++) {
