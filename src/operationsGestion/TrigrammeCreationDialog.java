@@ -70,7 +70,7 @@ public class TrigrammeCreationDialog extends JDialog {
 		    champTrigramme.setBackground(null);
 		} else {
 		    try {
-			if (!Trigramme.exists(parent.connexion, champTrigramme.getText())) {
+			if (!Trigramme.exists(parent, champTrigramme.getText())) {
 			    champTrigramme.setBackground(Color.GREEN);
 			} else {
 			    champTrigramme.setBackground(Color.RED);

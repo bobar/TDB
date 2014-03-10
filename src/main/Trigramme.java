@@ -261,8 +261,8 @@ public class Trigramme {
 	}
     }
 
-    public static boolean exists(Connection connexion, String tri) throws Exception {
-	Statement stmt = connexion.createStatement();
+    public static boolean exists(MainWindow parent, String tri) throws Exception {
+	Statement stmt = parent.connexion.createStatement();
 	ResultSet rs =
 		stmt.executeQuery("SELECT count(*) as c FROM accounts WHERE trigramme='" + tri
 			+ "'");
