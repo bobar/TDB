@@ -164,19 +164,8 @@ public class AdminListDialog extends JDialog {
 	    fond.setPreferredSize(new Dimension(410, 450));
 	    fond.setOpaque(true);
 
-	    Statement stmt = parent.connexion.createStatement();
-	    ResultSet rs =
-		    stmt.executeQuery("SELECT admins.id,permissions,trigramme,name,first_name FROM admins INNER JOIN accounts ON admins.id=accounts.id ORDER BY permissions DESC,name ASC");
-
-	    while (rs.next()) {
-		String perms = Admin.status_array[rs.getInt("permissions")];
-		String[] item =
-			{ rs.getString("trigramme"), rs.getString("name"),
-				rs.getString("first_name"), perms };
-		modele.addRow(item);
-	    }
+	    this.refresh();
 	    listeAdmin.setModel(modele);
-
 	    this.setContentPane(fond);
 	    this.pack();
 	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,

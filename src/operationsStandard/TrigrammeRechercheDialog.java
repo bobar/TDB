@@ -8,8 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -188,21 +187,13 @@ public class TrigrammeRechercheDialog extends JDialog {
 	for (int i = modele.getRowCount() - 1; i >= 0; i--) {
 	    modele.removeRow(i);
 	}
-	Statement stmt = parent.connexion.createStatement();
-	ResultSet rs =
-		stmt.executeQuery("SELECT trigramme,name,first_name,nickname FROM accounts WHERE name LIKE '%"
-			+ champSaisie.getText()
-			+ "%' OR first_name LIKE '%"
-			+ champSaisie.getText()
-			+ "%' OR nickname LIKE '%"
-			+ champSaisie.getText()
-			+ "%'");
-
-	while (rs.next()) {
-	    String[] item =
-		    { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-			    rs.getString("nickname") };
-	    modele.addRow(item);
+	Vector<Trigramme> trigrammes =
+		Trigramme.rechercher(parent.connexion, champSaisie.getText());
+	for (int i = 0; i < trigrammes.size(); ++i) {
+	    String[] ligne =
+		    { trigrammes.get(i).trigramme, trigrammes.get(i).name,
+			    trigrammes.get(i).first_name, trigrammes.get(i).nickname };
+	    modele.addRow(ligne);
 	}
 	resultats.setModel(modele);
 	resultats.repaint();

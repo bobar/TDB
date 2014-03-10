@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -66,21 +64,15 @@ public class TrigrammeCreationDialog extends JDialog {
 
 	public void keyReleased(KeyEvent arg0) {
 	    if (arg0.getSource().equals(champTrigramme)) {
-		champTrigramme.setText(champTrigramme.getText().toUpperCase());
+		champTrigramme.setText(champTrigramme.getText().toUpperCase()
+			.substring(0, Math.min(3, champTrigramme.getText().length())));
 		if (champTrigramme.getText().length() < 3) {
-		    validation = false;
 		    champTrigramme.setBackground(null);
 		} else {
 		    try {
-			Statement stmt = parent.connexion.createStatement();
-			ResultSet rs =
-				stmt.executeQuery("SELECT id FROM accounts WHERE trigramme='"
-					+ champTrigramme.getText() + "'");
-			if (!rs.first()) {
-			    validation = true;
+			if (!Trigramme.exists(parent.connexion, champTrigramme.getText())) {
 			    champTrigramme.setBackground(Color.GREEN);
 			} else {
-			    validation = false;
 			    champTrigramme.setBackground(Color.RED);
 			}
 
@@ -273,7 +265,7 @@ public class TrigrammeCreationDialog extends JDialog {
 	    }
 	    String surnom = champSurnom.getText().replace(",", ";");
 
-	    if (validation) {
+	    if (validation && champTrigramme.getBackground().equals(Color.GREEN)) {
 		Trigramme trigramme =
 			new Trigramme(parent, champTrigramme.getText(), nom, prenom, surnom,
 				champCasert.getText(), champCategorie.getSelectedIndex(),

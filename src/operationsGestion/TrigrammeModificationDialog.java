@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -66,26 +64,18 @@ public class TrigrammeModificationDialog extends JDialog {
 
 	public void keyReleased(KeyEvent arg0) {
 	    if (arg0.getSource().equals(champTrigramme)) {
-		champTrigramme.setText(champTrigramme.getText().toUpperCase());
+		champTrigramme.setText(champTrigramme.getText().toUpperCase()
+			.substring(0, Math.min(3, champTrigramme.getText().length())));
 		if (champTrigramme.getText().length() < 3) {
-		    validation = false;
 		    champTrigramme.setBackground(null);
 		} else {
 		    if (champTrigramme.getText().equals(parent.trigrammeActif.trigramme)) {
-			validation = true;
 			champTrigramme.setBackground(Color.GREEN);
 		    } else {
 			try {
-			    Statement stmt = parent.connexion.createStatement();
-			    ResultSet rs =
-				    stmt.executeQuery("SELECT COUNT(trigramme) as c FROM accounts WHERE trigramme='"
-					    + champTrigramme.getText() + "'");
-			    rs.first();
-			    if (rs.getInt("c") == 0) {
-				// validation = true;
+			    if (!Trigramme.exists(parent.connexion, champTrigramme.getText())) {
 				champTrigramme.setBackground(Color.GREEN);
 			    } else {
-				// validation = false;
 				champTrigramme.setBackground(Color.RED);
 			    }
 
@@ -93,8 +83,8 @@ public class TrigrammeModificationDialog extends JDialog {
 			    parent.afficherErreur(e);
 			}
 		    }
-		    champTrigramme.repaint();
 		}
+		champTrigramme.repaint();
 	    }
 	}
 
@@ -254,7 +244,7 @@ public class TrigrammeModificationDialog extends JDialog {
 		this.setResizable(false);
 		this.setVisible(true);
 
-		if (validation) {
+		if (validation && champTrigramme.getBackground().equals(Color.GREEN)) {
 		    String nom = champNom.getText().toUpperCase();
 		    nom.replace(',', ';');
 		    String prenom = champPrenom.getText().toLowerCase();

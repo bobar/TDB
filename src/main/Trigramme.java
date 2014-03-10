@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.Vector;
 import admin.AuthentificationDialog;
 
 public class Trigramme {
@@ -260,4 +261,33 @@ public class Trigramme {
 	}
     }
 
+    public static boolean exists(Connection connexion, String tri) throws Exception {
+	Statement stmt = connexion.createStatement();
+	ResultSet rs =
+		stmt.executeQuery("SELECT count(*) as c FROM accounts WHERE trigramme='" + tri
+			+ "'");
+	if (rs.next()) {
+	    return (rs.getInt("c") > 0);
+	} else {
+	    throw new TDBException("Impossible de chercher dans la base");
+	}
+    }
+
+    public static Vector<Trigramme> rechercher(Connection connexion, String str) throws Exception {
+	Statement stmt = connexion.createStatement();
+	ResultSet rs =
+		stmt.executeQuery("SELECT * FROM accounts WHERE name LIKE '%" + str
+			+ "%' OR first_name LIKE '%" + str + "%' OR nickname LIKE '%" + str + "%'");
+	Vector<Trigramme> res = new Vector<Trigramme>();
+	while (rs.next()) {
+	    Trigramme zou =
+		    new Trigramme(null, rs.getString("trigramme"), rs.getString("name"),
+			    rs.getString("first_name"), rs.getString("nickname"),
+			    rs.getString("casert"), rs.getInt("status"), rs.getInt("promo"),
+			    rs.getString("mail"), rs.getString("picture"), rs.getInt("balance"),
+			    rs.getInt("turnover"));
+	    res.add(zou);
+	}
+	return res;
+    }
 }

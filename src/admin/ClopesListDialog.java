@@ -174,19 +174,10 @@ public class ClopesListDialog extends JDialog {
 	    fond.add(resetButton);
 	    fond.add(fermerButton);
 
-	    fond.setPreferredSize(new Dimension(360, 450));
+	    fond.setPreferredSize(new Dimension(360, 460));
 	    fond.setOpaque(true);
 
-	    Statement stmt = parent.connexion.createStatement();
-	    ResultSet rs = stmt.executeQuery("SELECT * FROM clopes ORDER BY quantite DESC");
-
-	    while (rs.next()) {
-		String[] item =
-			{ rs.getString("marque"),
-				Double.parseDouble(rs.getString("prix")) / 100 + "",
-				rs.getString("quantite") };
-		modele.addRow(item);
-	    }
+	    this.refresh();
 	    listeClopes.setModel(modele);
 
 	    this.setContentPane(fond);
