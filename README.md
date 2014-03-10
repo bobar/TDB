@@ -3,7 +3,7 @@
 - `$ git clone https://github.com/bobar/TDB.git`
 
 ### Install development packages
-- `$ sudo apt-get install openjdk-6-jre`
+- `$ sudo apt-get install openjdk-7-jre`
 - `$ sudo apt-get install ant`
 
 ### Install Eclipse
