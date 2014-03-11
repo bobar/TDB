@@ -374,7 +374,7 @@ public class MainWindow extends JFrame {
     public void initialiser(String trigrammeBanque) throws Exception {
 	this.setTitle("TDB");
 	Dimension tailleEcran = Toolkit.getDefaultToolkit().getScreenSize();
-	tailleEcran.setSize(tailleEcran.getWidth() - 60, tailleEcran.getHeight());
+	tailleEcran.setSize(tailleEcran.getWidth(), tailleEcran.getHeight());
 	// hack sordide, a cause du lanceur Unity a gauche
 	this.setSize(tailleEcran);
 
