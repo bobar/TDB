@@ -220,7 +220,7 @@ public class LogGroupeDialog extends JDialog {
 			Transaction transaction =
 				new Transaction(trigramme.id, -montant, commentaire,
 					authentification.admin, null, parent.banqueBob.id);
-			transaction.WriteToDB(parent.connexion);
+			transaction.WriteToDB(parent);
 		    }
 		} else {
 		    throw new TDBException("Montant négatif");

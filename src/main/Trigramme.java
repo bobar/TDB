@@ -127,7 +127,7 @@ public class Trigramme {
 	Transaction transaction =
 		new Transaction(id, balance, "Création de trigramme", admin, null,
 			parent.banqueBob.id);
-	transaction.WriteToDB(parent.connexion);
+	transaction.WriteToDB(parent);
 	parent.setTrigrammeActif(new Trigramme(parent, trigramme));
     }
 
@@ -173,7 +173,7 @@ public class Trigramme {
 	    Transaction transaction =
 		    new Transaction(id, 0, "Modification du trigramme (ancien trigramme : "
 			    + rs.getString("trigramme") + ")", admin, null, parent.banqueBob.id);
-	    transaction.WriteToDB(parent.connexion);
+	    transaction.WriteToDB(parent);
 	} else {
 	    throw new TDBException("Trigramme inexistant");
 	}
@@ -195,7 +195,7 @@ public class Trigramme {
 	    }
 	    Transaction transaction = new Transaction(id, -montant, "", null, null, banqueId);
 	    parent.dernieresActions.add(transaction);
-	    transaction.WriteToDB(parent.connexion);
+	    transaction.WriteToDB(parent);
 	} else if (montant > 2000) {
 	    AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	    authentification.executer();
@@ -207,7 +207,7 @@ public class Trigramme {
 		Transaction transaction =
 			new Transaction(id, -montant, "", authentification.admin, null, banqueId);
 		parent.dernieresActions.add(transaction);
-		transaction.WriteToDB(parent.connexion);
+		transaction.WriteToDB(parent);
 	    } else {
 		throw new TDBException("Vous n'avez pas les droits");
 	    }
@@ -219,7 +219,7 @@ public class Trigramme {
 			new Transaction(id, montant, "", authentification.admin, null,
 				parent.banqueBob.id);
 		parent.dernieresActions.add(transaction);
-		transaction.WriteToDB(parent.connexion);
+		transaction.WriteToDB(parent);
 	    } else {
 		throw new TDBException("Vous n'avez pas les droits");
 	    }
@@ -230,14 +230,14 @@ public class Trigramme {
 
     }
 
-    public void crediter(Connection connexion, int montant, String commentaire, Admin admin)
+    public void crediter(int montant, String commentaire, Admin admin)
 	    throws Exception {
 	if (Math.abs(montant) > 100000) { throw new TDBException(
 		"Opération annulée car le montant est trop élevé"); }
 	int banqueId = parent.banqueBob.id;
 
 	Transaction transaction = new Transaction(id, montant, commentaire, admin, null, banqueId);
-	transaction.WriteToDB(parent.connexion);
+	transaction.WriteToDB(parent);
 	parent.trigrammeActif = new Trigramme(parent, parent.trigrammeActif.trigramme);
 	parent.refresh();
     }

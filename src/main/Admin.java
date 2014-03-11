@@ -89,7 +89,7 @@ public class Admin {
 	Transaction transaction =
 		new Transaction(id, 0, "Nommé administrateur : " + status.get(this.permissions),
 			null, null, parent.banqueBob.id);
-	transaction.WriteToDB(parent.connexion);
+	transaction.WriteToDB(parent);
     }
 
     public void setPasswd(String MD5) throws Exception {
@@ -105,7 +105,7 @@ public class Admin {
 	Transaction transaction =
 		new Transaction(id, 0, "Nouveau statut administrateur : " + status.get(perms),
 			null, null, parent.banqueBob.id);
-	transaction.WriteToDB(parent.connexion);
+	transaction.WriteToDB(parent);
     }
     public String getStatus() {
 	return Admin.status_array[this.permissions];
@@ -117,7 +117,7 @@ public class Admin {
 	Transaction transaction =
 		new Transaction(id, 0, "Viré des administrateurs, et bim !",
 			null, null, parent.banqueBob.id);
-	transaction.WriteToDB(parent.connexion);
+	transaction.WriteToDB(parent);
     }
 
     public boolean BoBarman() {

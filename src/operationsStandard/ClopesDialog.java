@@ -161,7 +161,7 @@ public class ClopesDialog extends JDialog {
 		    new Transaction(parent.trigrammeActif.id, -quantite * prix, quantite + " "
 			    + marque, admin, null, parent.banqueBob.id);
 	    parent.dernieresActions.add(transaction);
-	    transaction.WriteToDB(parent.connexion);
+	    transaction.WriteToDB(parent);
 	    stmt.executeUpdate("UPDATE clopes SET quantite=quantite+" + quantite
 		    + " WHERE marque='" + marque + "'");
 	}

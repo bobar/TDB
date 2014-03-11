@@ -143,7 +143,7 @@ public class TransfertDialog extends JDialog {
 		Transaction transaction =
 			new Transaction(trigramme1.id, -montant, commentaire,
 				authentification.admin, null, trigramme2.id);
-		transaction.WriteToDB(parent.connexion);
+		transaction.WriteToDB(parent);
 	    }
 	    parent.refresh();
 	} else {

@@ -131,7 +131,7 @@ public class CreditDialog extends JDialog {
 		} else {
 		    comment = champCommentaire.getText();
 		}
-		parent.trigrammeActif.crediter(parent.connexion, montant, comment,
+		parent.trigrammeActif.crediter(montant, comment,
 			authentification.admin);
 	    }
 	} else {

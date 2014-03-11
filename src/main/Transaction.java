@@ -32,8 +32,8 @@ public class Transaction {
 	this.id2 = id2;
     }
 
-    public void WriteToDB(Connection connexion) throws Exception {
-	Statement stmt = connexion.createStatement();
+    public void WriteToDB(MainWindow parent) throws Exception {
+	Statement stmt = parent.connexion.createStatement();
 	if (price > 0) {
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price + " WHERE id=" + id);
 	} else if (price < 0) {

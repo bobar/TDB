@@ -283,7 +283,7 @@ public class DebitFichierDialog extends JDialog {
 			    Transaction transaction =
 				    new Transaction(trigramme.id, -montant, "", adminId, null,
 					    banqueId);
-			    transaction.WriteToDB(parent.connexion);
+			    transaction.WriteToDB(parent);
 			} else {
 			    out.println(modele.getValueAt(i, 1) + "," + modele.getValueAt(i, 2)
 				    + "," + modele.getValueAt(i, 3) + "," + modele.getValueAt(i, 4));
