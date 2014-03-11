@@ -6,8 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -181,16 +180,12 @@ public class AdminListDialog extends JDialog {
 	for (int i = modele.getRowCount() - 1; i >= 0; i--) {
 	    modele.removeRow(i);
 	}
-	Statement stmt = parent.connexion.createStatement();
-	ResultSet rs =
-		stmt.executeQuery("SELECT admins.id,permissions,trigramme,name,first_name FROM admins INNER JOIN accounts ON admins.id=accounts.id ORDER BY permissions DESC,name ASC");
-
-	while (rs.next()) {
-	    String perms = Admin.status_array[rs.getInt("permissions")];
-	    String[] item =
-		    { rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-			    perms };
-	    modele.addRow(item);
+	Vector<Admin.AdminData> admins = Admin.getAllAdmins(parent);
+	for (int i = 0; i < admins.size(); ++i) {
+	    String[] ligne =
+		    { admins.get(i).trigramme, admins.get(i).name, admins.get(i).firstname,
+			    admins.get(i).permissions };
+	    modele.addRow(ligne);
 	}
 	listeAdmin.setModel(modele);
 	listeAdmin.repaint();

@@ -115,8 +115,8 @@ public class Admin {
 	Statement stmt = parent.connexion.createStatement();
 	stmt.executeUpdate("DELETE FROM admins WHERE id=" + this.id);
 	Transaction transaction =
-		new Transaction(id, 0, "Viré des administrateurs, et bim !",
-			null, null, parent.banqueBob.id);
+		new Transaction(id, 0, "Viré des administrateurs, et bim !", null, null,
+			parent.banqueBob.id);
 	transaction.WriteToDB(parent);
     }
 
@@ -132,6 +132,29 @@ public class Admin {
     }
     public boolean pekin() {
 	return this.permissions >= Pekin;
+    }
+
+    public static class AdminData {
+	public String trigramme;
+	public String name;
+	public String firstname;
+	public String permissions;
+    }
+
+    public static Vector<AdminData> getAllAdmins(MainWindow parent) throws Exception {
+	Vector<AdminData> res = new Vector<AdminData>();
+	Statement stmt = parent.connexion.createStatement();
+	ResultSet rs =
+		stmt.executeQuery("SELECT permissions,trigramme,name,first_name FROM admins NATURAL JOIN accounts ORDER BY permissions DESC,name ASC");
+	while (rs.next()) {
+	    AdminData admin = new AdminData();
+	    admin.trigramme = rs.getString("trigramme");
+	    admin.name = rs.getString("name");
+	    admin.firstname = rs.getString("first_name");
+	    admin.permissions = Admin.status_array[rs.getInt("permissions")];
+	    res.add(admin);
+	}
+	return res;
     }
 
 }

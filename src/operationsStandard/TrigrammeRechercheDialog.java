@@ -188,7 +188,7 @@ public class TrigrammeRechercheDialog extends JDialog {
 	    modele.removeRow(i);
 	}
 	Vector<Trigramme> trigrammes =
-		Trigramme.rechercher(parent.connexion, champSaisie.getText());
+		Trigramme.rechercher(parent, champSaisie.getText());
 	for (int i = 0; i < trigrammes.size(); ++i) {
 	    String[] ligne =
 		    { trigrammes.get(i).trigramme, trigrammes.get(i).name,

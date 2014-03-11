@@ -1,6 +1,5 @@
 package main;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -230,8 +229,7 @@ public class Trigramme {
 
     }
 
-    public void crediter(int montant, String commentaire, Admin admin)
-	    throws Exception {
+    public void crediter(int montant, String commentaire, Admin admin) throws Exception {
 	if (Math.abs(montant) > 100000) { throw new TDBException(
 		"Opération annulée car le montant est trop élevé"); }
 	int banqueId = parent.banqueBob.id;
@@ -273,8 +271,8 @@ public class Trigramme {
 	}
     }
 
-    public static Vector<Trigramme> rechercher(Connection connexion, String str) throws Exception {
-	Statement stmt = connexion.createStatement();
+    public static Vector<Trigramme> rechercher(MainWindow parent, String str) throws Exception {
+	Statement stmt = parent.connexion.createStatement();
 	ResultSet rs =
 		stmt.executeQuery("SELECT * FROM accounts WHERE name LIKE '%" + str
 			+ "%' OR first_name LIKE '%" + str + "%' OR nickname LIKE '%" + str + "%'");
