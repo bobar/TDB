@@ -322,6 +322,7 @@ public class MainWindow extends JFrame {
 		}
 	    }
 	    br.close();
+	    TDB.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	    TDB.initialiser(trigrammeBanque);
 	} catch (Exception e) {
 	    TDB.afficherErreur(e);
