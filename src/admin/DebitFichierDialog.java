@@ -74,7 +74,7 @@ public class DebitFichierDialog extends JDialog {
 
 	public void keyPressed(KeyEvent arg0) {
 	    if (arg0.getKeyChar() == KeyEvent.VK_ESCAPE) {
-		parent.dispose();
+		dispose();
 	    } else if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
 		// on fait rien exprès pour éviter les fausses manips sordides
 	    }
