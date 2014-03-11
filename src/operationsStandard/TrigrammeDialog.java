@@ -29,7 +29,7 @@ public class TrigrammeDialog extends JDialog {
 
 	public void keyPressed(KeyEvent arg0) {
 	    if (arg0.getKeyChar() == KeyEvent.VK_ESCAPE) {
-		parent.dispose();
+		dispose();
 	    }
 	}
 
