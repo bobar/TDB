@@ -230,7 +230,8 @@ public class MainWindow extends JFrame {
 	    String date = formater.format(new Date());
 	    prefs.put("dateResetTurnover", date);
 	    Statement stmt = connexion.createStatement();
-	    stmt.executeUpdate("UPDATE accounts SET turnover=+balance");
+	    stmt.executeUpdate("UPDATE accounts SET turnover=balance");
+	    stmt.executeUpdate("UPDATE accounts SET turnover=0 WHERE status=2");
 	    refresh();
 	    JOptionPane.showMessageDialog(this, "Chiffres d'affaires réinitialisés", "",
 		    JOptionPane.INFORMATION_MESSAGE);
@@ -645,7 +646,7 @@ public class MainWindow extends JFrame {
 	    balanceLabel.setText("" + (double) trigrammeActif.balance / 100);
 	    if (trigrammeActif.status == 2) {
 		turnoverLabel
-			.setText(((double) (trigrammeActif.balance - trigrammeActif.turnover) / 100)
+			.setText(((double) (trigrammeActif.turnover) / 100)
 				+ "€ gagnés depuis dernier reset.");
 	    } else {
 		turnoverLabel

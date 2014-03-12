@@ -35,7 +35,8 @@ public class Transaction {
     public void WriteToDB(MainWindow parent) throws Exception {
 	Statement stmt = parent.connexion.createStatement();
 	if (price > 0) {
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price + " WHERE id=" + id);
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price
+		    + ", turnover=turnover+" + price + " WHERE id=" + id);
 	} else if (price < 0) {
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-price) + " WHERE id="
 		    + id);
@@ -49,15 +50,16 @@ public class Transaction {
 	if (price > 0) {
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + " WHERE id=" + id2);
 	} else if (price < 0) {
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-price) + " WHERE id="
-		    + id2);
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-price)
+		    + ", turnover=turnover+" + (-price) + " WHERE id=" + id2);
 	}
     }
 
     public void annuler(Connection connexion) throws Exception {
 	Statement stmt = connexion.createStatement();
 	if (price > 0) {
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + " WHERE id=" + id);
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price
+		    + ", turnover=turnover-" + price + " WHERE id=" + id);
 	} else if (price < 0) {
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-price) + " WHERE id="
 		    + id);
@@ -68,8 +70,8 @@ public class Transaction {
 	if (price > 0) {
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price + " WHERE id=" + id2);
 	} else if (price < 0) {
-	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-price) + " WHERE id="
-		    + id2);
+	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-price)
+		    + ", turnover=turnover-" + (-price) + " WHERE id=" + id2);
 	}
     }
 
