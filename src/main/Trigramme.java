@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.Vector;
+import java.util.LinkedList;
 import admin.AuthentificationDialog;
 
 public class Trigramme {
@@ -271,12 +271,12 @@ public class Trigramme {
 	}
     }
 
-    public static Vector<Trigramme> rechercher(MainWindow parent, String str) throws Exception {
+    public static LinkedList<Trigramme> rechercher(MainWindow parent, String str) throws Exception {
 	Statement stmt = parent.connexion.createStatement();
 	ResultSet rs =
 		stmt.executeQuery("SELECT * FROM accounts WHERE name LIKE '%" + str
 			+ "%' OR first_name LIKE '%" + str + "%' OR nickname LIKE '%" + str + "%'");
-	Vector<Trigramme> res = new Vector<Trigramme>();
+	LinkedList<Trigramme> res = new LinkedList<Trigramme>();
 	while (rs.next()) {
 	    Trigramme zou =
 		    new Trigramme(null, rs.getString("trigramme"), rs.getString("name"),

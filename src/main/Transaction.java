@@ -43,6 +43,9 @@ public class Transaction {
 	stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
 		+ id + "," + price + ",'" + comment + "'," + admin_id + ",'" + date + "'," + id2
 		+ ")");
+	stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
+		+ id2 + "," + (-price) + ",'" + comment + "'," + admin_id + ",'" + date + "'," + id
+		+ ")");
 	if (price > 0) {
 	    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + " WHERE id=" + id2);
 	} else if (price < 0) {

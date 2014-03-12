@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Vector;
+import java.util.LinkedList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -187,12 +187,10 @@ public class TrigrammeRechercheDialog extends JDialog {
 	for (int i = modele.getRowCount() - 1; i >= 0; i--) {
 	    modele.removeRow(i);
 	}
-	Vector<Trigramme> trigrammes =
-		Trigramme.rechercher(parent, champSaisie.getText());
-	for (int i = 0; i < trigrammes.size(); ++i) {
+	LinkedList<Trigramme> trigrammes = Trigramme.rechercher(parent, champSaisie.getText());
+	for (Trigramme trigramme : trigrammes) {
 	    String[] ligne =
-		    { trigrammes.get(i).trigramme, trigrammes.get(i).name,
-			    trigrammes.get(i).first_name, trigrammes.get(i).nickname };
+		    { trigramme.trigramme, trigramme.name, trigramme.first_name, trigramme.nickname };
 	    modele.addRow(ligne);
 	}
 	resultats.setModel(modele);

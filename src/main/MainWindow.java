@@ -19,11 +19,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Stack;
 import java.util.prefs.Preferences;
 import javax.imageio.ImageIO;
@@ -138,15 +138,6 @@ public class MainWindow extends JFrame {
 	    return false;
 	}
     };
-    // COMMENTED
-    /* DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() { private static final
-     * long serialVersionUID = 1L;
-     * 
-     * public Component getTableCellRendererComponent(JTable table, Object value, boolean
-     * isSelected, boolean hasFocus, int row, int column) { Component cell =
-     * super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); if (row
-     * % 2 == 0) { cell.setBackground(Color.red); } else { cell.setBackground(Color.white); } return
-     * cell; } }; */
     DefaultTableColumnModel modeleColonnes;
     JScrollPane historiqueScrollPane = new JScrollPane();
     JPanel historiquePane = new JPanel();
@@ -374,7 +365,7 @@ public class MainWindow extends JFrame {
     public void initialiser(String trigrammeBanque) throws Exception {
 	this.setTitle("TDB");
 	Dimension tailleEcran = Toolkit.getDefaultToolkit().getScreenSize();
-	tailleEcran.setSize(tailleEcran.getWidth(), tailleEcran.getHeight());
+	tailleEcran.setSize(tailleEcran.getWidth() - 60, tailleEcran.getHeight());
 	// hack sordide, a cause du lanceur Unity a gauche
 	this.setSize(tailleEcran);
 
@@ -631,35 +622,12 @@ public class MainWindow extends JFrame {
 	    } else {
 		trigrammeLabel.setForeground(Color.BLUE);
 	    }
-	    Statement stmt = connexion.createStatement();
-	    ResultSet rs =
-		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
-			    + " FROM transactions as tr "
-			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
-			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
-			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
-			    + " WHERE tr.id="
-			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
-			    + " FROM transactions as tr "
-			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
-			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
-			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
-			    + " WHERE tr.id2="
-			    + trigrammeActif.id + " ORDER BY date DESC LIMIT 50");
-	    while (rs.next()) {
-		String adminTrig = rs.getString("t3");
-		String banqueTrig = rs.getString("t2");
-		if (banqueTrig.equals("BOB")) {
-		    banqueTrig = "";
-		}
-		String date =
-			rs.getString("date").substring(0,
-				Math.min(16, rs.getString("date").length()));
-		String[] item =
-			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
-				rs.getString("c"), date };
-		modele.addRow(item);
+
+	    LinkedList<Historique.Entry> histo = Historique.getHistorique(this, trigrammeActif, 50);
+	    for (Historique.Entry entry : histo) {
+		String[] ligne =
+			{ entry.price + "", entry.banque, entry.admin, entry.comment, entry.date };
+		modele.addRow(ligne);
 	    }
 
 	    trigrammeLabel.setText(trigrammeActif.trigramme);
@@ -723,35 +691,11 @@ public class MainWindow extends JFrame {
 	}
 
 	if (trigrammeActif != null) {
-	    Statement stmt = connexion.createStatement();
-	    ResultSet rs =
-		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
-			    + " FROM transactions as tr "
-			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
-			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
-			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
-			    + " WHERE tr.id="
-			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
-			    + " FROM transactions as tr "
-			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
-			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
-			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
-			    + " WHERE tr.id2="
-			    + trigrammeActif.id + " ORDER BY date DESC");
-	    while (rs.next()) {
-		String adminTrig = rs.getString("t3");
-		String banqueTrig = rs.getString("t2");
-		if (banqueTrig.equals("BOB")) {
-		    banqueTrig = "";
-		}
-		String date =
-			rs.getString("date").substring(0,
-				Math.min(16, rs.getString("date").length()));
-		String[] item =
-			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
-				rs.getString("c"), date };
-		modele.addRow(item);
+	    LinkedList<Historique.Entry> histo = Historique.getHistorique(this, trigrammeActif, -1);
+	    for (Historique.Entry entry : histo) {
+		String[] ligne =
+			{ entry.price + "", entry.banque, entry.admin, entry.comment, entry.date };
+		modele.addRow(ligne);
 	    }
 	    infos.repaint();
 	    historique.setModel(modele);
@@ -767,48 +711,18 @@ public class MainWindow extends JFrame {
 	}
 
 	if (trigrammeActif != null) {
-	    Statement stmt = connexion.createStatement();
-	    ResultSet rs =
-		    stmt.executeQuery("SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
-			    + " FROM transactions as tr "
-			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
-			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
-			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin " + " WHERE tr.id="
-			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
-			    + " FROM transactions as tr "
-			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
-			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
-			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
-			    + " WHERE tr.id2="
-			    + trigrammeActif.id
-			    + " UNION SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
-			    + " FROM transactions_history as tr "
-			    + " JOIN accounts as ac1 ON ac1.id=tr.id "
-			    + " JOIN accounts as ac2 ON ac2.id=tr.id2 "
-			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
-			    + " WHERE tr.id="
-			    + trigrammeActif.id
-			    + " UNION SELECT -price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
-			    + " FROM transactions_history as tr "
-			    + " JOIN accounts as ac1 ON ac1.id=tr.id2 "
-			    + " JOIN accounts as ac2 ON ac2.id=tr.id "
-			    + " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin "
-			    + " WHERE tr.id2="
-			    + trigrammeActif.id + " ORDER BY date DESC");
-	    while (rs.next()) {
-		String adminTrig = rs.getString("t3");
-		String banqueTrig = rs.getString("t2");
-		if (banqueTrig.equals("BOB")) {
-		    banqueTrig = "";
-		}
-		String date =
-			rs.getString("date").substring(0,
-				Math.min(16, rs.getString("date").length()));
-		String[] item =
-			{ ((double) rs.getInt("p") / 100) + "", banqueTrig, adminTrig,
-				rs.getString("c"), date };
-		modele.addRow(item);
+	    LinkedList<Historique.Entry> histo = Historique.getHistorique(this, trigrammeActif, -1);
+	    for (Historique.Entry entry : histo) {
+		String[] ligne =
+			{ entry.price + "", entry.banque, entry.admin, entry.comment, entry.date };
+		modele.addRow(ligne);
+	    }
+	    LinkedList<Historique.Entry> oldhisto =
+		    Historique.getOldHistorique(this, trigrammeActif, -1);
+	    for (Historique.Entry entry : oldhisto) {
+		String[] ligne =
+			{ entry.price + "", entry.banque, entry.admin, entry.comment, entry.date };
+		modele.addRow(ligne);
 	    }
 	    infos.repaint();
 	    historique.setModel(modele);

@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Vector;
 
 public class Admin {
@@ -141,8 +142,8 @@ public class Admin {
 	public String permissions;
     }
 
-    public static Vector<AdminData> getAllAdmins(MainWindow parent) throws Exception {
-	Vector<AdminData> res = new Vector<AdminData>();
+    public static LinkedList<AdminData> getAllAdmins(MainWindow parent) throws Exception {
+	LinkedList<AdminData> res = new LinkedList<AdminData>();
 	Statement stmt = parent.connexion.createStatement();
 	ResultSet rs =
 		stmt.executeQuery("SELECT permissions,trigramme,name,first_name FROM admins NATURAL JOIN accounts ORDER BY permissions DESC,name ASC");

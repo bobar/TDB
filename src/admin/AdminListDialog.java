@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Vector;
+import java.util.LinkedList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -180,11 +180,9 @@ public class AdminListDialog extends JDialog {
 	for (int i = modele.getRowCount() - 1; i >= 0; i--) {
 	    modele.removeRow(i);
 	}
-	Vector<Admin.AdminData> admins = Admin.getAllAdmins(parent);
-	for (int i = 0; i < admins.size(); ++i) {
-	    String[] ligne =
-		    { admins.get(i).trigramme, admins.get(i).name, admins.get(i).firstname,
-			    admins.get(i).permissions };
+	LinkedList<Admin.AdminData> admins = Admin.getAllAdmins(parent);
+	for (Admin.AdminData admin : admins) {
+	    String[] ligne = { admin.trigramme, admin.name, admin.firstname, admin.permissions };
 	    modele.addRow(ligne);
 	}
 	listeAdmin.setModel(modele);
