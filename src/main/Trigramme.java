@@ -95,7 +95,7 @@ public class Trigramme {
 
 	Statement stmt = parent.connexion.createStatement();
 	ResultSet rs = stmt.executeQuery("SELECT MAX(id) as maxid FROM accounts");
-	int id = 0;
+	int id = 1;
 	if (rs.next()) {
 	    id = rs.getInt("maxid") + 1;
 	}
