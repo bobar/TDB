@@ -5,8 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.LinkedList;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,9 +15,9 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import main.Admin;
+import main.Clopes;
 import main.MainWindow;
 import main.TDBException;
-import main.Transaction;
 import main.Trigramme;
 import admin.AuthentificationDialog;
 
@@ -85,12 +83,7 @@ public class ClopesDialog extends JDialog {
 	labelMarque.setPreferredSize(new Dimension(100, 20));
 	labelMarque.setHorizontalAlignment(SwingConstants.RIGHT);
 
-	Statement stmt = parent.connexion.createStatement();
-	ResultSet rs = stmt.executeQuery("SELECT marque,prix FROM clopes ORDER BY quantite DESC");
-	LinkedList<String> listeMarques = new LinkedList<String>();
-	while (rs.next()) {
-	    listeMarques.add(rs.getString("marque"));
-	}
+	LinkedList<String> listeMarques = Clopes.getMarques(parent);
 	String[] tableauMarques = listeMarques.toArray(new String[0]);
 	champMarque = new JComboBox<String>(tableauMarques);
 	champMarque.setPreferredSize(new Dimension(150, 20));
@@ -136,34 +129,23 @@ public class ClopesDialog extends JDialog {
 
 	    String marque = (String) champMarque.getSelectedItem();
 	    int quantite = (Integer) champQuantite.getValue();
-	    ResultSet rs2 =
-		    stmt.executeQuery("SELECT prix FROM clopes WHERE marque='" + marque + "'");
-	    int prix = 0;
-	    if (rs2.next()) {
-		prix = rs2.getInt("prix");
-	    }
-	    if (prix == 0) { throw new TDBException("Problème d`accès à la base des clopes"); }
+	    
+	    Clopes clopes = new Clopes(parent, marque);
 
 	    Admin admin = null;
-	    if (quantite * prix > 2000
+	    if (quantite * clopes.prix() > 2000
 		    || (parent.trigrammeActif.status != Trigramme.XPlatal && parent.trigrammeActif.balance < quantite
-			    * prix)) {
+			    * clopes.prix())) {
 		AuthentificationDialog authentification = new AuthentificationDialog(parent);
 		authentification.executer();
 
 		if (authentification.admin.ami()) {
-		    throw new TDBException("vous n`avez pas les droits");
-		} else {
 		    admin = authentification.admin;
+		} else {
+		    throw new TDBException("vous n'avez pas les droits");
 		}
 	    }
-	    Transaction transaction =
-		    new Transaction(parent.trigrammeActif.id, -quantite * prix, quantite + " "
-			    + marque, admin, null, parent.banqueBob.id);
-	    parent.dernieresActions.add(transaction);
-	    transaction.WriteToDB(parent);
-	    stmt.executeUpdate("UPDATE clopes SET quantite=quantite+" + quantite
-		    + " WHERE marque='" + marque + "'");
+	    clopes.Vendre(parent.trigrammeActif,admin,quantite);
 	}
 	parent.refresh();
     }
