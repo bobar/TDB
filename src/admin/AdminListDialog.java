@@ -172,6 +172,8 @@ public class AdminListDialog extends JDialog {
 	    this.setResizable(false);
 
 	    this.setVisible(true);
+	} else {
+	    throw new TDBException("Vous n'avez pas les droits.");
 	}
     }
 
