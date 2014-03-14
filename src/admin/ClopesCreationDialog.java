@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+import main.Clopes;
 import main.MainWindow;
 
 public class ClopesCreationDialog extends JDialog {
@@ -110,35 +111,10 @@ public class ClopesCreationDialog extends JDialog {
 	this.setVisible(true);
 
 	if (validation) {
-	    // La, c'est le bordel, ca remet les majuscule au début des mots, et
-	    // ca vire les virgules pour pas niquer les fichiers .csv
-	    String marque = champMarque.getText().toLowerCase();
-	    marque.replace(",", ";");
-	    boolean majusculeSuivant = true;
-	    for (int i = 0; i < marque.length(); i++) {
-		if (majusculeSuivant) {
-		    if (i != 0) {
-			marque =
-				marque.substring(0, i) + (char) (marque.charAt(i) - 32)
-					+ marque.substring(i + 1);
-		    } else {
-			marque = (char) (marque.charAt(i) - 32) + marque.substring(i + 1);
-		    }
-		}
-		if (marque.charAt(i) == ' ' || marque.charAt(i) == '-') {
-		    majusculeSuivant = true;
-		} else {
-		    majusculeSuivant = false;
-		}
-	    }
-	    try {
-		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("INSERT INTO clopes (marque,prix,quantite) VALUES ('" + marque
-			+ "'," + (int) (Math.round(100 * Double.parseDouble(champPrix.getText())))
-			+ ",0)");
-	    } catch (Exception e) {
-		parent.afficherErreur(e);
-	    }
+	    String marque = MainWindow.formatString(champMarque.getText());
+	    int prix = (int) Math.round(100 * Double.parseDouble(champPrix.getText()));
+	    Clopes clopes = new Clopes(this.parent, marque, prix);
+	    clopes.Creer(null);
 	}
     }
 }
