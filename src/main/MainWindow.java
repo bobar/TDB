@@ -645,9 +645,8 @@ public class MainWindow extends JFrame {
 	    }
 	    balanceLabel.setText("" + (double) trigrammeActif.balance / 100);
 	    if (trigrammeActif.status == 2) {
-		turnoverLabel
-			.setText(((double) (trigrammeActif.turnover) / 100)
-				+ "€ gagnés depuis dernier reset.");
+		turnoverLabel.setText(((double) (trigrammeActif.turnover) / 100)
+			+ "€ gagnés depuis dernier reset.");
 	    } else {
 		turnoverLabel
 			.setText(((double) (trigrammeActif.turnover - trigrammeActif.balance) / 100)
@@ -730,5 +729,19 @@ public class MainWindow extends JFrame {
 	    historique.repaint();
 	    this.repaint();
 	}
+    }
+
+    public static String formatString(String zou) {
+	zou.replace(',', ';'); // Pour les exports csv.
+	//Et on met les premieres lettres de chaque mot en majuscule.
+	if(!zou.isEmpty()){
+	    zou.substring(0, 0).toUpperCase();
+	}
+	for(int i=1;i<zou.length();++i){
+	    if(zou.charAt(i-1)==' ' || zou.charAt(i-1)=='-'){
+		zou.substring(i, i).toUpperCase();
+	    }
+	}
+	return zou;
     }
 }
