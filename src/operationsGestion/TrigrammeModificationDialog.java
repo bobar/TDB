@@ -245,27 +245,8 @@ public class TrigrammeModificationDialog extends JDialog {
 		this.setVisible(true);
 
 		if (validation && champTrigramme.getBackground().equals(Color.GREEN)) {
-		    String nom = champNom.getText().toUpperCase();
-		    nom.replace(',', ';');
-		    String prenom = champPrenom.getText().toLowerCase();
-		    prenom.replace(",", ";");
-		    boolean majusculeSuivant = true;
-		    for (int i = 0; i < prenom.length(); i++) {
-			if (majusculeSuivant) {
-			    if (i != 0) {
-				prenom =
-					prenom.substring(0, i) + (char) (prenom.charAt(i) - 32)
-						+ prenom.substring(i + 1);
-			    } else {
-				prenom = (char) (prenom.charAt(i) - 32) + prenom.substring(i + 1);
-			    }
-			}
-			if (prenom.charAt(i) == ' ' || prenom.charAt(i) == '-') {
-			    majusculeSuivant = true;
-			} else {
-			    majusculeSuivant = false;
-			}
-		    }
+		    String nom = champNom.getText().toUpperCase().replace(',',';');
+		    String prenom = MainWindow.formatString(champPrenom.getText().toLowerCase());
 		    String surnom = champSurnom.getText().replace(",", ";");
 
 		    if (champTrigramme.getBackground().equals(Color.GREEN)) {
