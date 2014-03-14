@@ -145,7 +145,7 @@ public class ClopesDialog extends JDialog {
 		    throw new TDBException("vous n'avez pas les droits");
 		}
 	    }
-	    clopes.Vendre(parent.trigrammeActif,admin,quantite);
+	    clopes.vendre(parent.trigrammeActif,admin,quantite);
 	}
 	parent.refresh();
     }

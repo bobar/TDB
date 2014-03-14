@@ -6,13 +6,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.sql.Statement;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+import main.Clopes;
 import main.MainWindow;
 
 public class ClopesModificationDialog extends JDialog {
@@ -20,8 +20,7 @@ public class ClopesModificationDialog extends JDialog {
     private static final long serialVersionUID = 1L;
     MainWindow parent;
     ClopesModificationDialogListener listener = new ClopesModificationDialogListener();
-    String marque;
-    double prix;
+    Clopes clope;
     JTextField champMarque;
     JTextField champPrix;
     JButton okButton;
@@ -62,11 +61,10 @@ public class ClopesModificationDialog extends JDialog {
 
     }
 
-    ClopesModificationDialog(MainWindow parent, String marque, double prix) {
+    ClopesModificationDialog(MainWindow parent, String marque) throws Exception {
 	super(parent, "Modifier des clopes", true);
 	this.parent = parent;
-	this.marque = marque;
-	this.prix = prix;
+	this.clope = new Clopes(parent, marque);
     }
 
     public void executer() throws Exception {
@@ -77,7 +75,7 @@ public class ClopesModificationDialog extends JDialog {
 	champMarque = new JTextField();
 	champMarque.setPreferredSize(new Dimension(150, 20));
 	champMarque.addKeyListener(listener);
-	champMarque.setText(marque);
+	champMarque.setText(clope.marque());
 	champMarque.setEditable(false);
 
 	JLabel labelPrix = new JLabel("Prix : ");
@@ -85,7 +83,7 @@ public class ClopesModificationDialog extends JDialog {
 
 	champPrix = new JTextField();
 	champPrix.setPreferredSize(new Dimension(150, 20));
-	champPrix.setText(prix + "");
+	champPrix.setText((double) clope.prix() / 100 + "");
 	champPrix.addKeyListener(listener);
 
 	okButton = new JButton("Valider");
@@ -117,14 +115,10 @@ public class ClopesModificationDialog extends JDialog {
 
 	if (validation) {
 	    try {
-		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("UPDATE clopes SET prix="
-			+ (int) Math.round(100 * Double.parseDouble(champPrix.getText()))
-			+ " WHERE marque='" + marque + "'");
+		clope.setPrix((int) Math.round(100 * Double.parseDouble(champPrix.getText())));
 	    } catch (Exception e) {
 		parent.afficherErreur(e);
 	    }
 	}
     }
-
 }

@@ -6,8 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.util.LinkedList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -18,6 +17,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import main.Clopes;
 import main.MainWindow;
 import main.TDBException;
 
@@ -69,11 +69,9 @@ public class ClopesListDialog extends JDialog {
 		} else if (arg0.getSource().equals(modifierButton)) {
 		    int ligneChoisie = listeClopes.getSelectedRow();
 		    if (ligneChoisie == -1) { throw new TDBException("Pas de clopes sélectionnées"); }
-		    double prix =
-			    Double.parseDouble((String) listeClopes.getValueAt(ligneChoisie, 1));
 		    ClopesModificationDialog dialog =
 			    new ClopesModificationDialog(parent, (String) listeClopes.getValueAt(
-				    ligneChoisie, 0), prix);
+				    ligneChoisie, 0));
 		    dialog.executer();
 		} else if (arg0.getSource().equals(supprimerButton)) {
 		    int ligneChoisie = listeClopes.getSelectedRow();
@@ -86,9 +84,9 @@ public class ClopesListDialog extends JDialog {
 				    "Confirmation", JOptionPane.OK_CANCEL_OPTION,
 				    JOptionPane.QUESTION_MESSAGE, null);
 		    if (confirmation == JOptionPane.OK_OPTION) {
-			Statement stmt = parent.connexion.createStatement();
-			stmt.executeUpdate("DELETE FROM clopes WHERE marque='"
-				+ modele.getValueAt(ligneChoisie, 0) + "'");
+			String marque = (String) modele.getValueAt(ligneChoisie, 0);
+			Clopes clopes = new Clopes(parent, marque);
+			clopes.delete();
 		    }
 		} else if (arg0.getSource().equals(resetButton)) {
 		    int confirmation =
@@ -97,8 +95,7 @@ public class ClopesListDialog extends JDialog {
 				    "Confirmation", JOptionPane.OK_CANCEL_OPTION,
 				    JOptionPane.QUESTION_MESSAGE, null);
 		    if (confirmation == JOptionPane.OK_OPTION) {
-			Statement stmt = parent.connexion.createStatement();
-			stmt.executeUpdate("UPDATE clopes SET quantite =0");
+			Clopes.resetQuantites(parent);
 		    }
 		} else if (arg0.getSource().equals(fermerButton)) {
 		    dispose();
@@ -194,14 +191,11 @@ public class ClopesListDialog extends JDialog {
 	for (int i = modele.getRowCount() - 1; i >= 0; i--) {
 	    modele.removeRow(i);
 	}
-	Statement stmt = parent.connexion.createStatement();
-	ResultSet rs = stmt.executeQuery("SELECT * FROM clopes ORDER BY quantite DESC");
-
-	while (rs.next()) {
-	    String[] item =
-		    { rs.getString("marque"), Double.parseDouble(rs.getString("prix")) / 100 + "",
-			    rs.getString("quantite") };
-	    modele.addRow(item);
+	LinkedList<Clopes> clopes = Clopes.getAllClopes(parent);
+	for (Clopes clope : clopes) {
+	    String[] data =
+		    { clope.marque(), "" + (double) clope.prix() / 100, "" + clope.quantite() };
+	    modele.addRow(data);
 	}
 	listeClopes.setModel(modele);
 	listeClopes.repaint();

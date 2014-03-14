@@ -113,7 +113,7 @@ public class ClopesCreationDialog extends JDialog {
 	    String marque = MainWindow.formatString(champMarque.getText());
 	    int prix = (int) Math.round(100 * Double.parseDouble(champPrix.getText()));
 	    Clopes clopes = new Clopes(this.parent, marque, prix);
-	    clopes.Creer(null);
+	    clopes.creer(null);
 	}
     }
 }
