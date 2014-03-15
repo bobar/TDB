@@ -13,6 +13,7 @@
 	<path id="TDB.classpath">
 		<pathelement location="bin" />
 		<pathelement location="mysql-connector-java-5.1.22-bin.jar" />
+		<pathelement location="mail.jar" />
 	</path>
 	<target name="init">
 		<mkdir dir="bin" />
