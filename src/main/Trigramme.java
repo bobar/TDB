@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
+import java.text.Normalizer;
 import java.util.LinkedList;
 import admin.AuthentificationDialog;
 
@@ -297,7 +298,9 @@ public class Trigramme {
 	    String mail =
 		    first_name.toLowerCase().replace(' ', '-') + "."
 			    + name.toLowerCase().replace(' ', '-') + "@polytechnique.edu";
-	    GoogleMail.Send("bobar.negatif", "mythemec", mail, "T'es en négatif", message);
+	    mail = Normalizer.normalize(mail, Normalizer.Form.NFD);
+	    mail = mail.replaceAll("[^\\p{ASCII}]", "");
+	    GoogleMail.Send("bobar.negatif", "plapzderas", mail, "T'es en négatif", message);
 	}
     }
 }
