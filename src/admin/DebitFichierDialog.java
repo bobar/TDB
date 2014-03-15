@@ -172,11 +172,34 @@ public class DebitFichierDialog extends JDialog {
 		String ligne;
 
 		while ((ligne = br.readLine()) != null) {
-		    // TODO deviner le bon séparateur
-		    String[] valeurs = ligne.split(",");
+		    char separateur = ',';
+		    int virgules = MainWindow.countOccurrences(ligne, ',');
+		    int pointvirgules = MainWindow.countOccurrences(ligne, ';');
+		    int deuxpoints = MainWindow.countOccurrences(ligne, ':');
+		    int espaces = MainWindow.countOccurrences(ligne, ' ');
+		    int tabs = MainWindow.countOccurrences(ligne, '\t');
 
+		    int best =
+			    Math.max(Math.max(virgules, pointvirgules),
+				    Math.max(deuxpoints, Math.max(espaces, tabs)));
+		    if (best == virgules) {
+			separateur = ',';
+		    } else if (best == pointvirgules) {
+			separateur = ';';
+		    } else if (best == deuxpoints) {
+			separateur = ':';
+		    } else if (best == espaces) {
+			separateur = ' ';
+		    } else if (best == tabs) {
+			separateur = '\t';
+		    }
+		    
+		    String[] valeurs = ligne.split(separateur + "");
+		    if(valeurs.length==4){
+			valeurs[2]=valeurs[2]+'.'+valeurs[3];
+		    }
 		    if (valeurs.length == 3) {
-			Object[] futureLigne = { true, valeurs[0], valeurs[1], valeurs[2], "" };
+			Object[] futureLigne = { true, valeurs[0], valeurs[1], valeurs[2].replace(',', '.'), "" };
 			modele.addRow(futureLigne);
 		    } else {
 			Object[] futureLigne = { false, "", "Illisible", "", ligne };
