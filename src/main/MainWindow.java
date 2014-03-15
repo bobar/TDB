@@ -290,12 +290,6 @@ public class MainWindow extends JFrame {
 
     public static void main(String[] args) {
 	MainWindow TDB = new MainWindow();
-	// COMMENTED
-	// TDB.prefs.put("version", "TDB 3.0");
-	// TDB.prefs.put("auteur", "Thierry Deo");
-	// TDB.prefs.put("dateMAJ", "25/01/2013");
-	// TDB.prefs.put("dateResetTurnover", "25/01/2013 00:00");
-	// TDB.prefs.put("dateResetHistorique", "25/01/2013 00:00");
 	try {
 	    String trigrammeBanque = "BOB";
 	    String absolutePath = TDB.getExecutionPath();
@@ -354,10 +348,11 @@ public class MainWindow extends JFrame {
     }
 
     public void afficherMythe() {
-	JOptionPane.showMessageDialog(this,
-		"Plap zdé mythe" + "\nAuteur : " + prefs.get("auteur", "Thierry Deo")
-			+ "\n\nReset chiffres d'affaires : " + prefs.get("dateResetTurnover", "")
-			+ "\nReset historiques : " + prefs.get("dateResetHistorique", ""), "Mythe",
+	JOptionPane.showMessageDialog(
+		this,
+		"Plap zdé mythe" + "\n\nReset chiffres d'affaires : "
+			+ prefs.get("dateResetTurnover", "") + "\nReset historiques : "
+			+ prefs.get("dateResetHistorique", ""), "Mythe",
 		JOptionPane.INFORMATION_MESSAGE);
 	JOptionPane.showMessageDialog(this, "Manou Manou Manou Manou", "Mythe",
 		JOptionPane.INFORMATION_MESSAGE);
@@ -733,25 +728,25 @@ public class MainWindow extends JFrame {
 
     public static String formatString(String zou) {
 	zou.replace(',', ';'); // Pour les exports csv.
-	//Et on met les premieres lettres de chaque mot en majuscule.
-	if(!zou.isEmpty()){
+	// Et on met les premieres lettres de chaque mot en majuscule.
+	if (!zou.isEmpty()) {
 	    zou.substring(0, 0).toUpperCase();
 	}
-	for(int i=1;i<zou.length();++i){
-	    if(zou.charAt(i-1)==' ' || zou.charAt(i-1)=='-'){
+	for (int i = 1; i < zou.length(); ++i) {
+	    if (zou.charAt(i - 1) == ' ' || zou.charAt(i - 1) == '-') {
 		zou.substring(i, i).toUpperCase();
 	    }
 	}
 	return zou;
     }
-    
+
     public static int countOccurrences(String haystack, char needle) {
-	    int count = 0;
-	    for (char c : haystack.toCharArray()) {
-	        if (c == needle) {
-	           ++count;
-	        }
+	int count = 0;
+	for (char c : haystack.toCharArray()) {
+	    if (c == needle) {
+		++count;
 	    }
-	    return count;
 	}
+	return count;
+    }
 }
