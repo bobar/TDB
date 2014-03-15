@@ -288,4 +288,16 @@ public class Trigramme {
 	}
 	return res;
     }
+
+    public void sendMail() throws Exception {
+	if (status == 0 && balance < 0) {
+	    String message = "Salut,\n\nT'es en négatif au BôB.\nTu nous dois ";
+	    message += ((-(double) balance / 100) + "").replace('.', ',');
+	    message += " €. Apporte nous un chèque.\n\nLe BôB, qui t'enkhûle avec affection.";
+	    String mail =
+		    first_name.toLowerCase().replace(' ', '-') + "."
+			    + name.toLowerCase().replace(' ', '-') + "@polytechnique.edu";
+	    GoogleMail.Send("bobar.negatif", "mythemec", mail, "T'es en négatif", message);
+	}
+    }
 }
