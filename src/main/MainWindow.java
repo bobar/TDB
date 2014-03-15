@@ -72,7 +72,7 @@ public class MainWindow extends JFrame {
     public Stack<Transaction> dernieresActions;
 
     private MainWindowListener mainWindowListener = new MainWindowListener(this);
-    Preferences prefs = Preferences.systemNodeForPackage(this.getClass());
+    Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
     // Création de tous les menus, on les met en variable global pour y avoir
     // accès dans le listener
@@ -744,4 +744,14 @@ public class MainWindow extends JFrame {
 	}
 	return zou;
     }
+    
+    public static int countOccurrences(String haystack, char needle) {
+	    int count = 0;
+	    for (char c : haystack.toCharArray()) {
+	        if (c == needle) {
+	           ++count;
+	        }
+	    }
+	    return count;
+	}
 }
