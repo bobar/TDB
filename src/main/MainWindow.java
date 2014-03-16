@@ -323,7 +323,7 @@ public class MainWindow extends JFrame {
 		this.connecter();
 	    } catch (Exception e1) {}
 	}
-	if (e.getClass() != TDBException.class) {
+	if (!TDBException.class.isAssignableFrom(e.getClass())) {
 	    try {
 		String absolutePath = this.getExecutionPath();
 		PrintWriter out =
@@ -343,7 +343,6 @@ public class MainWindow extends JFrame {
 		e1.printStackTrace();
 	    }
 	}
-
     }
 
     public void afficherMythe() {
