@@ -31,8 +31,8 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import main.Admin;
 import main.MainWindow;
-import main.TDBException;
 import main.Transaction;
+import main.TrigException;
 import main.Trigramme;
 import operationsStandard.TrigrammeDialog;
 
@@ -129,9 +129,9 @@ public class DebitFichierDialog extends JDialog {
 	    dialog.executer();
 	}
 	if (parent.trigrammeActif == null) {
-	    throw new TDBException("Pas de trigramme banque ouvert");
+	    throw new TrigException("Pas de trigramme banque ouvert");
 	} else if (parent.trigrammeActif.status != 2) {
-	    throw new TDBException("Le trigramme n'est pas un compte binet");
+	    throw new TrigException("Le trigramme n'est pas un compte binet");
 	}
 
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);

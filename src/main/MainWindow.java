@@ -205,7 +205,7 @@ public class MainWindow extends JFrame {
 	    dialog.executer();
 	}
 	if (trigrammeActif.status != Trigramme.Binet) {
-	    throw new TDBException("Le trigramme n'est pas un compte binet");
+	    throw new TrigException("Le trigramme n'est pas un compte binet");
 	}
 	banqueBinet = trigrammeActif;
 	banqueBobActif = true;

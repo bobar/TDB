@@ -15,8 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.WindowConstants;
+import main.AuthException;
 import main.MainWindow;
-import main.TDBException;
 
 // Pour info : 0=pékin, 1=ami du BôB, 2=ex-BôBarman, 3=BôBarman
 
@@ -77,58 +77,57 @@ public class MotDePasseDialog extends JDialog {
 
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
-	if (authentification.admin.pekin()) {
-	    JLabel labelMDP1 = new JLabel("Mot de passe : ");
-	    labelMDP1.setPreferredSize(new Dimension(120, 20));
-	    champMDP1 = new JPasswordField();
-	    champMDP1.setPreferredSize(new Dimension(150, 20));
+	if (!authentification.admin.pekin()) {
+	    throw new AuthException("Vous n'avez pas de compte admin.");
+	}
+	JLabel labelMDP1 = new JLabel("Mot de passe : ");
+	labelMDP1.setPreferredSize(new Dimension(120, 20));
+	champMDP1 = new JPasswordField();
+	champMDP1.setPreferredSize(new Dimension(150, 20));
 
-	    JLabel labelMDP2 = new JLabel("Confirmation : ");
-	    labelMDP2.setPreferredSize(new Dimension(120, 20));
-	    champMDP2 = new JPasswordField();
-	    champMDP2.setPreferredSize(new Dimension(150, 20));
-	    champMDP2.addKeyListener(listener);
+	JLabel labelMDP2 = new JLabel("Confirmation : ");
+	labelMDP2.setPreferredSize(new Dimension(120, 20));
+	champMDP2 = new JPasswordField();
+	champMDP2.setPreferredSize(new Dimension(150, 20));
+	champMDP2.addKeyListener(listener);
 
-	    okButton = new JButton("Valider");
-	    okButton.addActionListener(listener);
-	    okButton.setPreferredSize(new Dimension(140, 20));
+	okButton = new JButton("Valider");
+	okButton.addActionListener(listener);
+	okButton.setPreferredSize(new Dimension(140, 20));
 
-	    cancelButton = new JButton("Annuler");
-	    cancelButton.addActionListener(listener);
-	    cancelButton.setPreferredSize(new Dimension(140, 20));
+	cancelButton = new JButton("Annuler");
+	cancelButton.addActionListener(listener);
+	cancelButton.setPreferredSize(new Dimension(140, 20));
 
-	    JPanel pane = new JPanel();
-	    pane.add(labelMDP1);
-	    pane.add(champMDP1);
-	    pane.add(labelMDP2);
-	    pane.add(champMDP2);
-	    pane.add(okButton);
-	    pane.add(cancelButton);
-	    pane.setPreferredSize(new Dimension(300, 80));
+	JPanel pane = new JPanel();
+	pane.add(labelMDP1);
+	pane.add(champMDP1);
+	pane.add(labelMDP2);
+	pane.add(champMDP2);
+	pane.add(okButton);
+	pane.add(cancelButton);
+	pane.setPreferredSize(new Dimension(300, 80));
 
-	    this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-	    Container contentPane = this.getContentPane();
-	    contentPane.add(pane);
-	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
-		    (parent.getHeight() - this.getHeight()) / 2);
-	    this.setResizable(false);
-	    this.setVisible(true);
+	Container contentPane = this.getContentPane();
+	contentPane.add(pane);
+	this.pack();
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
+	this.setResizable(false);
+	this.setVisible(true);
 
-	    if (validation = true) {
-		String mdp1 = MD5Hex(champMDP1.getPassword());
-		String mdp2 = MD5Hex(champMDP2.getPassword());
-		if (!mdp1.equals(mdp2)) {
-		    throw new TDBException("Les mots de passe ne correspondent pas");
-		} else {
-		    authentification.admin.setPasswd(mdp1);
-		    JOptionPane.showMessageDialog(this, "Mot de passe changé", "",
-			    JOptionPane.INFORMATION_MESSAGE);
-		}
+	if (validation = true) {
+	    String mdp1 = MD5Hex(champMDP1.getPassword());
+	    String mdp2 = MD5Hex(champMDP2.getPassword());
+	    if (!mdp1.equals(mdp2)) {
+		throw new AuthException("Les mots de passe ne correspondent pas");
+	    } else {
+		authentification.admin.setPasswd(mdp1);
+		JOptionPane.showMessageDialog(this, "Mot de passe changé", "",
+			JOptionPane.INFORMATION_MESSAGE);
 	    }
-	} else {
-	    throw new TDBException("Vous n'avez pas de compte admin");
 	}
     }
 

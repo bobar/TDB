@@ -32,7 +32,7 @@ public class Admin {
 	    this.permissions = rs.getInt("permissions");
 	    this.passwd = rs.getString("passwd");
 	} else {
-	    throw new TDBException("Aucun admin avec cet id");
+	    throw new TrigException("Aucun admin avec cet id");
 	}
     }
 
@@ -47,7 +47,7 @@ public class Admin {
 	    this.permissions = rs.getInt("permissions");
 	    this.passwd = rs.getString("passwd");
 	} else {
-	    throw new TDBException("Aucun administrateur avec ce trigramme.");
+	    throw new TrigException("Aucun administrateur avec ce trigramme.");
 	}
     }
 
@@ -60,7 +60,7 @@ public class Admin {
 	    this.permissions = permissions;
 	    this.passwd = passwd;
 	} else {
-	    throw new TDBException("Trigramme inexistant");
+	    throw new TrigException("Trigramme inexistant");
 	}
     }
 
@@ -78,7 +78,7 @@ public class Admin {
 		throw new AuthException("Le mot de passe est incorrect.");
 	    }
 	} else {
-	    throw new TDBException("Pas d'administrateur avec ce trigramme");
+	    throw new TrigException("Pas d'administrateur avec ce trigramme");
 	}
     }
 

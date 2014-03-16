@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.WindowConstants;
 import main.Admin;
+import main.AuthException;
 import main.MainWindow;
 import main.TrigrammeTextField;
 
@@ -137,7 +138,7 @@ public class AdminCreationDialog extends JDialog {
 	    String cryptage1 = MD5Hex(champMDP1.getPassword());
 	    String cryptage2 = MD5Hex(champMDP2.getPassword());
 	    if (!cryptage1.equals(cryptage2)) {
-		throw new Exception("Les mots de passe ne correspondent pas");
+		throw new AuthException("Les mots de passe ne correspondent pas");
 	    }
 	    try {
 		Admin new_admin =

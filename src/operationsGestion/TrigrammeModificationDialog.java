@@ -19,7 +19,7 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import main.AuthException;
 import main.MainWindow;
-import main.TDBException;
+import main.TrigException;
 import main.Trigramme;
 import operationsStandard.TrigrammeDialog;
 import admin.AuthentificationDialog;
@@ -261,7 +261,7 @@ public class TrigrammeModificationDialog extends JDialog {
 				    parent.trigrammeActif.turnover);
 		    trigramme.modifier(parent.trigrammeActif.id, authentification.admin);
 		} else {
-		    throw new TDBException("Trigramme déjà pris.");
+		    throw new TrigException("Trigramme déjà pris.");
 		}
 	    }
 	    parent.refresh();

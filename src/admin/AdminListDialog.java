@@ -115,8 +115,8 @@ public class AdminListDialog extends JDialog {
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
 
-	if (authentification.admin.BoBarman()) {
-	    throw new AuthException("Vous n'avez pas les droits");
+	if (!authentification.admin.BoBarman()) {
+	    throw new AuthException();
 	}
 
 	this.addKeyListener(listener);

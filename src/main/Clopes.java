@@ -23,7 +23,7 @@ public class Clopes {
 	    quantite = rs.getInt("quantite");
 	    prix = rs.getInt("prix");
 	    if (rs.next()) {
-		throw new TDBException("Cette marque n'est pas unique.");
+		throw new DBException("Cette marque n'est pas unique.");
 	    }
 	} else {
 	    throw new TDBException("Clopes inconnues : " + marque);
