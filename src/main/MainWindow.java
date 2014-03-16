@@ -197,67 +197,64 @@ public class MainWindow extends JFrame {
     public void ouvrirBanqueBinet() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
-	if (authentification.admin.exBoBarman()) {
-	    if (trigrammeActif == null || trigrammeActif.status != 2) {
-		TrigrammeDialog dialog = new TrigrammeDialog(this, "");
-		dialog.executer();
-	    }
-	    if (trigrammeActif.status != 2) { throw new TDBException(
-		    "Le trigramme n'est pas un compte binet"); }
-	    banqueBinet = trigrammeActif;
-	    banqueBobActif = true;
-	} else {
-	    throw new TDBException("Vous n'avez pas les droits");
+	if (!authentification.admin.exBoBarman()) {
+	    throw new AuthException();
 	}
+	if (trigrammeActif == null || trigrammeActif.status != Trigramme.Binet) {
+	    TrigrammeDialog dialog = new TrigrammeDialog(this, "");
+	    dialog.executer();
+	}
+	if (trigrammeActif.status != Trigramme.Binet) {
+	    throw new TDBException("Le trigramme n'est pas un compte binet");
+	}
+	banqueBinet = trigrammeActif;
+	banqueBobActif = true;
 	this.refresh();
     }
 
     public void fermerBanqueBinet() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
-	if (authentification.admin.exBoBarman()) {
-	    banqueBinet = null;
-	    banqueBobActif = true;
-	} else {
-	    throw new TDBException("Vous n'avez pas les droits");
+	if (!authentification.admin.exBoBarman()) {
+	    throw new AuthException();
 	}
+	banqueBinet = null;
+	banqueBobActif = true;
 	this.refresh();
     }
 
     public void reinitialiserTurnover() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
-	if (authentification.admin.BoBarman()) {
-	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    String date = formater.format(new Date());
-	    prefs.put("dateResetTurnover", date);
-	    Statement stmt = connexion.createStatement();
-	    stmt.executeUpdate("UPDATE accounts SET turnover=balance");
-	    stmt.executeUpdate("UPDATE accounts SET turnover=0 WHERE status=2");
-	    refresh();
-	    JOptionPane.showMessageDialog(this, "Chiffres d'affaires réinitialisés", "",
-		    JOptionPane.INFORMATION_MESSAGE);
-	} else {
-	    throw new TDBException("Vous n'avez pas les droits");
+	if (!authentification.admin.BoBarman()) {
+	    throw new AuthException();
 	}
+	SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	String date = formater.format(new Date());
+	prefs.put("dateResetTurnover", date);
+	Statement stmt = connexion.createStatement();
+	stmt.executeUpdate("UPDATE accounts SET turnover=balance");
+	stmt.executeUpdate("UPDATE accounts SET turnover=0 WHERE status=2");
+	refresh();
+	JOptionPane.showMessageDialog(this, "Chiffres d'affaires réinitialisés", "",
+		JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void reinitialiserHistorique() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(this);
 	authentification.executer();
-	if (authentification.admin.BoBarman()) {
-	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    String date = formater.format(new Date());
-	    prefs.put("dateResetHistorique", date);
-	    Statement stmt = connexion.createStatement();
-	    stmt.executeUpdate("INSERT INTO transactions_history SELECT * FROM transactions");
-	    stmt.executeUpdate("DELETE FROM transactions");
-	    refresh();
-	    JOptionPane.showMessageDialog(this, "Historiques réinitialisés", "",
-		    JOptionPane.INFORMATION_MESSAGE);
-	} else {
-	    throw new TDBException("Vous n'avez pas les droits");
+	if (!authentification.admin.BoBarman()) {
+	    throw new AuthException();
 	}
+	SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	String date = formater.format(new Date());
+	prefs.put("dateResetHistorique", date);
+	Statement stmt = connexion.createStatement();
+	stmt.executeUpdate("INSERT INTO transactions_history SELECT * FROM transactions");
+	stmt.executeUpdate("DELETE FROM transactions");
+	refresh();
+	JOptionPane.showMessageDialog(this, "Historiques réinitialisés", "",
+		JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void annuler() throws Exception {
@@ -570,7 +567,7 @@ public class MainWindow extends JFrame {
 	// Finalement,connexion à la base de données.
 	this.connecter();
 	banqueBob = new Trigramme(this, trigrammeBanque);
-	if (banqueBob.status != 2) {
+	if (banqueBob.status != Trigramme.Binet) {
 	    this.dispose();
 	    throw new TDBException("La banque doit être un compte binet");
 	}

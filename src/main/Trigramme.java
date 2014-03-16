@@ -50,9 +50,11 @@ public class Trigramme {
 	    picture = rs.getString("picture");
 	    balance = rs.getInt("balance");
 	    turnover = rs.getInt("turnover");
-	    if (rs.next()) { throw new TDBException("Trigramme pas unique"); }
+	    if (rs.next()) {
+		throw new TrigException("Trigramme pas unique");
+	    }
 	} else {
-	    throw new TDBException("Trigramme inconnu : " + tri);
+	    throw new TrigException("Trigramme inconnu : " + tri);
 	}
     }
 
@@ -102,7 +104,9 @@ public class Trigramme {
 	}
 	ResultSet rs1 =
 		stmt.executeQuery("SELECT id FROM accounts WHERE trigramme='" + trigramme + "'");
-	if (rs1.first()) { throw new TDBException("Trigramme existant"); }
+	if (rs1.first()) {
+	    throw new TrigException("Trigramme existant");
+	}
 	PreparedStatement stmt2 =
 		parent.connexion
 			.prepareStatement("INSERT INTO accounts (id,trigramme, name, first_name, nickname, casert, status, promo, mail, picture, balance, turnover) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
@@ -138,12 +142,13 @@ public class Trigramme {
 	if (rs.next()) {
 	    int id = rs.getInt("id");
 	    if (rs.next()) {
-		throw new TDBException("Trigramme double");
+		throw new DBException("Id en double dans la base.");
 	    } else {
+		this.id = id;
 		return id;
 	    }
 	} else {
-	    throw new TDBException("Trigramme inexistant");
+	    throw new TrigException("Trigramme inexistant");
 	}
     }
 
@@ -175,19 +180,22 @@ public class Trigramme {
 			    + rs.getString("trigramme") + ")", admin, null, parent.banqueBob.id);
 	    transaction.WriteToDB(parent);
 	} else {
-	    throw new TDBException("Trigramme inexistant");
+	    throw new TrigException("Trigramme inexistant");
 	}
     }
 
     public void debiter(int montant) throws Exception {
-	if (Math.abs(montant) > 1000000) { throw new TDBException(
-		"Opération annulée car le montant est trop élevé"); }
+	if (Math.abs(montant) > 1000000) {
+	    throw new TDBException("Opération annulée car le montant est trop élevé.");
+	}
 	if (montant >= 0 && montant <= 2000) {
 	    if (balance - montant < 0 && status != Trigramme.XPlatal) {
 		AuthentificationDialog authentification = new AuthentificationDialog(parent);
 		authentification.executer();
-		if (!authentification.admin.ami()) { throw new TDBException(
-			"Vous n'avez pas les droits de faire passer cette personne en négatif"); }
+		if (!authentification.admin.ami()) {
+		    throw new AuthException(
+			    "Vous n'avez pas les droits de faire passer cette personne en négatif.");
+		}
 	    }
 	    int banqueId = parent.banqueBob.id;
 	    if (!parent.banqueBobActif) {
@@ -199,30 +207,28 @@ public class Trigramme {
 	} else if (montant > 2000) {
 	    AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	    authentification.executer();
-	    if (authentification.admin.ami()) {
-		int banqueId = parent.banqueBob.id;
-		if (!parent.banqueBobActif) {
-		    banqueId = parent.banqueBinet.id;
-		}
-		Transaction transaction =
-			new Transaction(id, -montant, "", authentification.admin, null, banqueId);
-		parent.dernieresActions.add(transaction);
-		transaction.WriteToDB(parent);
-	    } else {
-		throw new TDBException("Vous n'avez pas les droits");
+	    if (!authentification.admin.ami()) {
+		throw new AuthException();
 	    }
+	    int banqueId = parent.banqueBob.id;
+	    if (!parent.banqueBobActif) {
+		banqueId = parent.banqueBinet.id;
+	    }
+	    Transaction transaction =
+		    new Transaction(id, -montant, "", authentification.admin, null, banqueId);
+	    parent.dernieresActions.add(transaction);
+	    transaction.WriteToDB(parent);
 	} else {
 	    AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	    authentification.executer();
-	    if (authentification.admin.ami()) {
-		Transaction transaction =
-			new Transaction(id, montant, "", authentification.admin, null,
-				parent.banqueBob.id);
-		parent.dernieresActions.add(transaction);
-		transaction.WriteToDB(parent);
-	    } else {
-		throw new TDBException("Vous n'avez pas les droits");
+	    if (!authentification.admin.ami()) {
+		throw new AuthException();
 	    }
+	    Transaction transaction =
+		    new Transaction(id, montant, "", authentification.admin, null,
+			    parent.banqueBob.id);
+	    parent.dernieresActions.add(transaction);
+	    transaction.WriteToDB(parent);
 	}
 	Thread.sleep(200);
 	parent.trigrammeActif = new Trigramme(parent, parent.trigrammeActif.trigramme);
@@ -231,8 +237,9 @@ public class Trigramme {
     }
 
     public void crediter(int montant, String commentaire, Admin admin) throws Exception {
-	if (Math.abs(montant) > 100000) { throw new TDBException(
-		"Opération annulée car le montant est trop élevé"); }
+	if (Math.abs(montant) > 100000) {
+	    throw new TDBException("Opération annulée car le montant est trop élevé.");
+	}
 	int banqueId = parent.banqueBob.id;
 
 	Transaction transaction = new Transaction(id, montant, commentaire, admin, null, banqueId);
@@ -244,19 +251,18 @@ public class Trigramme {
     public void supprimer() throws Exception {
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
-	if (authentification.admin.BoBarman()) {
-	    if (parent.trigrammeActif.balance == 0) {
-		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("DELETE FROM accounts WHERE id=" + id);
-		stmt.executeUpdate("DELETE FROM admins WHERE id=" + id);
-		stmt.executeUpdate("DELETE FROM transactions WHERE id=" + id);
-		stmt.executeUpdate("DELETE FROM transactions WHERE id2=" + id);
-		stmt.closeOnCompletion();
-	    } else {
-		throw new TDBException("Le trigramme doit être à 0.");
-	    }
+	if (!authentification.admin.BoBarman()) {
+	    throw new AuthException();
+	}
+	if (parent.trigrammeActif.balance == 0) {
+	    Statement stmt = parent.connexion.createStatement();
+	    stmt.executeUpdate("DELETE FROM accounts WHERE id=" + id);
+	    stmt.executeUpdate("DELETE FROM admins WHERE id=" + id);
+	    stmt.executeUpdate("DELETE FROM transactions WHERE id=" + id);
+	    stmt.executeUpdate("DELETE FROM transactions WHERE id2=" + id);
+	    stmt.closeOnCompletion();
 	} else {
-	    throw new TDBException("Vous n'avez pas les droits.");
+	    throw new TDBException("Le trigramme doit être à 0.");
 	}
     }
 
@@ -268,7 +274,7 @@ public class Trigramme {
 	if (rs.next()) {
 	    return (rs.getInt("c") > 0);
 	} else {
-	    throw new TDBException("Impossible de chercher dans la base");
+	    throw new DBException("Pas de trigrammes dans la base");
 	}
     }
 

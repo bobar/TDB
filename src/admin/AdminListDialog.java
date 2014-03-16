@@ -17,6 +17,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 import main.Admin;
+import main.AuthException;
 import main.MainWindow;
 import main.TDBException;
 import main.Trigramme;
@@ -66,7 +67,9 @@ public class AdminListDialog extends JDialog {
 		    dialog.executer();
 		} else if (arg0.getSource().equals(modifierButton)) {
 		    int ligneChoisie = listeAdmin.getSelectedRow();
-		    if (ligneChoisie == -1) { throw new TDBException("Pas d'admin sélectionné"); }
+		    if (ligneChoisie == -1) {
+			throw new TDBException("Pas d'admin sélectionné");
+		    }
 		    int permissions = 0;
 		    String perms = (String) listeAdmin.getValueAt(ligneChoisie, 3);
 		    permissions = Admin.status.indexOf(perms);
@@ -76,7 +79,9 @@ public class AdminListDialog extends JDialog {
 		    dialog.executer();
 		} else if (arg0.getSource().equals(supprimerButton)) {
 		    int ligneChoisie = listeAdmin.getSelectedRow();
-		    if (ligneChoisie == -1) { throw new TDBException("Pas d'admin sélectionné"); }
+		    if (ligneChoisie == -1) {
+			throw new TDBException("Pas d'admin sélectionné");
+		    }
 		    Trigramme trigramme =
 			    new Trigramme(parent, (String) listeAdmin.getValueAt(ligneChoisie, 0));
 		    int confirmation =
@@ -111,72 +116,71 @@ public class AdminListDialog extends JDialog {
 	authentification.executer();
 
 	if (authentification.admin.BoBarman()) {
-	    this.addKeyListener(listener);
-
-	    listeAdmin = new JTable();
-	    listeAdmin.addKeyListener(listener);
-	    listeAdmin.setModel(modele);
-	    listeAdmin.repaint();
-
-	    resultatsScrollPane = new JScrollPane(listeAdmin);
-	    resultatsScrollPane
-		    .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-	    resultatsScrollPane.setPreferredSize(new Dimension(400, 340));
-
-	    String[] header = { "Trigramme", "Nom", "Prénom", "Statut" };
-	    modele.setColumnIdentifiers(header);
-
-	    listeAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	    listeAdmin.setModel(modele);
-	    listeAdmin.getColumnModel().getColumn(0).setPreferredWidth(65);
-	    listeAdmin.getColumnModel().getColumn(1).setPreferredWidth(80);
-	    listeAdmin.getColumnModel().getColumn(2).setPreferredWidth(80);
-	    listeAdmin.getColumnModel().getColumn(3).setPreferredWidth(70);
-	    listeAdmin.repaint();
-
-	    listeAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-	    creerButton = new JButton("Créer un admin");
-	    creerButton.setPreferredSize(new Dimension(220, 20));
-	    creerButton.addActionListener(listener);
-
-	    modifierButton = new JButton("Modifier l'admin");
-	    modifierButton.setPreferredSize(new Dimension(220, 20));
-	    modifierButton.addActionListener(listener);
-
-	    supprimerButton = new JButton("Supprimer l'admin");
-	    supprimerButton.setPreferredSize(new Dimension(220, 20));
-	    supprimerButton.addActionListener(listener);
-
-	    fermerButton = new JButton("Fermer la fenêtre");
-	    fermerButton.setPreferredSize(new Dimension(220, 20));
-	    fermerButton.addActionListener(listener);
-
-	    fond = new JPanel();
-	    fond.setLayout(new FlowLayout(FlowLayout.CENTER));
-	    fond.add(resultatsScrollPane);
-	    fond.add(creerButton);
-	    fond.add(modifierButton);
-	    fond.add(supprimerButton);
-	    fond.add(fermerButton);
-
-	    fond.setPreferredSize(new Dimension(410, 450));
-	    fond.setOpaque(true);
-
-	    this.refresh();
-	    listeAdmin.setModel(modele);
-	    this.setContentPane(fond);
-	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
-		    (parent.getHeight() - this.getHeight()) / 2);
-	    this.setResizable(false);
-
-	    this.setVisible(true);
-	} else {
-	    throw new TDBException("Vous n'avez pas les droits.");
+	    throw new AuthException("Vous n'avez pas les droits");
 	}
-    }
 
+	this.addKeyListener(listener);
+
+	listeAdmin = new JTable();
+	listeAdmin.addKeyListener(listener);
+	listeAdmin.setModel(modele);
+	listeAdmin.repaint();
+
+	resultatsScrollPane = new JScrollPane(listeAdmin);
+	resultatsScrollPane
+		.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	resultatsScrollPane.setPreferredSize(new Dimension(400, 340));
+
+	String[] header = { "Trigramme", "Nom", "Prénom", "Statut" };
+	modele.setColumnIdentifiers(header);
+
+	listeAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	listeAdmin.setModel(modele);
+	listeAdmin.getColumnModel().getColumn(0).setPreferredWidth(65);
+	listeAdmin.getColumnModel().getColumn(1).setPreferredWidth(80);
+	listeAdmin.getColumnModel().getColumn(2).setPreferredWidth(80);
+	listeAdmin.getColumnModel().getColumn(3).setPreferredWidth(70);
+	listeAdmin.repaint();
+
+	listeAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+	creerButton = new JButton("Créer un admin");
+	creerButton.setPreferredSize(new Dimension(220, 20));
+	creerButton.addActionListener(listener);
+
+	modifierButton = new JButton("Modifier l'admin");
+	modifierButton.setPreferredSize(new Dimension(220, 20));
+	modifierButton.addActionListener(listener);
+
+	supprimerButton = new JButton("Supprimer l'admin");
+	supprimerButton.setPreferredSize(new Dimension(220, 20));
+	supprimerButton.addActionListener(listener);
+
+	fermerButton = new JButton("Fermer la fenêtre");
+	fermerButton.setPreferredSize(new Dimension(220, 20));
+	fermerButton.addActionListener(listener);
+
+	fond = new JPanel();
+	fond.setLayout(new FlowLayout(FlowLayout.CENTER));
+	fond.add(resultatsScrollPane);
+	fond.add(creerButton);
+	fond.add(modifierButton);
+	fond.add(supprimerButton);
+	fond.add(fermerButton);
+
+	fond.setPreferredSize(new Dimension(410, 450));
+	fond.setOpaque(true);
+
+	this.refresh();
+	listeAdmin.setModel(modele);
+	this.setContentPane(fond);
+	this.pack();
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
+	this.setResizable(false);
+
+	this.setVisible(true);
+    }
     // On crée une petite fonction refresh pour après les modifs
     public void refresh() throws Exception {
 	for (int i = modele.getRowCount() - 1; i >= 0; i--) {

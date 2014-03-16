@@ -14,8 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+import main.AuthException;
 import main.MainWindow;
-import main.TDBException;
 
 public class VerifierTotalDialog extends JDialog {
 
@@ -99,68 +99,67 @@ public class VerifierTotalDialog extends JDialog {
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
 
-	if (authentification.admin.BoBarman()) {
-
-	    Statement stmt = parent.connexion.createStatement();
-	    ResultSet rs = stmt.executeQuery("SELECT SUM(balance) as tot FROM accounts");
-	    if (rs.next()) {
-		totalActuel = Integer.parseInt(rs.getString("tot"));
-	    }
-	    rs =
-		    stmt.executeQuery("SELECT balance FROM accounts WHERE trigramme='"
-			    + parent.banqueBob.trigramme + "'");
-	    if (rs.next()) {
-		bobActuel = Integer.parseInt(rs.getString("balance"));
-	    }
-	    bobIdeal = bobActuel - totalActuel;
-
-	    JLabel labelTotal = new JLabel("Total : ");
-	    labelTotal.setPreferredSize(new Dimension(110, 20));
-	    valueTotal = new JLabel("" + (double) totalActuel / 100);
-	    valueTotal.setPreferredSize(new Dimension(100, 20));
-
-	    JLabel labelBobActuel = new JLabel("BôB : ");
-	    labelBobActuel.setPreferredSize(new Dimension(110, 20));
-	    valueBobActuel = new JLabel("" + (double) bobActuel / 100);
-	    valueBobActuel.setPreferredSize(new Dimension(100, 20));
-
-	    JLabel labelBobIdeal = new JLabel("Idéal : ");
-	    labelBobIdeal.setPreferredSize(new Dimension(110, 20));
-	    valueBobIdeal = new JLabel("" + (double) bobIdeal / 100);
-	    valueBobIdeal.setPreferredSize(new Dimension(100, 20));
-
-	    okButton = new JButton("Actualiser");
-	    okButton.addActionListener(listener);
-	    okButton.setPreferredSize(new Dimension(140, 20));
-
-	    cancelButton = new JButton("Quitter");
-	    cancelButton.addActionListener(listener);
-	    cancelButton.setPreferredSize(new Dimension(140, 20));
-
-	    JPanel pane = new JPanel();
-	    pane.add(labelTotal);
-	    pane.add(valueTotal);
-	    pane.add(labelBobActuel);
-	    pane.add(valueBobActuel);
-	    pane.add(labelBobIdeal);
-	    pane.add(valueBobIdeal);
-	    pane.add(okButton);
-	    pane.add(cancelButton);
-	    pane.setPreferredSize(new Dimension(330, 110));
-
-	    this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
-	    Container contentPane = this.getContentPane();
-	    contentPane.add(pane);
-	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
-		    (parent.getHeight() - this.getHeight()) / 2);
-	    this.setResizable(false);
-	    this.setVisible(true);
-
-	    parent.refresh();
-	} else {
-	    throw new TDBException("Vous n'avez pas les droits");
+	if (!authentification.admin.BoBarman()) {
+	    throw new AuthException();
 	}
+
+	Statement stmt = parent.connexion.createStatement();
+	ResultSet rs = stmt.executeQuery("SELECT SUM(balance) as tot FROM accounts");
+	if (rs.next()) {
+	    totalActuel = Integer.parseInt(rs.getString("tot"));
+	}
+	rs =
+		stmt.executeQuery("SELECT balance FROM accounts WHERE trigramme='"
+			+ parent.banqueBob.trigramme + "'");
+	if (rs.next()) {
+	    bobActuel = Integer.parseInt(rs.getString("balance"));
+	}
+	bobIdeal = bobActuel - totalActuel;
+
+	JLabel labelTotal = new JLabel("Total : ");
+	labelTotal.setPreferredSize(new Dimension(110, 20));
+	valueTotal = new JLabel("" + (double) totalActuel / 100);
+	valueTotal.setPreferredSize(new Dimension(100, 20));
+
+	JLabel labelBobActuel = new JLabel("BôB : ");
+	labelBobActuel.setPreferredSize(new Dimension(110, 20));
+	valueBobActuel = new JLabel("" + (double) bobActuel / 100);
+	valueBobActuel.setPreferredSize(new Dimension(100, 20));
+
+	JLabel labelBobIdeal = new JLabel("Idéal : ");
+	labelBobIdeal.setPreferredSize(new Dimension(110, 20));
+	valueBobIdeal = new JLabel("" + (double) bobIdeal / 100);
+	valueBobIdeal.setPreferredSize(new Dimension(100, 20));
+
+	okButton = new JButton("Actualiser");
+	okButton.addActionListener(listener);
+	okButton.setPreferredSize(new Dimension(140, 20));
+
+	cancelButton = new JButton("Quitter");
+	cancelButton.addActionListener(listener);
+	cancelButton.setPreferredSize(new Dimension(140, 20));
+
+	JPanel pane = new JPanel();
+	pane.add(labelTotal);
+	pane.add(valueTotal);
+	pane.add(labelBobActuel);
+	pane.add(valueBobActuel);
+	pane.add(labelBobIdeal);
+	pane.add(valueBobIdeal);
+	pane.add(okButton);
+	pane.add(cancelButton);
+	pane.setPreferredSize(new Dimension(330, 110));
+
+	this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+	Container contentPane = this.getContentPane();
+	contentPane.add(pane);
+	this.pack();
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
+	this.setResizable(false);
+	this.setVisible(true);
+
+	parent.refresh();
     }
 }

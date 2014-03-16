@@ -15,9 +15,9 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import main.Admin;
+import main.AuthException;
 import main.Clopes;
 import main.MainWindow;
-import main.TDBException;
 import main.Trigramme;
 import admin.AuthentificationDialog;
 
@@ -129,7 +129,7 @@ public class ClopesDialog extends JDialog {
 
 	    String marque = (String) champMarque.getSelectedItem();
 	    int quantite = (Integer) champQuantite.getValue();
-	    
+
 	    Clopes clopes = new Clopes(parent, marque);
 
 	    Admin admin = null;
@@ -142,10 +142,10 @@ public class ClopesDialog extends JDialog {
 		if (authentification.admin.ami()) {
 		    admin = authentification.admin;
 		} else {
-		    throw new TDBException("vous n'avez pas les droits");
+		    throw new AuthException();
 		}
 	    }
-	    clopes.vendre(parent.trigrammeActif,admin,quantite);
+	    clopes.vendre(parent.trigrammeActif, admin, quantite);
 	}
 	parent.refresh();
     }

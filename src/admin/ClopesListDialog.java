@@ -68,14 +68,18 @@ public class ClopesListDialog extends JDialog {
 		    dialog.executer();
 		} else if (arg0.getSource().equals(modifierButton)) {
 		    int ligneChoisie = listeClopes.getSelectedRow();
-		    if (ligneChoisie == -1) { throw new TDBException("Pas de clopes sélectionnées"); }
+		    if (ligneChoisie == -1) {
+			throw new TDBException("Pas de clopes sélectionnées");
+		    }
 		    ClopesModificationDialog dialog =
 			    new ClopesModificationDialog(parent, (String) listeClopes.getValueAt(
 				    ligneChoisie, 0));
 		    dialog.executer();
 		} else if (arg0.getSource().equals(supprimerButton)) {
 		    int ligneChoisie = listeClopes.getSelectedRow();
-		    if (ligneChoisie == -1) { throw new TDBException("Pas de clopes sélectionnées"); }
+		    if (ligneChoisie == -1) {
+			throw new TDBException("Pas de clopes sélectionnées");
+		    }
 		    int confirmation =
 			    JOptionPane.showConfirmDialog(
 				    parent,

@@ -136,10 +136,13 @@ public class AdminCreationDialog extends JDialog {
 	if (validation) {
 	    String cryptage1 = MD5Hex(champMDP1.getPassword());
 	    String cryptage2 = MD5Hex(champMDP2.getPassword());
-	    if (!cryptage1.equals(cryptage2)) { throw new Exception(
-		    "Les mots de passe ne correspondent pas"); }
+	    if (!cryptage1.equals(cryptage2)) {
+		throw new Exception("Les mots de passe ne correspondent pas");
+	    }
 	    try {
-		Admin new_admin = new Admin(parent,champTrigramme.getText(),champCategorie.getSelectedIndex(),cryptage1);
+		Admin new_admin =
+			new Admin(parent, champTrigramme.getText(),
+				champCategorie.getSelectedIndex(), cryptage1);
 		new_admin.creer();
 	    } catch (Exception e) {
 		parent.afficherErreur(e);

@@ -57,65 +57,63 @@ public class Export {
 	AuthentificationDialog authentification = new AuthentificationDialog(this.parent);
 	authentification.executer();
 
-	if (authentification.admin.BoBarman()) {
-	    JFileChooser chooser = new JFileChooser();
-	    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	    int returnVal = chooser.showOpenDialog(parent);
-	    if (returnVal == JFileChooser.APPROVE_OPTION) {
-		chemin = chooser.getSelectedFile().getPath();
-		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-		String date = formater.format(new Date());
-		String fichier = chemin + "/transactions_" + date + ".csv";
-		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
-		PreparedStatement stmt =
-			parent.connexion
-				.prepareStatement("SELECT * FROM transactions ORDER BY date DESC");
-		ResultSet rs = stmt.executeQuery();
-		while (rs.next()) {
-		    out.println(rs.getInt("id") + "," + rs.getInt("price") + ","
-			    + rs.getString("comment") + "," + rs.getInt("id") + ","
-			    + rs.getInt("date") + "," + rs.getInt("id2"));
-		}
-		out.close();
-		fichier = chemin + "/accounts_" + date + ".csv";
-		stmt = parent.connexion.prepareStatement("SELECT * FROM accounts ORDER BY id DESC");
-		rs = stmt.executeQuery();
-		out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
-		while (rs.next()) {
-		    out.println(rs.getInt("id") + "," + rs.getString("trigramme") + ","
-			    + rs.getString("name") + "," + rs.getString("first_name") + ","
-			    + rs.getString("nickname") + "," + rs.getString("casert") + ","
-			    + rs.getInt("status") + "," + rs.getInt("promo") + rs.getString("mail")
-			    + "," + rs.getString("picture") + "," + rs.getInt("balance") + ","
-			    + rs.getString("turnover"));
-		}
-		out.close();
-		fichier = chemin + "/admins_" + date + ".csv";
-		stmt = parent.connexion.prepareStatement("SELECT * FROM admins ORDER BY id DESC");
-		rs = stmt.executeQuery();
-		out.close();
-		out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
-		while (rs.next()) {
-		    out.println(rs.getInt("id") + "," + rs.getInt("permissions") + ","
-			    + rs.getString("passwd"));
-		}
-		out.close();
-		fichier = chemin + "/clopes_" + date + ".csv";
-		stmt = parent.connexion.prepareStatement("SELECT * FROM clopes ORDER BY marque");
-		rs = stmt.executeQuery();
-		out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
-		while (rs.next()) {
-		    out.println(rs.getString("marque") + "," + rs.getInt("prix") + ","
-			    + rs.getInt("quantite"));
-		}
-		out.close();
-		JOptionPane.showConfirmDialog(parent, "Fichiers sauvegardés dans " + chemin, "",
-			JOptionPane.PLAIN_MESSAGE);
-	    }
-	} else {
-	    throw new TDBException("Vous n'avez pas les droits");
+	if (!authentification.admin.BoBarman()) {
+	    throw new AuthException();
 	}
-
+	JFileChooser chooser = new JFileChooser();
+	chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	int returnVal = chooser.showOpenDialog(parent);
+	if (returnVal == JFileChooser.APPROVE_OPTION) {
+	    chemin = chooser.getSelectedFile().getPath();
+	    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+	    String date = formater.format(new Date());
+	    String fichier = chemin + "/transactions_" + date + ".csv";
+	    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
+	    PreparedStatement stmt =
+		    parent.connexion
+			    .prepareStatement("SELECT * FROM transactions ORDER BY date DESC");
+	    ResultSet rs = stmt.executeQuery();
+	    while (rs.next()) {
+		out.println(rs.getInt("id") + "," + rs.getInt("price") + ","
+			+ rs.getString("comment") + "," + rs.getInt("id") + "," + rs.getInt("date")
+			+ "," + rs.getInt("id2"));
+	    }
+	    out.close();
+	    fichier = chemin + "/accounts_" + date + ".csv";
+	    stmt = parent.connexion.prepareStatement("SELECT * FROM accounts ORDER BY id DESC");
+	    rs = stmt.executeQuery();
+	    out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
+	    while (rs.next()) {
+		out.println(rs.getInt("id") + "," + rs.getString("trigramme") + ","
+			+ rs.getString("name") + "," + rs.getString("first_name") + ","
+			+ rs.getString("nickname") + "," + rs.getString("casert") + ","
+			+ rs.getInt("status") + "," + rs.getInt("promo") + rs.getString("mail")
+			+ "," + rs.getString("picture") + "," + rs.getInt("balance") + ","
+			+ rs.getString("turnover"));
+	    }
+	    out.close();
+	    fichier = chemin + "/admins_" + date + ".csv";
+	    stmt = parent.connexion.prepareStatement("SELECT * FROM admins ORDER BY id DESC");
+	    rs = stmt.executeQuery();
+	    out.close();
+	    out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
+	    while (rs.next()) {
+		out.println(rs.getInt("id") + "," + rs.getInt("permissions") + ","
+			+ rs.getString("passwd"));
+	    }
+	    out.close();
+	    fichier = chemin + "/clopes_" + date + ".csv";
+	    stmt = parent.connexion.prepareStatement("SELECT * FROM clopes ORDER BY marque");
+	    rs = stmt.executeQuery();
+	    out = new PrintWriter(new BufferedWriter(new FileWriter(fichier)));
+	    while (rs.next()) {
+		out.println(rs.getString("marque") + "," + rs.getInt("prix") + ","
+			+ rs.getInt("quantite"));
+	    }
+	    out.close();
+	    JOptionPane.showConfirmDialog(parent, "Fichiers sauvegardés dans " + chemin, "",
+		    JOptionPane.PLAIN_MESSAGE);
+	}
     }
 
     public void sauverListe(JTable table) throws Exception {

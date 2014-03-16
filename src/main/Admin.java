@@ -32,7 +32,7 @@ public class Admin {
 	    this.permissions = rs.getInt("permissions");
 	    this.passwd = rs.getString("passwd");
 	} else {
-	    throw new TDBException("Pas d'administrateur");
+	    throw new TDBException("Aucun admin avec cet id");
 	}
     }
 
@@ -47,7 +47,7 @@ public class Admin {
 	    this.permissions = rs.getInt("permissions");
 	    this.passwd = rs.getString("passwd");
 	} else {
-	    throw new TDBException("Pas d'administrateur");
+	    throw new TDBException("Aucun administrateur avec ce trigramme.");
 	}
     }
 
@@ -69,13 +69,16 @@ public class Admin {
 	Statement stmt = parent.connexion.createStatement();
 	ResultSet rs =
 		stmt.executeQuery("SELECT id,permissions,passwd FROM admins NATURAL JOIN accounts WHERE trigramme='"
-			+ tri + "' AND passwd='" + passwd + "'");
+			+ tri + "'");
 	if (rs.next()) {
 	    this.id = rs.getInt("id");
 	    this.permissions = rs.getInt("permissions");
 	    this.passwd = rs.getString("passwd");
+	    if (!this.passwd.equals(passwd)) {
+		throw new AuthException("Le mot de passe est incorrect.");
+	    }
 	} else {
-	    throw new TDBException("Erreur d'authentification");
+	    throw new TDBException("Pas d'administrateur avec ce trigramme");
 	}
     }
 

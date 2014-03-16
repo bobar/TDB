@@ -129,9 +129,10 @@ public class DebitFichierDialog extends JDialog {
 	    dialog.executer();
 	}
 	if (parent.trigrammeActif == null) {
-	    throw new TDBException("Trigramme Inexistant");
-	} else if (parent.trigrammeActif.status != 2) { throw new TDBException(
-		"Le trigramme n'est pas un compte binet"); }
+	    throw new TDBException("Pas de trigramme banque ouvert");
+	} else if (parent.trigrammeActif.status != 2) {
+	    throw new TDBException("Le trigramme n'est pas un compte binet");
+	}
 
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
@@ -193,13 +194,14 @@ public class DebitFichierDialog extends JDialog {
 		    } else if (best == tabs) {
 			separateur = '\t';
 		    }
-		    
+
 		    String[] valeurs = ligne.split(separateur + "");
-		    if(valeurs.length==4){
-			valeurs[2]=valeurs[2]+'.'+valeurs[3];
+		    if (valeurs.length == 4) {
+			valeurs[2] = valeurs[2] + '.' + valeurs[3];
 		    }
 		    if (valeurs.length == 3) {
-			Object[] futureLigne = { true, valeurs[0], valeurs[1], valeurs[2].replace(',', '.'), "" };
+			Object[] futureLigne =
+				{ true, valeurs[0], valeurs[1], valeurs[2].replace(',', '.'), "" };
 			modele.addRow(futureLigne);
 		    } else {
 			Object[] futureLigne = { false, "", "Illisible", "", ligne };

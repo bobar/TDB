@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+import main.AuthException;
 import main.MainWindow;
 import main.TDBException;
 import main.Transaction;
@@ -137,99 +138,98 @@ public class LogGroupeDialog extends JDialog {
 	AuthentificationDialog authentification = new AuthentificationDialog(parent);
 	authentification.executer();
 
-	if (authentification.admin.ami()) {
+	if (!authentification.admin.ami()) {
+	    throw new AuthException();
+	}
 
-	    JLabel labelMontant = new JLabel("Montant : ");
-	    labelMontant.setPreferredSize(new Dimension(110, 20));
-	    champMontant = new JTextField();
-	    champMontant.setPreferredSize(new Dimension(190, 20));
-	    champMontant.addKeyListener(listener);
+	JLabel labelMontant = new JLabel("Montant : ");
+	labelMontant.setPreferredSize(new Dimension(110, 20));
+	champMontant = new JTextField();
+	champMontant.setPreferredSize(new Dimension(190, 20));
+	champMontant.addKeyListener(listener);
 
-	    JLabel labelCommentaire = new JLabel("Commentaire : ");
-	    labelCommentaire.setPreferredSize(new Dimension(110, 20));
-	    champCommentaire = new JTextField();
-	    champCommentaire.setPreferredSize(new Dimension(190, 20));
-	    champCommentaire.addKeyListener(listener);
+	JLabel labelCommentaire = new JLabel("Commentaire : ");
+	labelCommentaire.setPreferredSize(new Dimension(110, 20));
+	champCommentaire = new JTextField();
+	champCommentaire.setPreferredSize(new Dimension(190, 20));
+	champCommentaire.addKeyListener(listener);
 
-	    JLabel labelTrigramme = new JLabel("Sur : ");
-	    labelTrigramme.setPreferredSize(new Dimension(110, 20));
-	    champTrigramme = new JTextField();
-	    champTrigramme.setPreferredSize(new Dimension(190, 20));
-	    champTrigramme.addKeyListener(listener);
+	JLabel labelTrigramme = new JLabel("Sur : ");
+	labelTrigramme.setPreferredSize(new Dimension(110, 20));
+	champTrigramme = new JTextField();
+	champTrigramme.setPreferredSize(new Dimension(190, 20));
+	champTrigramme.addKeyListener(listener);
 
-	    okButton = new JButton("Valider");
-	    okButton.addActionListener(listener);
-	    okButton.setPreferredSize(new Dimension(140, 20));
+	okButton = new JButton("Valider");
+	okButton.addActionListener(listener);
+	okButton.setPreferredSize(new Dimension(140, 20));
 
-	    cancelButton = new JButton("Annuler");
-	    cancelButton.addActionListener(listener);
-	    cancelButton.setPreferredSize(new Dimension(140, 20));
+	cancelButton = new JButton("Annuler");
+	cancelButton.addActionListener(listener);
+	cancelButton.setPreferredSize(new Dimension(140, 20));
 
-	    JPanel pane = new JPanel();
-	    pane.add(labelMontant);
-	    pane.add(champMontant);
-	    pane.add(labelCommentaire);
-	    pane.add(champCommentaire);
-	    pane.add(labelTrigramme);
-	    pane.add(champTrigramme);
-	    pane.add(okButton);
-	    pane.add(cancelButton);
-	    pane.setPreferredSize(new Dimension(330, 110));
+	JPanel pane = new JPanel();
+	pane.add(labelMontant);
+	pane.add(champMontant);
+	pane.add(labelCommentaire);
+	pane.add(champCommentaire);
+	pane.add(labelTrigramme);
+	pane.add(champTrigramme);
+	pane.add(okButton);
+	pane.add(cancelButton);
+	pane.setPreferredSize(new Dimension(330, 110));
 
-	    this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-	    Container contentPane = this.getContentPane();
-	    contentPane.add(pane);
-	    this.pack();
-	    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
-		    (parent.getHeight() - this.getHeight()) / 2);
-	    this.setResizable(false);
-	    this.setVisible(true);
+	Container contentPane = this.getContentPane();
+	contentPane.add(pane);
+	this.pack();
+	this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+		(parent.getHeight() - this.getHeight()) / 2);
+	this.setResizable(false);
+	this.setVisible(true);
 
-	    if (validation) {
+	if (validation) {
 
-		String commentaire = champCommentaire.getText();
-		String trig = champTrigramme.getText().toUpperCase();
-		trig.replace(" ", ",");
-		trig.replace(";", ",");
-		trig.replace(".", ",");
-		String[] trigrammes = trig.split(",");
+	    String commentaire = champCommentaire.getText();
+	    String trig = champTrigramme.getText().toUpperCase();
+	    trig.replace(" ", ",");
+	    trig.replace(";", ",");
+	    trig.replace(".", ",");
+	    String[] trigrammes = trig.split(",");
 
-		String trigrammesFaux = "Trigrammes faux : ";
-		for (int i = 0; i < trigrammes.length; i++) {
-		    Statement stmt = parent.connexion.createStatement();
-		    ResultSet rs =
-			    stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
-				    + trigrammes[i] + "'");
-		    if (!rs.first()) {
-			trigrammesFaux += trigrammes[i] + " ";
-		    }
-		}
-		if (!trigrammesFaux.equals("Trigrammes faux : ")) {
-		    JOptionPane.showMessageDialog(parent, trigrammesFaux, "Erreurs",
-			    JOptionPane.WARNING_MESSAGE, null);
-		}
-
-		int montant =
-			10 * (int) Math.ceil(10 * Double.parseDouble(champMontant.getText())
-				/ trigrammes.length);
-
-		if (montant > 0) {
-		    for (int i = 0; i < trigrammes.length; i++) {
-			Trigramme trigramme = new Trigramme(parent, trigrammes[i]);
-			Transaction transaction =
-				new Transaction(trigramme.id, -montant, commentaire,
-					authentification.admin, null, parent.banqueBob.id);
-			transaction.WriteToDB(parent);
-		    }
-		} else {
-		    throw new TDBException("Montant négatif");
+	    String trigrammesFaux = "Trigrammes faux : ";
+	    for (int i = 0; i < trigrammes.length; i++) {
+		Statement stmt = parent.connexion.createStatement();
+		ResultSet rs =
+			stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
+				+ trigrammes[i] + "'");
+		if (!rs.first()) {
+		    trigrammesFaux += trigrammes[i] + " ";
 		}
 	    }
-	    parent.refresh();
-	} else {
-	    throw new TDBException("Vous n'avez pas les droits");
+	    if (!trigrammesFaux.equals("Trigrammes faux : ")) {
+		JOptionPane.showMessageDialog(parent, trigrammesFaux, "Erreurs",
+			JOptionPane.WARNING_MESSAGE, null);
+	    }
+
+	    int montant =
+		    10 * (int) Math.ceil(10 * Double.parseDouble(champMontant.getText())
+			    / trigrammes.length);
+
+	    if (montant > 0) {
+		for (int i = 0; i < trigrammes.length; i++) {
+		    Trigramme trigramme = new Trigramme(parent, trigrammes[i]);
+		    Transaction transaction =
+			    new Transaction(trigramme.id, -montant, commentaire,
+				    authentification.admin, null, parent.banqueBob.id);
+		    transaction.WriteToDB(parent);
+		}
+	    } else {
+		throw new TDBException("Montant négatif");
+	    }
 	}
+	parent.refresh();
 
     }
 }

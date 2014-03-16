@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.WindowConstants;
 import main.MainWindow;
+import main.TDBException;
 
 // Pour info : 0=pékin, 1=ami du BôB, 2=ex-BôBarman, 3=BôBarman
 
@@ -119,7 +120,7 @@ public class MotDePasseDialog extends JDialog {
 		String mdp1 = MD5Hex(champMDP1.getPassword());
 		String mdp2 = MD5Hex(champMDP2.getPassword());
 		if (!mdp1.equals(mdp2)) {
-		    throw new Exception("Les mots de passe ne correspondent pas");
+		    throw new TDBException("Les mots de passe ne correspondent pas");
 		} else {
 		    authentification.admin.setPasswd(mdp1);
 		    JOptionPane.showMessageDialog(this, "Mot de passe changé", "",
@@ -127,7 +128,7 @@ public class MotDePasseDialog extends JDialog {
 		}
 	    }
 	} else {
-	    throw new Exception("Vous n'avez pas de compte admin");
+	    throw new TDBException("Vous n'avez pas de compte admin");
 	}
     }
 

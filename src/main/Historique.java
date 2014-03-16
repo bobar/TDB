@@ -24,7 +24,8 @@ public class Historique {
 			+ " JOIN accounts as ac2 ON ac2.id=tr.id2 "
 			+ " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin " + " WHERE tr.id="
 			+ trigramme.id + " ORDER BY date DESC";
-	if (limit >= 0) query += " LIMIT " + limit;
+	if (limit >= 0)
+	    query += " LIMIT " + limit;
 	ResultSet rs = stmt.executeQuery(query);
 	LinkedList<Entry> res = new LinkedList<Entry>();
 	while (rs.next()) {
@@ -32,8 +33,8 @@ public class Historique {
 	    zou.client = rs.getString("t1");
 	    zou.price = (double) rs.getInt("p") / 100;
 	    zou.banque = rs.getString("t2");
-	    if(zou.banque.equals(parent.banqueBob.trigramme)){
-		zou.banque="";
+	    if (zou.banque.equals(parent.banqueBob.trigramme)) {
+		zou.banque = "";
 	    }
 	    zou.admin = rs.getString("t3");
 	    zou.comment = rs.getString("c");
@@ -43,17 +44,19 @@ public class Historique {
 	}
 	return res;
     }
-    
-    public static LinkedList<Entry> getOldHistorique(MainWindow parent, Trigramme trigramme, int limit)
-	    throws Exception {
+
+    public static LinkedList<Entry> getOldHistorique(MainWindow parent, Trigramme trigramme,
+	    int limit) throws Exception {
 	Statement stmt = parent.connexion.createStatement();
 	String query =
 		"SELECT price as p,comment as c, ac1.trigramme as t1,ac2.trigramme as t2,ac3.trigramme as t3,date "
-			+ " FROM transactions_history as tr " + " JOIN accounts as ac1 ON ac1.id=tr.id "
+			+ " FROM transactions_history as tr "
+			+ " JOIN accounts as ac1 ON ac1.id=tr.id "
 			+ " JOIN accounts as ac2 ON ac2.id=tr.id2 "
 			+ " LEFT JOIN accounts as ac3 ON ac3.id=tr.admin " + " WHERE tr.id="
 			+ trigramme.id + " ORDER BY date DESC";
-	if (limit >= 0) query += " LIMIT " + limit;
+	if (limit >= 0)
+	    query += " LIMIT " + limit;
 	ResultSet rs = stmt.executeQuery(query);
 	LinkedList<Entry> res = new LinkedList<Entry>();
 	while (rs.next()) {
@@ -61,8 +64,8 @@ public class Historique {
 	    zou.client = rs.getString("t1");
 	    zou.price = (double) rs.getInt("p") / 100;
 	    zou.banque = rs.getString("t2");
-	    if(zou.banque.equals(parent.banqueBob.trigramme)){
-		zou.banque="";
+	    if (zou.banque.equals(parent.banqueBob.trigramme)) {
+		zou.banque = "";
 	    }
 	    zou.admin = rs.getString("t3");
 	    zou.comment = rs.getString("c");
