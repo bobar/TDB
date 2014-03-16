@@ -27,6 +27,8 @@ import java.util.LinkedList;
 import java.util.Stack;
 import java.util.prefs.Preferences;
 import javax.imageio.ImageIO;
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -288,7 +290,10 @@ public class MainWindow extends JFrame {
 	return absolutePath;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AddressException, MessagingException {
+	if(args.length==1 && args[0].equals("GNI")){
+	    GoogleMail.Send("bobar.negatif", "plapzderas", "thierry.deo@polytechnique.edu", "T'es en négatif", "batard");
+	}
 	MainWindow TDB = new MainWindow();
 	try {
 	    String trigrammeBanque = "BOB";
@@ -310,10 +315,6 @@ public class MainWindow extends JFrame {
 	    br.close();
 	    TDB.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	    TDB.initialiser(trigrammeBanque);
-	    if(args.length>0 && args[0].equals("GNI")){
-		Trigramme GNI = new Trigramme(TDB, "GNI");
-		GNI.sendMail();
-	    }
 	} catch (Exception e) {
 	    TDB.afficherErreur(e);
 	}
