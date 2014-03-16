@@ -310,6 +310,10 @@ public class MainWindow extends JFrame {
 	    br.close();
 	    TDB.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	    TDB.initialiser(trigrammeBanque);
+	    if(args.length>0 && args[0].equals("GNI")){
+		Trigramme GNI = new Trigramme(TDB, "GNI");
+		GNI.sendMail();
+	    }
 	} catch (Exception e) {
 	    TDB.afficherErreur(e);
 	}

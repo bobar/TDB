@@ -292,14 +292,16 @@ public class Trigramme {
 
     public void sendMail() throws Exception {
 	if (status == 0 && balance < 0) {
-	    String message = "Salut,\n\nT'es en négatif au BôB.\nTu nous dois ";
+	    String message = "Salut,\n\nT'es en négatif au BôB, tu nous dois ";
 	    message += ((-(double) balance / 100) + "").replace('.', ',');
-	    message += " €. Apporte nous un chèque.\n\nLe BôB, qui t'enkhûle avec affection.";
+	    message += " €.\nApporte nous un chèque.\n\nLe BôB, qui t'enkhûle avec affection.";
 	    String mail =
 		    first_name.toLowerCase().replace(' ', '-') + "."
-			    + name.toLowerCase().replace(' ', '-') + "@polytechnique.edu";
+			    + name.toLowerCase().replace(' ', '-');
 	    mail = Normalizer.normalize(mail, Normalizer.Form.NFD);
 	    mail = mail.replaceAll("[^\\p{ASCII}]", "");
+	    mail += "@polytechnique.edu";
+	    System.out.println(mail);
 	    GoogleMail.Send("bobar.negatif", "plapzderas", mail, "T'es en négatif", message);
 	}
     }

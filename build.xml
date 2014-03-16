@@ -64,6 +64,7 @@
 			</manifest>
 			<fileset dir="./bin" />
 			<zipfileset excludes="META-INF/*.SF" src="./mysql-connector-java-5.1.22-bin.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="./mail.jar" />
 		</jar>
 	</target>
 </project>
