@@ -291,10 +291,6 @@ public class MainWindow extends JFrame {
     }
 
     public static void main(String[] args) throws AddressException, MessagingException {
-	if(args.length==1 && args[0].equals("GNI")){
-	    GoogleMail.Send("bobar.negatif", "plapzderas", "thierry.deo@polytechnique.edu", "T'es en négatif", "batard");
-	    return;
-	}
 	MainWindow TDB = new MainWindow();
 	try {
 	    String trigrammeBanque = "BOB";
