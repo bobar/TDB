@@ -98,10 +98,10 @@ public class TrigrammeCreationDialog extends JDialog {
 		chooser.setFileFilter(new FileFilter() {
 
 		    public boolean accept(File arg0) {
-			return (arg0.isDirectory() || arg0.getName().contains(".gif")
-				|| arg0.getName().contains(".jpg")
-				|| arg0.getName().contains(".jpeg") || arg0.getName().contains(
-				".png"));
+			return (arg0.isDirectory() || arg0.getName().toLowerCase().contains(".gif")
+				|| arg0.getName().toLowerCase().contains(".jpg")
+				|| arg0.getName().toLowerCase().contains(".jpeg") || arg0.getName()
+				.toLowerCase().contains(".png"));
 		    }
 
 		    public String getDescription() {
