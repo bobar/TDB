@@ -17,6 +17,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import main.AuthException;
 import main.Clopes;
 import main.MainWindow;
 import main.TDBException;
@@ -121,74 +122,75 @@ public class ClopesListDialog extends JDialog {
 		AuthentificationDialog authentification = new AuthentificationDialog(parent);
 		authentification.executer();
 
-		if (authentification.admin.has_droit("gestion_clopes")) {
-			this.addKeyListener(listener);
-
-			listeClopes = new JTable();
-			listeClopes.addKeyListener(listener);
-			listeClopes.setModel(modele);
-			listeClopes.repaint();
-
-			resultatsScrollPane = new JScrollPane(listeClopes);
-			resultatsScrollPane
-					.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-			resultatsScrollPane.setPreferredSize(new Dimension(330, 320));
-
-			String[] header = { "Marque", "Prix", "Quantité" };
-			modele.setColumnIdentifiers(header);
-
-			listeClopes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			listeClopes.setModel(modele);
-			listeClopes.getColumnModel().getColumn(0).setPreferredWidth(120);
-			listeClopes.getColumnModel().getColumn(1).setPreferredWidth(70);
-			listeClopes.getColumnModel().getColumn(2).setPreferredWidth(70);
-			listeClopes.repaint();
-
-			listeClopes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-			creerButton = new JButton("Créer des clopes");
-			creerButton.setPreferredSize(new Dimension(220, 20));
-			creerButton.addActionListener(listener);
-
-			modifierButton = new JButton("Modifier les clopes");
-			modifierButton.setPreferredSize(new Dimension(220, 20));
-			modifierButton.addActionListener(listener);
-
-			supprimerButton = new JButton("Supprimer les clopes");
-			supprimerButton.setPreferredSize(new Dimension(220, 20));
-			supprimerButton.addActionListener(listener);
-
-			resetButton = new JButton("Remettre quantités à 0");
-			resetButton.setPreferredSize(new Dimension(220, 20));
-			resetButton.addActionListener(listener);
-
-			fermerButton = new JButton("Fermer la fenêtre");
-			fermerButton.setPreferredSize(new Dimension(220, 20));
-			fermerButton.addActionListener(listener);
-
-			fond = new JPanel();
-			fond.setLayout(new FlowLayout(FlowLayout.CENTER));
-			fond.add(resultatsScrollPane);
-			fond.add(creerButton);
-			fond.add(modifierButton);
-			fond.add(supprimerButton);
-			fond.add(resetButton);
-			fond.add(fermerButton);
-
-			fond.setPreferredSize(new Dimension(360, 460));
-			fond.setOpaque(true);
-
-			this.refresh();
-			listeClopes.setModel(modele);
-
-			this.setContentPane(fond);
-			this.pack();
-			this.setLocation((parent.getWidth() - this.getWidth()) / 2,
-					(parent.getHeight() - this.getHeight()) / 2);
-			this.setResizable(false);
-
-			this.setVisible(true);
+		if (!authentification.admin.has_droit("gestion_clopes")) {
+			throw new AuthException();
 		}
+		this.addKeyListener(listener);
+
+		listeClopes = new JTable();
+		listeClopes.addKeyListener(listener);
+		listeClopes.setModel(modele);
+		listeClopes.repaint();
+
+		resultatsScrollPane = new JScrollPane(listeClopes);
+		resultatsScrollPane
+				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		resultatsScrollPane.setPreferredSize(new Dimension(330, 320));
+
+		String[] header = { "Marque", "Prix", "Quantité" };
+		modele.setColumnIdentifiers(header);
+
+		listeClopes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listeClopes.setModel(modele);
+		listeClopes.getColumnModel().getColumn(0).setPreferredWidth(120);
+		listeClopes.getColumnModel().getColumn(1).setPreferredWidth(70);
+		listeClopes.getColumnModel().getColumn(2).setPreferredWidth(70);
+		listeClopes.repaint();
+
+		listeClopes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		creerButton = new JButton("Créer des clopes");
+		creerButton.setPreferredSize(new Dimension(220, 20));
+		creerButton.addActionListener(listener);
+
+		modifierButton = new JButton("Modifier les clopes");
+		modifierButton.setPreferredSize(new Dimension(220, 20));
+		modifierButton.addActionListener(listener);
+
+		supprimerButton = new JButton("Supprimer les clopes");
+		supprimerButton.setPreferredSize(new Dimension(220, 20));
+		supprimerButton.addActionListener(listener);
+
+		resetButton = new JButton("Remettre quantités à 0");
+		resetButton.setPreferredSize(new Dimension(220, 20));
+		resetButton.addActionListener(listener);
+
+		fermerButton = new JButton("Fermer la fenêtre");
+		fermerButton.setPreferredSize(new Dimension(220, 20));
+		fermerButton.addActionListener(listener);
+
+		fond = new JPanel();
+		fond.setLayout(new FlowLayout(FlowLayout.CENTER));
+		fond.add(resultatsScrollPane);
+		fond.add(creerButton);
+		fond.add(modifierButton);
+		fond.add(supprimerButton);
+		fond.add(resetButton);
+		fond.add(fermerButton);
+
+		fond.setPreferredSize(new Dimension(360, 460));
+		fond.setOpaque(true);
+
+		this.refresh();
+		listeClopes.setModel(modele);
+
+		this.setContentPane(fond);
+		this.pack();
+		this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+				(parent.getHeight() - this.getHeight()) / 2);
+		this.setResizable(false);
+
+		this.setVisible(true);
 	}
 
 	public void refresh() throws Exception {
