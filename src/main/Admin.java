@@ -78,7 +78,7 @@ public class Admin {
 			this.permissions = rs.getInt("permissions");
 			this.passwd = rs.getString("passwd");
 			if (!this.passwd.equals(passwd)) {
-				throw new AuthException("Le mot de passe est incorrect.");
+				throw new AuthException("Mot de passe incorrect.");
 			}
 			this.droits = new Droits(parent, permissions);
 		} else {
