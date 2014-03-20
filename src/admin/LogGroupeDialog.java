@@ -50,19 +50,20 @@ public class LogGroupeDialog extends JDialog {
 									JOptionPane.QUESTION_MESSAGE, null);
 					if (confirmation == JOptionPane.YES_OPTION) {
 						String trig = champTrigramme.getText().toUpperCase();
-						trig.replace(" ", ",");
-						trig.replace(";", ",");
-						trig.replace(".", ",");
+						trig = trig.replace(' ', ',');
+						trig = trig.replace(';', ',');
+						trig = trig.replace('.', ',');
+						trig = trig.replaceAll("[,]{2,}", ",");
 						String[] trigrammes = trig.split(",");
 
 						String trigrammesFaux = "Trigrammes faux : ";
-						for (int i = 0; i < trigrammes.length; i++) {
+						for (String tri : trigrammes) {
 							Statement stmt = parent.connexion.createStatement();
 							ResultSet rs =
-									stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
-											+ trigrammes[i] + "'");
+									stmt.executeQuery("SELECT id FROM accounts WHERE trigramme='"
+											+ tri + "'");
 							if (!rs.first()) {
-								trigrammesFaux += trigrammes[i] + " ";
+								trigrammesFaux += tri + ",";
 							}
 						}
 						if (!trigrammesFaux.equals("Trigrammes faux : ")) {
@@ -95,19 +96,20 @@ public class LogGroupeDialog extends JDialog {
 									JOptionPane.QUESTION_MESSAGE, null);
 					if (confirmation == JOptionPane.YES_OPTION) {
 						String trig = champTrigramme.getText().toUpperCase();
-						trig.replace(" ", ",");
-						trig.replace(";", ",");
-						trig.replace(".", ",");
+						trig = trig.replace(' ', ',');
+						trig = trig.replace(';', ',');
+						trig = trig.replace('.', ',');
+						trig = trig.replaceAll("[,]{2,}", ",");
 						String[] trigrammes = trig.split(",");
 
 						String trigrammesFaux = "Trigrammes faux : ";
-						for (int i = 0; i < trigrammes.length; i++) {
+						for (String tri : trigrammes) {
 							Statement stmt = parent.connexion.createStatement();
 							ResultSet rs =
 									stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
-											+ trigrammes[i] + "'");
+											+ tri + "'");
 							if (!rs.first()) {
-								trigrammesFaux += trigrammes[i] + " ";
+								trigrammesFaux += tri + " ";
 							}
 						}
 						if (!trigrammesFaux.equals("Trigrammes faux : ")) {
@@ -193,19 +195,19 @@ public class LogGroupeDialog extends JDialog {
 
 			String commentaire = champCommentaire.getText();
 			String trig = champTrigramme.getText().toUpperCase();
-			trig.replace(" ", ",");
-			trig.replace(";", ",");
-			trig.replace(".", ",");
+			trig = trig.replace(' ', ',');
+			trig = trig.replace(';', ',');
+			trig = trig.replace('.', ',');
+			trig = trig.replaceAll("[,]{2,}", ",");
 			String[] trigrammes = trig.split(",");
 
 			String trigrammesFaux = "Trigrammes faux : ";
-			for (int i = 0; i < trigrammes.length; i++) {
+			for (String tri : trigrammes) {
 				Statement stmt = parent.connexion.createStatement();
 				ResultSet rs =
-						stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
-								+ trigrammes[i] + "'");
+						stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='" + tri + "'");
 				if (!rs.first()) {
-					trigrammesFaux += trigrammes[i] + " ";
+					trigrammesFaux += tri + " ";
 				}
 			}
 			if (!trigrammesFaux.equals("Trigrammes faux : ")) {
