@@ -202,8 +202,8 @@ public class Trigramme {
 				banqueId = parent.banqueBinet.id;
 			}
 			Transaction transaction = new Transaction(id, -montant, "", null, null, banqueId);
-			parent.dernieresActions.add(transaction);
 			transaction.WriteToDB(parent);
+			parent.dernieresActions.add(transaction);
 		} else if (montant > 2000) {
 			AuthentificationDialog authentification = new AuthentificationDialog(parent);
 			authentification.executer();
@@ -225,10 +225,10 @@ public class Trigramme {
 				throw new AuthException();
 			}
 			Transaction transaction =
-					new Transaction(id, montant, "", authentification.admin, null,
+					new Transaction(id, -montant, "", authentification.admin, null,
 							parent.banqueBob.id);
-			parent.dernieresActions.add(transaction);
 			transaction.WriteToDB(parent);
+			parent.dernieresActions.add(transaction);
 		}
 		Thread.sleep(200);
 		parent.trigrammeActif = new Trigramme(parent, parent.trigrammeActif.trigramme);
@@ -244,6 +244,7 @@ public class Trigramme {
 
 		Transaction transaction = new Transaction(id, montant, commentaire, admin, null, banqueId);
 		transaction.WriteToDB(parent);
+		parent.dernieresActions.add(transaction);
 		parent.trigrammeActif = new Trigramme(parent, parent.trigrammeActif.trigramme);
 		parent.refresh();
 	}
