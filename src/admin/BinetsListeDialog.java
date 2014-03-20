@@ -17,6 +17,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import main.AuthException;
 import main.MainWindow;
 import main.Trigramme;
 
@@ -92,58 +93,59 @@ public class BinetsListeDialog extends JDialog {
 		AuthentificationDialog authentification = new AuthentificationDialog(parent);
 		authentification.executer();
 
-		if (authentification.admin.has_droit("voir_comptes")) {
-
-			this.addKeyListener(listener);
-
-			resultats = new JTable();
-			resultats.addKeyListener(listener);
-			resultats.setModel(modele);
-			resultats.repaint();
-
-			resultatsScrollPane = new JScrollPane(resultats);
-			resultatsScrollPane
-					.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-			resultatsScrollPane.setPreferredSize(new Dimension(450, 460));
-
-			String[] header = { "Trigramme", "Nom", "Prénom", "Balance" };
-			modele.setColumnIdentifiers(header);
-
-			resultats.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			resultats.setModel(modele);
-			resultats.getColumnModel().getColumn(0).setPreferredWidth(65);
-			resultats.getColumnModel().getColumn(1).setPreferredWidth(150);
-			resultats.getColumnModel().getColumn(2).setPreferredWidth(150);
-			resultats.getColumnModel().getColumn(2).setPreferredWidth(65);
-			resultats.repaint();
-
-			resultats.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-			ouvrirButton = new JButton("Ouvrir le trigramme");
-			ouvrirButton.setPreferredSize(new Dimension(200, 20));
-			ouvrirButton.addActionListener(listener);
-
-			fermerButton = new JButton("Fermer la fenêtre");
-			fermerButton.setPreferredSize(new Dimension(200, 20));
-			fermerButton.addActionListener(listener);
-
-			fond = new JPanel();
-			fond.setLayout(new FlowLayout(FlowLayout.CENTER));
-			fond.add(resultatsScrollPane);
-			fond.add(ouvrirButton);
-			fond.add(fermerButton);
-
-			fond.setPreferredSize(new Dimension(500, 500));
-			fond.setOpaque(true);
-
-			this.setContentPane(fond);
-			this.pack();
-			this.setLocation((parent.getWidth() - this.getWidth()) / 2,
-					(parent.getHeight() - this.getHeight()) / 2);
-			this.chargerListe();
-			this.setResizable(false);
-			this.setVisible(true);
+		if (!authentification.admin.has_droit("voir_comptes")) {
+			throw new AuthException();
 		}
+
+		this.addKeyListener(listener);
+
+		resultats = new JTable();
+		resultats.addKeyListener(listener);
+		resultats.setModel(modele);
+		resultats.repaint();
+
+		resultatsScrollPane = new JScrollPane(resultats);
+		resultatsScrollPane
+				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		resultatsScrollPane.setPreferredSize(new Dimension(450, 460));
+
+		String[] header = { "Trigramme", "Nom", "Prénom", "Balance" };
+		modele.setColumnIdentifiers(header);
+
+		resultats.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		resultats.setModel(modele);
+		resultats.getColumnModel().getColumn(0).setPreferredWidth(65);
+		resultats.getColumnModel().getColumn(1).setPreferredWidth(150);
+		resultats.getColumnModel().getColumn(2).setPreferredWidth(150);
+		resultats.getColumnModel().getColumn(2).setPreferredWidth(65);
+		resultats.repaint();
+
+		resultats.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		ouvrirButton = new JButton("Ouvrir le trigramme");
+		ouvrirButton.setPreferredSize(new Dimension(200, 20));
+		ouvrirButton.addActionListener(listener);
+
+		fermerButton = new JButton("Fermer la fenêtre");
+		fermerButton.setPreferredSize(new Dimension(200, 20));
+		fermerButton.addActionListener(listener);
+
+		fond = new JPanel();
+		fond.setLayout(new FlowLayout(FlowLayout.CENTER));
+		fond.add(resultatsScrollPane);
+		fond.add(ouvrirButton);
+		fond.add(fermerButton);
+
+		fond.setPreferredSize(new Dimension(500, 500));
+		fond.setOpaque(true);
+
+		this.setContentPane(fond);
+		this.pack();
+		this.setLocation((parent.getWidth() - this.getWidth()) / 2,
+				(parent.getHeight() - this.getHeight()) / 2);
+		this.chargerListe();
+		this.setResizable(false);
+		this.setVisible(true);
 	}
 
 	// Pour charger la liste, on prend d'abord les binets pas à 0, ceux qui nous
