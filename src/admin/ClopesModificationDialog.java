@@ -114,11 +114,7 @@ public class ClopesModificationDialog extends JDialog {
 		this.setVisible(true);
 
 		if (validation) {
-			try {
-				clope.setPrix((int) Math.round(100 * Double.parseDouble(champPrix.getText())));
-			} catch (Exception e) {
-				parent.afficherErreur(e);
-			}
+			clope.setPrix((int) Math.round(100 * Double.parseDouble(champPrix.getText())));
 		}
 	}
 }

@@ -77,6 +77,7 @@ public class DroitsListDialog extends JDialog {
 					dialog.executer();
 					refresh();
 				} else if (arg0.getSource().equals(modifierButton)) {
+					//TODO Se chauffer pour créer l'interface
 					/* int ligneChoisie = listeDroits.getSelectedRow(); if (ligneChoisie == -1) {
 					 * throw new TDBException("Pas d'admin sélectionné"); } int permissions = 0;
 					 * String perms = (String) listeDroits.getValueAt(ligneChoisie, 3); Map<String,

@@ -121,14 +121,10 @@ public class AdminModificationDialog extends JDialog {
 		this.setVisible(true);
 
 		if (validation) {
-			try {
-				Admin admin = new Admin(parent, champTrigramme.getText());
-				String newStatus = (String) champCategorie.getSelectedItem();
-				Droits newDroit = new Droits(parent, newStatus);
-				admin.setPerms(newDroit.permissions());
-			} catch (Exception e) {
-				parent.afficherErreur(e);
-			}
+			Admin admin = new Admin(parent, champTrigramme.getText());
+			String newStatus = (String) champCategorie.getSelectedItem();
+			Droits newDroit = new Droits(parent, newStatus);
+			admin.setPerms(newDroit.permissions());
 		}
 	}
 

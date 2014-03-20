@@ -143,14 +143,10 @@ public class AdminCreationDialog extends JDialog {
 			if (!cryptage1.equals(cryptage2)) {
 				throw new AuthException("Les mots de passe ne correspondent pas");
 			}
-			try {
-				Admin new_admin =
-						new Admin(parent, champTrigramme.getText(),
-								champCategorie.getSelectedIndex(), cryptage1);
-				new_admin.creer();
-			} catch (Exception e) {
-				parent.afficherErreur(e);
-			}
+			Admin new_admin =
+					new Admin(parent, champTrigramme.getText(), champCategorie.getSelectedIndex(),
+							cryptage1);
+			new_admin.creer();
 		}
 	}
 
