@@ -89,7 +89,14 @@ public class Droits {
 		return this.nom;
 	}
 
-	public void updateDroits() throws SQLException {
+	public void updateDroits(Vector<String> granted) throws SQLException {
+		this.droits = new HashMap<String, Boolean>();
+		for (String droit : possibilites) {
+			this.droits.put(droit, false);
+		}
+		for (String droit : granted) {
+			this.droits.put(droit, true);
+		}
 		Statement stmt = parent.connexion.createStatement();
 		String query = "UPDATE droits SET ";
 		for (Map.Entry<String, Boolean> droit : droits.entrySet()) {

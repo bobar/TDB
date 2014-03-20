@@ -77,14 +77,30 @@ public class DroitsListDialog extends JDialog {
 					dialog.executer();
 					refresh();
 				} else if (arg0.getSource().equals(modifierButton)) {
-					//TODO Se chauffer pour créer l'interface
-					/* int ligneChoisie = listeDroits.getSelectedRow(); if (ligneChoisie == -1) {
-					 * throw new TDBException("Pas d'admin sélectionné"); } int permissions = 0;
-					 * String perms = (String) listeDroits.getValueAt(ligneChoisie, 3); Map<String,
-					 * Integer> statusIds = Droits.getStatusId(parent); permissions =
-					 * statusIds.get(perms); AdminModificationDialog dialog = new
-					 * AdminModificationDialog(parent, (String) listeDroits.getValueAt(
-					 * ligneChoisie, 0), permissions); dialog.executer(); */
+					int ligneChoisie = listeDroits.getSelectedRow();
+					if (ligneChoisie == -1) {
+						throw new TDBException("Pas de droits sélectionnés");
+					}
+					int confirmation = JOptionPane.OK_OPTION;
+					if (Droits.droitsUtilises(parent,
+							(String) listeDroits.getValueAt(ligneChoisie, 0))) {
+						confirmation =
+								JOptionPane
+										.showConfirmDialog(
+												parent,
+												"Les droits "
+														+ listeDroits.getValueAt(ligneChoisie, 0)
+														+ " sont actuellement utilisés. Etes-vous sûr de vouloir les modifier ?",
+												"Confirmation", JOptionPane.OK_CANCEL_OPTION,
+												JOptionPane.QUESTION_MESSAGE, null);
+					}
+					if (confirmation == JOptionPane.OK_OPTION) {
+						Droits droits =
+								new Droits(parent, (String) listeDroits.getValueAt(ligneChoisie, 0));
+						DroitsModificationDialog dialog =
+								new DroitsModificationDialog(parent, droits);
+						dialog.executer();
+					}
 				} else if (arg0.getSource().equals(supprimerButton)) {
 					int ligneChoisie = listeDroits.getSelectedRow();
 					if (ligneChoisie == -1) {
