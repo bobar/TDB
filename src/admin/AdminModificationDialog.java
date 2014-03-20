@@ -88,7 +88,7 @@ public class AdminModificationDialog extends JDialog {
 		labelCategorie.setPreferredSize(new Dimension(120, 20));
 
 		Map<Integer, String> status = Droits.getStatuses(parent);
-		champCategorie = new JComboBox<String>((String[]) status.values().toArray());
+		champCategorie = new JComboBox<String>(status.values().toArray(new String[0]));
 		champCategorie.setPreferredSize(new Dimension(150, 20));
 		champCategorie.setSelectedIndex(permissions);
 		champCategorie.addKeyListener(listener);
@@ -123,7 +123,9 @@ public class AdminModificationDialog extends JDialog {
 		if (validation) {
 			try {
 				Admin admin = new Admin(parent, champTrigramme.getText());
-				admin.setPerms(champCategorie.getSelectedIndex());
+				String newStatus = (String) champCategorie.getSelectedItem();
+				Droits newDroit = new Droits(parent, newStatus);
+				admin.setPerms(newDroit.permissions());
 			} catch (Exception e) {
 				parent.afficherErreur(e);
 			}
