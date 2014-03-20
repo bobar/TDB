@@ -124,7 +124,6 @@ public class DroitsCreationDialog extends JDialog {
 					granted.add(Droits.possibilites[i]);
 				}
 			}
-			System.out.println(champNom.getText());
 			Droits droits = new Droits(parent, champNom.getText(), granted);
 			droits.creer();
 		}
