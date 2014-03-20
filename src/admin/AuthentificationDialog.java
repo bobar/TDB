@@ -121,11 +121,7 @@ public class AuthentificationDialog extends JDialog {
 			if (validation) {
 				String trigramme = champTrigramme.getText();
 				String cryptage = MD5Hex(champMDP.getPassword());
-				try {
-					admin = new Admin(parent, trigramme, cryptage);
-				} catch (Exception e) {
-					parent.afficherErreur(e);
-				}
+				admin = new Admin(parent, trigramme, cryptage);
 			}
 		}
 	}
