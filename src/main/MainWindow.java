@@ -182,10 +182,11 @@ public class MainWindow extends JFrame {
 	public void ouvrirModeAdmin() throws Exception {
 		AuthentificationDialog authentification = new AuthentificationDialog(this);
 		authentification.executer();
-		if (authentification.admin.has_droit("super_admin")) {
-			modeAdministrateur = true;
-			administrateur = authentification.admin;
+		if (!authentification.admin.has_droit("super_admin")) {
+			throw new AuthException();
 		}
+		modeAdministrateur = true;
+		administrateur = authentification.admin;
 		this.refresh();
 	}
 
