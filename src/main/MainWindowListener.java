@@ -75,6 +75,14 @@ public class MainWindowListener implements KeyListener, ActionListener {
 				parent.refresh();
 			} else if (action.getSource().equals(parent.annuler)) {
 				parent.annuler();
+			} else if (action.getSource().equals(parent.fasciserParMail)){
+				if (parent.trigrammeActif == null) {
+					TrigrammeDialog dialog = new TrigrammeDialog(parent, "");
+					dialog.executer();
+				}
+				if (parent.trigrammeActif != null) {
+					parent.trigrammeActif.sendPolytechniqueMail();
+				}
 			} else if (action.getSource().equals(parent.loggerAPlusieurs)) {
 				LogGroupeDialog dialog = new LogGroupeDialog(parent);
 				dialog.executer();

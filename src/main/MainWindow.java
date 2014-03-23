@@ -91,6 +91,7 @@ public class MainWindow extends JFrame {
 	JMenuItem annuler = new JMenuItem("Annuler");
 
 	JMenu menuGestion = new JMenu("Gérer un trigramme");
+	JMenuItem fasciserParMail = new JMenuItem("Envoyer mail de fascisation");
 	JMenuItem loggerAPlusieurs = new JMenuItem("Logger à plusieurs");
 	JMenuItem approvisionner = new JMenuItem("Approvisionner le trigramme");
 	JMenuItem transfert = new JMenuItem("Transfert");
@@ -311,8 +312,8 @@ public class MainWindow extends JFrame {
 			br.close();
 			TDB.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			TDB.initialiser(trigrammeBanque);
-			Trigramme GNI = new Trigramme(TDB, "GNI");
-			GNI.sendPolytechniqueMail();
+//			Trigramme GNI = new Trigramme(TDB, "GNI");
+//			GNI.sendPolytechniqueMail();
 		} catch (Exception e) {
 			TDB.afficherErreur(e);
 		}
@@ -400,6 +401,9 @@ public class MainWindow extends JFrame {
 		menuStandard.add(pinteDeKroPourSIE);
 		menuStandard.add(annuler);
 
+		fasciserParMail.addActionListener(mainWindowListener);
+		fasciserParMail.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
+				InputEvent.CTRL_DOWN_MASK + InputEvent.ALT_DOWN_MASK));
 		loggerAPlusieurs.addActionListener(mainWindowListener);
 		loggerAPlusieurs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
 				InputEvent.CTRL_DOWN_MASK));
@@ -417,6 +421,7 @@ public class MainWindow extends JFrame {
 		supprimerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				InputEvent.CTRL_DOWN_MASK));
 
+		menuGestion.add(fasciserParMail);
 		menuGestion.add(loggerAPlusieurs);
 		menuGestion.add(approvisionner);
 		menuGestion.add(transfert);
