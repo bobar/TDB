@@ -314,7 +314,7 @@ public class Trigramme {
 			GoogleMail.Send("bobar.negatif", "plapzderas", mail, "T'es en négatif", message);
 		}
 	}
-	
+
 	public void sendPolytechniqueMail() throws Exception {
 		if (status == 0 && balance < 0) {
 			String message = "Salut,\n\nT'es en négatif au BôB, tu nous dois ";
@@ -329,5 +329,15 @@ public class Trigramme {
 			System.out.println(mail);
 			PolytechniqueMail.Send("bobar.negatif", "plapzderas", mail, "T'es en négatif", message);
 		}
+	}
+
+	public static LinkedList<Trigramme> getAllNegatifAccounts(MainWindow parent) throws Exception {
+		LinkedList<Trigramme> res = new LinkedList<Trigramme>();
+		Statement stmt = parent.connexion.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT id FROM accounts WHERE balance<0 AND status=0");
+		while (rs.next()) {
+			res.add(new Trigramme(parent, rs.getInt("id")));
+		}
+		return res;
 	}
 }
