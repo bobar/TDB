@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.LinkedList;
 import operationsGestion.CreditDialog;
 import operationsGestion.TransfertDialog;
 import operationsGestion.TrigrammeCreationDialog;
@@ -107,11 +106,6 @@ public class MainWindowListener implements KeyListener, ActionListener {
 				dialog.executer();
 			} else if (action.getSource().equals(parent.supprimerTrigramme)) {
 				parent.supprimerTrigramme();
-			} else if (action.getSource().equals(parent.envoyerTousLesMails)) {
-				LinkedList<Trigramme> comptes = Trigramme.getAllNegatifAccounts(parent);
-				for (Trigramme compte : comptes) {
-					compte.sendMail();
-				}
 			} else if (action.getSource().equals(parent.verifTotal)) {
 				VerifierTotalDialog dialog = new VerifierTotalDialog(parent);
 				dialog.executer();

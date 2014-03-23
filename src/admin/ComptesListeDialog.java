@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -31,6 +32,7 @@ public class ComptesListeDialog extends JDialog {
 	JButton ouvrirButton;
 	JButton sauverButton;
 	JButton fermerButton;
+	JButton envoyerMails;
 
 	JPanel fond;
 	JTable resultats;
@@ -77,7 +79,7 @@ public class ComptesListeDialog extends JDialog {
 				} catch (Exception e) {
 					parent.afficherErreur(e);
 				}
-			} else if (arg0.getSource() == ouvrirButton) {
+			} else if (arg0.getSource().equals(ouvrirButton)) {
 				int ligneChoisie = resultats.getSelectedRow();
 				try {
 					parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
@@ -85,6 +87,25 @@ public class ComptesListeDialog extends JDialog {
 					dispose();
 				} catch (Exception e) {
 					parent.afficherErreur(e);
+				}
+			} else if (arg0.getSource().equals(envoyerMails)) {
+				int confirmation =
+						JOptionPane.showConfirmDialog(parent,
+								"Etes-vous sur de vouloir envoyer les mails ?", "Confirmation",
+								JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+				if (confirmation == JOptionPane.YES_OPTION) {
+					try {
+						int nbLignes = resultats.getModel().getRowCount();
+						for (int i = 0; i < nbLignes; ++i) {
+							Trigramme trig =
+									new Trigramme(parent, (String) modele.getValueAt(i, 0));
+							trig.sendPolytechniqueMail();
+						}
+						JOptionPane.showMessageDialog(parent, nbLignes + " mails envoyés.",
+								"Mails envoyés", JOptionPane.INFORMATION_MESSAGE, null);
+					} catch (Exception e) {
+						parent.afficherErreur(e);
+					}
 				}
 			}
 		}
@@ -136,14 +157,19 @@ public class ComptesListeDialog extends JDialog {
 		fermerButton.setPreferredSize(new Dimension(160, 20));
 		fermerButton.addActionListener(listener);
 
+		envoyerMails = new JButton("Envoyer mails de fascisation");
+		envoyerMails.setPreferredSize(new Dimension(250, 20));
+		envoyerMails.addActionListener(listener);
+
 		fond = new JPanel();
 		fond.setLayout(new FlowLayout(FlowLayout.CENTER));
 		fond.add(resultatsScrollPane);
 		fond.add(ouvrirButton);
 		fond.add(sauverButton);
 		fond.add(fermerButton);
+		fond.add(envoyerMails);
 
-		fond.setPreferredSize(new Dimension(500, 500));
+		fond.setPreferredSize(new Dimension(500, 520));
 		fond.setOpaque(true);
 
 		this.setContentPane(fond);

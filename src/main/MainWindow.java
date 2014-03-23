@@ -100,7 +100,6 @@ public class MainWindow extends JFrame {
 	JMenuItem supprimerTrigramme = new JMenuItem("Supprimer un trigramme");
 
 	JMenu menuTDB = new JMenu("Menu du TDB");
-	JMenuItem envoyerTousLesMails = new JMenuItem("Envoyer mails de fascisation");
 	JMenuItem verifTotal = new JMenuItem("Vérifier somme trigrammes");
 	JMenuItem voirBinets = new JMenuItem("Voir les binets");
 	JMenuItem voirComptes = new JMenuItem("Voir des comptes");
@@ -313,8 +312,8 @@ public class MainWindow extends JFrame {
 			br.close();
 			TDB.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			TDB.initialiser(trigrammeBanque);
-//			Trigramme GNI = new Trigramme(TDB, "GNI");
-//			GNI.sendPolytechniqueMail();
+			// Trigramme GNI = new Trigramme(TDB, "GNI");
+			// GNI.sendPolytechniqueMail();
 		} catch (Exception e) {
 			TDB.afficherErreur(e);
 		}
@@ -430,7 +429,6 @@ public class MainWindow extends JFrame {
 		menuGestion.add(modifierTrigramme);
 		menuGestion.add(supprimerTrigramme);
 
-		envoyerTousLesMails.addActionListener(mainWindowListener);
 		verifTotal.addActionListener(mainWindowListener);
 		voirBinets.addActionListener(mainWindowListener);
 		voirComptes.addActionListener(mainWindowListener);
@@ -440,7 +438,6 @@ public class MainWindow extends JFrame {
 		reinitialiserHistorique.addActionListener(mainWindowListener);
 		reinitialiserConso.addActionListener(mainWindowListener);
 
-//		menuTDB.add(envoyerTousLesMails);
 		menuTDB.add(verifTotal);
 		menuTDB.add(voirBinets);
 		menuTDB.add(voirComptes);
