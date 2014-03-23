@@ -440,7 +440,7 @@ public class MainWindow extends JFrame {
 		reinitialiserHistorique.addActionListener(mainWindowListener);
 		reinitialiserConso.addActionListener(mainWindowListener);
 
-		menuTDB.add(envoyerTousLesMails);
+//		menuTDB.add(envoyerTousLesMails);
 		menuTDB.add(verifTotal);
 		menuTDB.add(voirBinets);
 		menuTDB.add(voirComptes);
