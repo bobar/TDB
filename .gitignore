@@ -1,4 +1,5 @@
 .classpath
+.settings
 logTDB
 TDB.jar
 note.txt
