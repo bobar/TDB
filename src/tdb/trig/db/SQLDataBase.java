@@ -1,8 +1,10 @@
-package tdb.trig;
+package tdb.trig.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 
 
@@ -46,5 +48,11 @@ public class SQLDataBase {
 	
 	public boolean GetStatus() throws SQLException{
 		return this.connexion.isValid(SQLTIMEOUT);
+	}
+
+	public ResultSet ExecuteQuery(String QUERY) throws SQLException{
+		Statement stmt = this.connexion.createStatement();
+		ResultSet rs = stmt.executeQuery(QUERY);
+		return rs;
 	}
 }

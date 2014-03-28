@@ -6,9 +6,13 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.text.Normalizer;
 import java.util.LinkedList;
+
+import tdb.trig.db.TrigrammeDatabaseInterface;
 import admin.AuthentificationDialog;
 
 public class Trigramme {
+	
+	private TrigrammeDatabaseInterface provider;
 
 	public static final int XPlatal = 0;
 	public static final int XAncien = 1;
