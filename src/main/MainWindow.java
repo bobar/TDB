@@ -340,7 +340,7 @@ public class MainWindow extends JFrame {
 				out.println(date);
 				out.println();
 				for (StackTraceElement zou : e.getStackTrace()) {
-					out.println(zou);
+					out.print(zou + "\t\t");
 				}
 				out.println();
 				out.close();

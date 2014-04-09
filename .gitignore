@@ -6,4 +6,5 @@ note.txt
 src/TDB.config
 bin/*
 /bin
+*.class
 *~
