@@ -125,7 +125,7 @@ public class Trigramme {
 		stmt2.setString(9, mail);
 		stmt2.setString(10, picture);
 		stmt2.setInt(11, 0);
-		stmt2.setInt(12, turnover);
+		stmt2.setInt(12, 0);
 		stmt2.executeUpdate();
 
 		Transaction transaction =
