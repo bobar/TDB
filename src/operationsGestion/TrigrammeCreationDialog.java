@@ -245,6 +245,8 @@ public class TrigrammeCreationDialog extends JDialog {
 
 		String nom = champNom.getText().toUpperCase().replace(',', ';');
 		String prenom = MainWindow.formatString(champPrenom.getText().toLowerCase());
+		if (!prenom.isEmpty())
+			prenom = ("" + prenom.charAt(0)).toUpperCase() + prenom.substring(1);
 		String surnom = champSurnom.getText().replace(",", ";");
 
 		if (validation && champTrigramme.getBackground().equals(Color.GREEN)) {
