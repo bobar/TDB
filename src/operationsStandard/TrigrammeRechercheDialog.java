@@ -97,8 +97,8 @@ public class TrigrammeRechercheDialog extends JDialog {
 			if (arg0.getClickCount() == 2) {
 				int ligneChoisie = resultats.getSelectedRow();
 				try {
-					parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
-							ligneChoisie, 0)));
+					parent.setTrigrammeActif(new Trigramme(parent, Integer
+							.parseInt((String) resultats.getValueAt(ligneChoisie, 4))));
 					dispose();
 				} catch (Exception e) {
 					parent.afficherErreur(e);
@@ -134,7 +134,7 @@ public class TrigrammeRechercheDialog extends JDialog {
 				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		resultatsScrollPane.setPreferredSize(new Dimension(390, 340));
 
-		String[] header = { "Trigramme", "Nom", "Prénom", "Surnom" };
+		String[] header = { "Trigramme", "Nom", "Prénom", "Surnom", "Id" };
 		modele.setColumnIdentifiers(header);
 
 		resultats.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -143,6 +143,9 @@ public class TrigrammeRechercheDialog extends JDialog {
 		resultats.getColumnModel().getColumn(1).setPreferredWidth(70);
 		resultats.getColumnModel().getColumn(2).setPreferredWidth(60);
 		resultats.getColumnModel().getColumn(3).setPreferredWidth(80);
+		resultats.getColumnModel().getColumn(4).setMinWidth(0);
+		resultats.getColumnModel().getColumn(4).setMaxWidth(0);
+		resultats.getColumnModel().getColumn(4).setWidth(0);
 		resultats.addMouseListener(listener);
 		resultats.repaint();
 
@@ -190,7 +193,8 @@ public class TrigrammeRechercheDialog extends JDialog {
 		LinkedList<Trigramme> trigrammes = Trigramme.rechercher(parent, champSaisie.getText());
 		for (Trigramme trigramme : trigrammes) {
 			String[] ligne =
-					{ trigramme.trigramme, trigramme.name, trigramme.first_name, trigramme.nickname };
+					{ trigramme.trigramme, trigramme.name, trigramme.first_name,
+							trigramme.nickname, "" + trigramme.id };
 			modele.addRow(ligne);
 		}
 		resultats.setModel(modele);

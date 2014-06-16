@@ -231,7 +231,7 @@ public class Trigramme {
 			parent.dernieresActions.add(transaction);
 		}
 		Thread.sleep(200);
-		parent.trigrammeActif = new Trigramme(parent, parent.trigrammeActif.trigramme);
+		parent.trigrammeActif = new Trigramme(parent, parent.trigrammeActif.id);
 		parent.refresh();
 
 	}
@@ -284,16 +284,12 @@ public class Trigramme {
 	public static LinkedList<Trigramme> rechercher(MainWindow parent, String str) throws Exception {
 		Statement stmt = parent.connexion.createStatement();
 		ResultSet rs =
-				stmt.executeQuery("SELECT * FROM accounts WHERE name LIKE '%" + str
+				stmt.executeQuery("SELECT id FROM accounts WHERE name LIKE '%" + str
 						+ "%' OR first_name LIKE '%" + str + "%' OR nickname LIKE '%" + str + "%'");
 		LinkedList<Trigramme> res = new LinkedList<Trigramme>();
 		while (rs.next()) {
 			Trigramme zou =
-					new Trigramme(null, rs.getString("trigramme"), rs.getString("name"),
-							rs.getString("first_name"), rs.getString("nickname"),
-							rs.getString("casert"), rs.getInt("status"), rs.getInt("promo"),
-							rs.getString("mail"), rs.getString("picture"), rs.getInt("balance"),
-							rs.getInt("turnover"));
+					new Trigramme(parent, rs.getInt("id"));
 			res.add(zou);
 		}
 		return res;
