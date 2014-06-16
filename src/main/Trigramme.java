@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.text.Normalizer;
 import java.util.LinkedList;
+import javax.mail.internet.AddressException;
 import admin.AuthentificationDialog;
 
 public class Trigramme {
@@ -322,8 +323,12 @@ public class Trigramme {
 			mail = Normalizer.normalize(mail, Normalizer.Form.NFD);
 			mail = mail.replaceAll("[^\\p{ASCII}]", "");
 			mail += "@polytechnique.edu";
-			System.out.println(mail);
-			PolytechniqueMail.Send("bobar.negatif", "plapzderas", mail, "T'es en négatif", message);
+			//System.out.println(mail);
+			try {
+				PolytechniqueMail.Send("bobar.negatif", "plapzderas", mail, "T'es en négatif", message);
+			} catch (AddressException e) {
+				throw new TDBException("Adresse " + mail + " non valide (trigramme : "+trigramme+").");
+			}
 		}
 	}
 
