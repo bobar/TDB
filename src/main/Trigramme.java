@@ -323,9 +323,10 @@ public class Trigramme {
 			mail = Normalizer.normalize(mail, Normalizer.Form.NFD);
 			mail = mail.replaceAll("[^\\p{ASCII}]", "");
 			mail += "@polytechnique.edu";
+			String objet = trigramme + ", t'es en négatif.";
 			//System.out.println(mail);
 			try {
-				PolytechniqueMail.Send("bobar.negatif", "plapzderas", mail, "T'es en négatif", message);
+				PolytechniqueMail.Send("bobar.negatif", "plapzderas", mail, objet, message);
 			} catch (AddressException e) {
 				throw new TDBException("Adresse " + mail + " non valide (trigramme : "+trigramme+").");
 			}
