@@ -13,6 +13,7 @@ public class Transaction {
 	public int admin_id;
 	public String date;
 	public int id2;
+	public boolean is_clopes = false;
 
 	public Transaction(int id, int price, String comment, Admin admin, String date, int id2) {
 		this.id = id;
@@ -47,6 +48,10 @@ public class Transaction {
 		stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES ("
 				+ id2 + "," + (-price) + ",'" + comment + "'," + admin_id + ",'" + date + "'," + id
 				+ ")");
+		if (is_clopes) {
+			stmt.execute("UPDATE accounts SET total_clopes = total_clopes+" + (-price)
+					+ " WHERE id=" + id);
+		}
 		if (price > 0) {
 			stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + " WHERE id=" + id2);
 		} else if (price < 0) {
@@ -67,6 +72,10 @@ public class Transaction {
 		stmt.executeUpdate("DELETE FROM transactions WHERE id=" + id + " AND price=" + price
 				+ " AND comment='" + comment + "' AND admin=" + admin_id + " AND date='" + date
 				+ "' AND id2=" + id2);
+		if (is_clopes) {
+			stmt.execute("UPDATE accounts SET total_clopes = total_clopes-" + (-price)
+					+ " WHERE id=" + id);
+		}
 		if (price > 0) {
 			stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price + " WHERE id=" + id2);
 		} else if (price < 0) {

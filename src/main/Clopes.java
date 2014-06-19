@@ -64,6 +64,7 @@ public class Clopes {
 		Transaction transaction =
 				new Transaction(trigramme.id, -quantite * prix, quantite + " " + marque, admin,
 						null, parent.banqueBob.id);
+		transaction.is_clopes = true;
 		parent.dernieresActions.add(transaction);
 		transaction.WriteToDB(parent);
 		Statement stmt = parent.connexion.createStatement();
