@@ -30,7 +30,7 @@ public class Trigramme {
 	public int status; // 0=X platal,1=X
 	// ancien,2=binet,3=personnel,4=supop,5=autre
 	public int promo;
-	public String mail;
+	private String mail;
 	public String picture;
 	public int balance;
 	public int turnover;
