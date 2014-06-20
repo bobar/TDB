@@ -167,6 +167,13 @@ public class Trigramme {
 		}
 	}
 
+	public void setMail(String email) throws Exception {
+		PreparedStatement stmt =
+				parent.connexion.prepareStatement("UPDATE accounts SET mail=? WHERE id=?");
+		stmt.setString(1, email);
+		stmt.setInt(2, id);
+		stmt.executeUpdate();
+	}
 	public void modifier(int id, Admin admin) throws Exception {
 		Statement stmt = parent.connexion.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT trigramme FROM accounts WHERE id=" + id);
