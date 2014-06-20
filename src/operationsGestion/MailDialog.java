@@ -74,7 +74,7 @@ public class MailDialog extends JDialog {
 		JLabel mailActuelLabel = new JLabel("Mail actuel : ");
 		mailActuelLabel.setPreferredSize(new Dimension(130, 20));
 		mailActuelLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		JLabel mailLabel = new JLabel(parent.trigrammeActif.mail);
+		JLabel mailLabel = new JLabel(parent.trigrammeActif.getMail());
 		mailLabel.setPreferredSize(new Dimension(180, 20));
 		mailLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
