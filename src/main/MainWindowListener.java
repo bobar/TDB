@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import operationsGestion.CreditDialog;
+import operationsGestion.MailDialog;
 import operationsGestion.TransfertDialog;
 import operationsGestion.TrigrammeCreationDialog;
 import operationsGestion.TrigrammeModificationDialog;
@@ -97,6 +98,9 @@ public class MainWindowListener implements KeyListener, ActionListener {
 				}
 			} else if (action.getSource().equals(parent.transfert)) {
 				TransfertDialog dialog = new TransfertDialog(parent);
+				dialog.executer();
+			} else if (action.getSource().equals(parent.modifierMail)) {
+				MailDialog dialog = new MailDialog(parent);
 				dialog.executer();
 			} else if (action.getSource().equals(parent.creerTrigramme)) {
 				TrigrammeCreationDialog dialog = new TrigrammeCreationDialog(parent);

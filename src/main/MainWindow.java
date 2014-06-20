@@ -95,6 +95,7 @@ public class MainWindow extends JFrame {
 	JMenuItem loggerAPlusieurs = new JMenuItem("Logger à plusieurs");
 	JMenuItem approvisionner = new JMenuItem("Approvisionner le trigramme");
 	JMenuItem transfert = new JMenuItem("Transfert");
+	JMenuItem modifierMail = new JMenuItem("Définir l'adresse mail");
 	JMenuItem creerTrigramme = new JMenuItem("Créer un trigramme");
 	JMenuItem modifierTrigramme = new JMenuItem("Modifier un trigramme");
 	JMenuItem supprimerTrigramme = new JMenuItem("Supprimer un trigramme");
@@ -411,6 +412,7 @@ public class MainWindow extends JFrame {
 		approvisionner.setAccelerator(KeyStroke.getKeyStroke('+'));
 		transfert.addActionListener(mainWindowListener);
 		transfert.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
+		modifierMail.addActionListener(mainWindowListener);
 		creerTrigramme.addActionListener(mainWindowListener);
 		creerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
 				InputEvent.CTRL_DOWN_MASK));
@@ -425,6 +427,7 @@ public class MainWindow extends JFrame {
 		menuGestion.add(loggerAPlusieurs);
 		menuGestion.add(approvisionner);
 		menuGestion.add(transfert);
+		menuGestion.add(modifierMail);
 		menuGestion.add(creerTrigramme);
 		menuGestion.add(modifierTrigramme);
 		menuGestion.add(supprimerTrigramme);
