@@ -48,6 +48,7 @@ public class Trigramme {
 			casert = rs.getString("casert");
 			status = rs.getInt("status");
 			promo = rs.getInt("promo");
+			mail = rs.getString("mail");
 			picture = rs.getString("picture");
 			balance = rs.getInt("balance");
 			turnover = rs.getInt("turnover");
@@ -89,6 +90,7 @@ public class Trigramme {
 			casert = rs.getString("casert");
 			status = rs.getInt("status");
 			promo = rs.getInt("promo");
+			mail = rs.getString("mail");
 			picture = rs.getString("picture");
 			balance = rs.getInt("balance");
 			turnover = rs.getInt("turnover");
