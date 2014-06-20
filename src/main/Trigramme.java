@@ -153,6 +153,20 @@ public class Trigramme {
 		}
 	}
 
+	public String getMail() {
+		if (mail.isEmpty()) {
+			String email =
+					first_name.toLowerCase().replace(' ', '-') + "."
+							+ name.toLowerCase().replace(' ', '-');
+			email = Normalizer.normalize(mail, Normalizer.Form.NFD);
+			email = mail.replaceAll("[^\\p{ASCII}]", "");
+			email += "@polytechnique.edu";
+			return email;
+		} else {
+			return mail;
+		}
+	}
+
 	public void modifier(int id, Admin admin) throws Exception {
 		Statement stmt = parent.connexion.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT trigramme FROM accounts WHERE id=" + id);
@@ -289,8 +303,7 @@ public class Trigramme {
 						+ "%' OR first_name LIKE '%" + str + "%' OR nickname LIKE '%" + str + "%'");
 		LinkedList<Trigramme> res = new LinkedList<Trigramme>();
 		while (rs.next()) {
-			Trigramme zou =
-					new Trigramme(parent, rs.getInt("id"));
+			Trigramme zou = new Trigramme(parent, rs.getInt("id"));
 			res.add(zou);
 		}
 		return res;
@@ -317,18 +330,14 @@ public class Trigramme {
 			String message = "Salut,\n\nT'es en négatif au BôB, tu nous dois ";
 			message += ((-(double) balance / 100) + "").replace('.', ',');
 			message += " €.\nApporte nous un chèque.\n\nLe BôB, qui t'enkhûle avec affection.";
-			String mail =
-					first_name.toLowerCase().replace(' ', '-') + "."
-							+ name.toLowerCase().replace(' ', '-');
-			mail = Normalizer.normalize(mail, Normalizer.Form.NFD);
-			mail = mail.replaceAll("[^\\p{ASCII}]", "");
-			mail += "@polytechnique.edu";
+			String mail = getMail();
 			String objet = trigramme + ", t'es en négatif.";
-			//System.out.println(mail);
+			// System.out.println(mail);
 			try {
 				PolytechniqueMail.Send("bobar.negatif", "plapzderas", mail, objet, message);
 			} catch (AddressException e) {
-				throw new TDBException("Adresse " + mail + " non valide (trigramme : "+trigramme+").");
+				throw new TDBException("Adresse " + mail + " non valide (trigramme : " + trigramme
+						+ ").");
 			}
 		}
 	}
