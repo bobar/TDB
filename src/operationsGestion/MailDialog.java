@@ -75,11 +75,11 @@ public class MailDialog extends JDialog {
 		mailActuelLabel.setPreferredSize(new Dimension(130, 20));
 		mailActuelLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		JLabel mailLabel = new JLabel(parent.trigrammeActif.getMail());
-		mailLabel.setPreferredSize(new Dimension(180, 20));
+		mailLabel.setPreferredSize(new Dimension(280, 20));
 		mailLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
 		champMail = new JTextField();
-		champMail.setPreferredSize(new Dimension(180, 20));
+		champMail.setPreferredSize(new Dimension(280, 20));
 		champMail.addKeyListener(listener);
 		JLabel newMailLabel = new JLabel("Nouveau mail : ");
 		newMailLabel.setPreferredSize(new Dimension(130, 20));
@@ -100,7 +100,7 @@ public class MailDialog extends JDialog {
 		pane.add(champMail);
 		pane.add(okButton);
 		pane.add(cancelButton);
-		pane.setPreferredSize(new Dimension(350, 80));
+		pane.setPreferredSize(new Dimension(450, 80));
 
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.getContentPane().add(pane);

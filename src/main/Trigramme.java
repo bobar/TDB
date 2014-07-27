@@ -156,12 +156,12 @@ public class Trigramme {
 	}
 
 	public String getMail() {
-		if (mail.isEmpty()) {
+		if (mail == null || mail.isEmpty()) {
 			String email =
 					first_name.toLowerCase().replace(' ', '-') + "."
 							+ name.toLowerCase().replace(' ', '-');
-			email = Normalizer.normalize(mail, Normalizer.Form.NFD);
-			email = mail.replaceAll("[^\\p{ASCII}]", "");
+			email = Normalizer.normalize(email, Normalizer.Form.NFD);
+			email = email.replaceAll("[^\\p{ASCII}]", "");
 			email += "@polytechnique.edu";
 			return email;
 		} else {
