@@ -108,5 +108,4 @@ public class DebitDialog extends JDialog {
 			parent.trigrammeActif.debiter(montant);
 		}
 	}
-
 }

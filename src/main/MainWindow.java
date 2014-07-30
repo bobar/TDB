@@ -346,7 +346,10 @@ public class MainWindow extends JFrame {
 				this.connecter();
 			} catch (Exception e1) {
 			}
+			return;
 		}
+		if (e.getClass() == NumberFormatException.class)
+			return;
 		if (!TDBException.class.isAssignableFrom(e.getClass())) {
 			try {
 				String absolutePath = this.getExecutionPath();
@@ -357,11 +360,9 @@ public class MainWindow extends JFrame {
 						"yyyy-MM-dd HH:mm:ss");
 				String date = formater.format(new Date());
 				out.println(date);
-				out.println();
-				for (StackTraceElement zou : e.getStackTrace()) {
-					out.print(zou + "\t\t");
-				}
-				out.println();
+				out.println(e.getStackTrace().toString()
+						.replaceAll("\n", "\t\t"));
+				out.println("\n");
 				out.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
