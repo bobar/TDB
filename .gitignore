@@ -1,7 +1,7 @@
 .classpath
 .settings
 logTDB*
-TDB.jar
+TDB.jar*
 note.txt
 src/TDB.config
 bin/*
