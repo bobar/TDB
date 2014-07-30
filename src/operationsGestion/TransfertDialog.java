@@ -50,9 +50,11 @@ public class TransfertDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -72,7 +74,8 @@ public class TransfertDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 
 		if (!authentification.admin.has_droit("transfert")) {
@@ -138,13 +141,15 @@ public class TransfertDialog extends JDialog {
 		this.setVisible(true);
 
 		if (validation) {
-			int montant = (int) (100 * Double.parseDouble(champMontant.getText()));
+			int montant = (int) (100 * Double.parseDouble(champMontant
+					.getText()));
 			String commentaire = champCommentaire.getText();
-			Trigramme trigramme1 = new Trigramme(parent, champTrigramme1.getText());
-			Trigramme trigramme2 = new Trigramme(parent, champTrigramme2.getText());
-			Transaction transaction =
-					new Transaction(trigramme1.id, -montant, commentaire, authentification.admin,
-							null, trigramme2.id);
+			Trigramme trigramme1 = new Trigramme(parent,
+					champTrigramme1.getText());
+			Trigramme trigramme2 = new Trigramme(parent,
+					champTrigramme2.getText());
+			Transaction transaction = new Transaction(trigramme1.id, -montant,
+					commentaire, authentification.admin, null, trigramme2.id);
 			transaction.WriteToDB(parent);
 		}
 		parent.refresh();

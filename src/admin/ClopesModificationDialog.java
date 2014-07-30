@@ -28,7 +28,8 @@ public class ClopesModificationDialog extends JDialog {
 
 	boolean validation = false;
 
-	public class ClopesModificationDialogListener implements KeyListener, ActionListener {
+	public class ClopesModificationDialogListener implements KeyListener,
+			ActionListener {
 
 		public ClopesModificationDialogListener() {
 			super();
@@ -44,9 +45,11 @@ public class ClopesModificationDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -114,7 +117,8 @@ public class ClopesModificationDialog extends JDialog {
 		this.setVisible(true);
 
 		if (validation) {
-			clope.setPrix((int) Math.round(100 * Double.parseDouble(champPrix.getText())));
+			clope.setPrix((int) Math.round(100 * Double.parseDouble(champPrix
+					.getText())));
 		}
 	}
 }

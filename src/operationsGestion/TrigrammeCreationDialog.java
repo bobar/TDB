@@ -45,7 +45,8 @@ public class TrigrammeCreationDialog extends JDialog {
 
 	boolean validation = false;
 
-	public class TrigrammeCreationDialogListener implements KeyListener, ActionListener {
+	public class TrigrammeCreationDialogListener implements KeyListener,
+			ActionListener {
 
 		public TrigrammeCreationDialogListener() {
 			super();
@@ -64,8 +65,14 @@ public class TrigrammeCreationDialog extends JDialog {
 
 		public void keyReleased(KeyEvent arg0) {
 			if (arg0.getSource().equals(champTrigramme)) {
-				champTrigramme.setText(champTrigramme.getText().toUpperCase()
-						.substring(0, Math.min(3, champTrigramme.getText().length())));
+				champTrigramme
+						.setText(champTrigramme
+								.getText()
+								.toUpperCase()
+								.substring(
+										0,
+										Math.min(3, champTrigramme.getText()
+												.length())));
 				if (champTrigramme.getText().length() < 3) {
 					champTrigramme.setBackground(null);
 				} else {
@@ -84,7 +91,8 @@ public class TrigrammeCreationDialog extends JDialog {
 			}
 		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -98,9 +106,13 @@ public class TrigrammeCreationDialog extends JDialog {
 				chooser.setFileFilter(new FileFilter() {
 
 					public boolean accept(File arg0) {
-						return (arg0.isDirectory() || arg0.getName().toLowerCase().contains(".gif")
-								|| arg0.getName().toLowerCase().contains(".jpg")
-								|| arg0.getName().toLowerCase().contains(".jpeg") || arg0.getName()
+						return (arg0.isDirectory()
+								|| arg0.getName().toLowerCase()
+										.contains(".gif")
+								|| arg0.getName().toLowerCase()
+										.contains(".jpg")
+								|| arg0.getName().toLowerCase()
+										.contains(".jpeg") || arg0.getName()
 								.toLowerCase().contains(".png"));
 					}
 
@@ -111,7 +123,8 @@ public class TrigrammeCreationDialog extends JDialog {
 				});
 				int returnVal = chooser.showOpenDialog(parent);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					champPhoto.setText(chooser.getSelectedFile().getAbsolutePath());
+					champPhoto.setText(chooser.getSelectedFile()
+							.getAbsolutePath());
 				}
 			}
 		}
@@ -125,7 +138,8 @@ public class TrigrammeCreationDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 
 		if (!authentification.admin.has_droit("creer_tri")) {
@@ -244,18 +258,27 @@ public class TrigrammeCreationDialog extends JDialog {
 		this.setVisible(true);
 
 		String nom = champNom.getText().toUpperCase().replace(',', ';');
-		String prenom = MainWindow.formatString(champPrenom.getText().toLowerCase());
+		String prenom = MainWindow.formatString(champPrenom.getText()
+				.toLowerCase());
 		if (!prenom.isEmpty())
-			prenom = ("" + prenom.charAt(0)).toUpperCase() + prenom.substring(1);
+			prenom = ("" + prenom.charAt(0)).toUpperCase()
+					+ prenom.substring(1);
 		String surnom = champSurnom.getText().replace(",", ";");
 
 		if (validation && champTrigramme.getBackground().equals(Color.GREEN)) {
-			Trigramme trigramme =
-					new Trigramme(parent, champTrigramme.getText(), nom, prenom, surnom,
-							champCasert.getText(), champCategorie.getSelectedIndex(),
-							Integer.parseInt("0" + champPromo.getText()), "", champPhoto.getText(),
-							(int) (100 * Double.parseDouble("0" + champSolde.getText())),
-							(int) (100 * Double.parseDouble("0" + champSolde.getText())));
+			Trigramme trigramme = new Trigramme(
+					parent,
+					champTrigramme.getText(),
+					nom,
+					prenom,
+					surnom,
+					champCasert.getText(),
+					champCategorie.getSelectedIndex(),
+					Integer.parseInt("0" + champPromo.getText()),
+					"",
+					champPhoto.getText(),
+					(int) (100 * Double.parseDouble("0" + champSolde.getText())),
+					(int) (100 * Double.parseDouble("0" + champSolde.getText())));
 			trigramme.creer(authentification.admin);
 		}
 		parent.refresh();

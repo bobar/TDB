@@ -41,7 +41,8 @@ public class TrigrammeDialog extends JDialog {
 			}
 		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 	}
 
@@ -73,7 +74,8 @@ public class TrigrammeDialog extends JDialog {
 		this.setVisible(true);
 
 		if (validation) {
-			parent.setTrigrammeActif(new Trigramme(parent, champSaisie.getText()));
+			parent.setTrigrammeActif(new Trigramme(parent, champSaisie
+					.getText()));
 		}
 	}
 }

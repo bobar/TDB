@@ -34,7 +34,8 @@ public class AuthentificationDialog extends JDialog {
 	public Admin admin;
 	boolean validation = false;
 
-	public class AuthentificationDialogListener implements KeyListener, ActionListener {
+	public class AuthentificationDialogListener implements KeyListener,
+			ActionListener {
 
 		public AuthentificationDialogListener() {
 			super();
@@ -51,9 +52,11 @@ public class AuthentificationDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {

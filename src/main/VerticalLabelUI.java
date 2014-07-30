@@ -21,7 +21,8 @@ public class VerticalLabelUI extends BasicLabelUI {
 	protected static VerticalLabelUI verticalLabelUI = new VerticalLabelUI();
 	private final static VerticalLabelUI SAFE_VERTICAL_LABEL_UI = new VerticalLabelUI();
 
-	public VerticalLabelUI() {}
+	public VerticalLabelUI() {
+	}
 
 	public VerticalLabelUI(boolean clockwise) {
 		this.clockwise = clockwise;
@@ -40,21 +41,22 @@ public class VerticalLabelUI extends BasicLabelUI {
 		return -1;
 	}
 
-	public Component.BaselineResizeBehavior getBaselineResizeBehavior(JComponent c) {
+	public Component.BaselineResizeBehavior getBaselineResizeBehavior(
+			JComponent c) {
 		super.getBaselineResizeBehavior(c);
 		return Component.BaselineResizeBehavior.OTHER;
 	}
 
-	protected String layoutCL(JLabel label, FontMetrics fontMetrics, String text, Icon icon,
-			Rectangle viewR, Rectangle iconR, Rectangle textR) {
+	protected String layoutCL(JLabel label, FontMetrics fontMetrics,
+			String text, Icon icon, Rectangle viewR, Rectangle iconR,
+			Rectangle textR) {
 
 		verticalViewR = transposeRectangle(viewR, verticalViewR);
 		verticalIconR = transposeRectangle(iconR, verticalIconR);
 		verticalTextR = transposeRectangle(textR, verticalTextR);
 
-		text =
-				super.layoutCL(label, fontMetrics, text, icon, verticalViewR, verticalIconR,
-						verticalTextR);
+		text = super.layoutCL(label, fontMetrics, text, icon, verticalViewR,
+				verticalIconR, verticalTextR);
 
 		viewR = copyRectangle(verticalViewR, viewR);
 		iconR = copyRectangle(verticalIconR, iconR);
@@ -67,7 +69,8 @@ public class VerticalLabelUI extends BasicLabelUI {
 		if (clockwise) {
 			g2.rotate(Math.PI / 2, c.getSize().width / 2, c.getSize().width / 2);
 		} else {
-			g2.rotate(-Math.PI / 2, c.getSize().height / 2, c.getSize().height / 2);
+			g2.rotate(-Math.PI / 2, c.getSize().height / 2,
+					c.getSize().height / 2);
 		}
 		super.paint(g2, c);
 	}

@@ -38,7 +38,8 @@ public class AdminCreationDialog extends JDialog {
 
 	protected boolean validation = false;
 
-	public class AdminCreationDialogListener implements KeyListener, ActionListener {
+	public class AdminCreationDialogListener implements KeyListener,
+			ActionListener {
 
 		protected AdminCreationDialogListener() {
 			super();
@@ -54,9 +55,11 @@ public class AdminCreationDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -88,7 +91,8 @@ public class AdminCreationDialog extends JDialog {
 		labelCategorie.setPreferredSize(new Dimension(120, 20));
 
 		Map<String, Integer> status = Droits.getStatusId(parent);
-		champCategorie = new JComboBox<String>(status.keySet().toArray(new String[0]));
+		champCategorie = new JComboBox<String>(status.keySet().toArray(
+				new String[0]));
 		champCategorie.setPreferredSize(new Dimension(150, 20));
 		champCategorie.addKeyListener(listener);
 
@@ -141,11 +145,11 @@ public class AdminCreationDialog extends JDialog {
 			String cryptage1 = MD5Hex(champMDP1.getPassword());
 			String cryptage2 = MD5Hex(champMDP2.getPassword());
 			if (!cryptage1.equals(cryptage2)) {
-				throw new AuthException("Les mots de passe ne correspondent pas");
+				throw new AuthException(
+						"Les mots de passe ne correspondent pas");
 			}
-			Admin new_admin =
-					new Admin(parent, champTrigramme.getText(), champCategorie.getSelectedIndex(),
-							cryptage1);
+			Admin new_admin = new Admin(parent, champTrigramme.getText(),
+					champCategorie.getSelectedIndex(), cryptage1);
 			new_admin.creer();
 		}
 	}

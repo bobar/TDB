@@ -43,9 +43,11 @@ public class DebitDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -101,7 +103,8 @@ public class DebitDialog extends JDialog {
 		this.setVisible(true);
 
 		if (validation) {
-			int montant = (int) (100 * Double.parseDouble(champMontant.getText()));
+			int montant = (int) (100 * Double.parseDouble(champMontant
+					.getText()));
 			parent.trigrammeActif.debiter(montant);
 		}
 	}

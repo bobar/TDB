@@ -44,10 +44,10 @@ public class LogGroupeDialog extends JDialog {
 		public void keyPressed(KeyEvent arg0) {
 			if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
 				try {
-					int confirmation =
-							JOptionPane.showConfirmDialog(parent, "Etes-vous sur ?",
-									"Confirmation", JOptionPane.YES_NO_OPTION,
-									JOptionPane.QUESTION_MESSAGE, null);
+					int confirmation = JOptionPane.showConfirmDialog(parent,
+							"Etes-vous sur ?", "Confirmation",
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null);
 					if (confirmation == JOptionPane.YES_OPTION) {
 						String trig = champTrigramme.getText().toUpperCase();
 						trig = trig.replace(' ', ',');
@@ -59,15 +59,16 @@ public class LogGroupeDialog extends JDialog {
 						String trigrammesFaux = "Trigrammes faux : ";
 						for (String tri : trigrammes) {
 							Statement stmt = parent.connexion.createStatement();
-							ResultSet rs =
-									stmt.executeQuery("SELECT id FROM accounts WHERE trigramme='"
+							ResultSet rs = stmt
+									.executeQuery("SELECT id FROM accounts WHERE trigramme='"
 											+ tri + "'");
 							if (!rs.first()) {
 								trigrammesFaux += tri + ",";
 							}
 						}
 						if (!trigrammesFaux.equals("Trigrammes faux : ")) {
-							JOptionPane.showMessageDialog(parent, trigrammesFaux, "Erreurs",
+							JOptionPane.showMessageDialog(parent,
+									trigrammesFaux, "Erreurs",
 									JOptionPane.WARNING_MESSAGE, null);
 						} else {
 							validation = true;
@@ -83,17 +84,19 @@ public class LogGroupeDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent arg0) {
 			if (arg0.getSource().equals(okButton)) {
 				try {
-					int confirmation =
-							JOptionPane.showConfirmDialog(parent, "Etes-vous sur ?",
-									"Confirmation", JOptionPane.YES_NO_OPTION,
-									JOptionPane.QUESTION_MESSAGE, null);
+					int confirmation = JOptionPane.showConfirmDialog(parent,
+							"Etes-vous sur ?", "Confirmation",
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null);
 					if (confirmation == JOptionPane.YES_OPTION) {
 						String trig = champTrigramme.getText().toUpperCase();
 						trig = trig.replace(' ', ',');
@@ -105,15 +108,16 @@ public class LogGroupeDialog extends JDialog {
 						String trigrammesFaux = "Trigrammes faux : ";
 						for (String tri : trigrammes) {
 							Statement stmt = parent.connexion.createStatement();
-							ResultSet rs =
-									stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
+							ResultSet rs = stmt
+									.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
 											+ tri + "'");
 							if (!rs.first()) {
 								trigrammesFaux += tri + " ";
 							}
 						}
 						if (!trigrammesFaux.equals("Trigrammes faux : ")) {
-							JOptionPane.showMessageDialog(parent, trigrammesFaux, "Erreurs",
+							JOptionPane.showMessageDialog(parent,
+									trigrammesFaux, "Erreurs",
 									JOptionPane.WARNING_MESSAGE, null);
 						} else {
 							validation = true;
@@ -137,7 +141,8 @@ public class LogGroupeDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 
 		if (!authentification.admin.has_droit("log_groupe")) {
@@ -204,27 +209,28 @@ public class LogGroupeDialog extends JDialog {
 			String trigrammesFaux = "Trigrammes faux : ";
 			for (String tri : trigrammes) {
 				Statement stmt = parent.connexion.createStatement();
-				ResultSet rs =
-						stmt.executeQuery("SELECT id FROM accounts WHERE trigramme ='" + tri + "'");
+				ResultSet rs = stmt
+						.executeQuery("SELECT id FROM accounts WHERE trigramme ='"
+								+ tri + "'");
 				if (!rs.first()) {
 					trigrammesFaux += tri + " ";
 				}
 			}
 			if (!trigrammesFaux.equals("Trigrammes faux : ")) {
-				JOptionPane.showMessageDialog(parent, trigrammesFaux, "Erreurs",
-						JOptionPane.WARNING_MESSAGE, null);
+				JOptionPane.showMessageDialog(parent, trigrammesFaux,
+						"Erreurs", JOptionPane.WARNING_MESSAGE, null);
 			}
 
-			int montant =
-					10 * (int) Math.ceil(10 * Double.parseDouble(champMontant.getText())
-							/ trigrammes.length);
+			int montant = 10 * (int) Math.ceil(10
+					* Double.parseDouble(champMontant.getText())
+					/ trigrammes.length);
 
 			if (montant > 0 && montant < 10000) {
 				for (int i = 0; i < trigrammes.length; i++) {
 					Trigramme trigramme = new Trigramme(parent, trigrammes[i]);
-					Transaction transaction =
-							new Transaction(trigramme.id, -montant, commentaire,
-									authentification.admin, null, parent.banqueBob.id);
+					Transaction transaction = new Transaction(trigramme.id,
+							-montant, commentaire, authentification.admin,
+							null, parent.banqueBob.id);
 					transaction.WriteToDB(parent);
 				}
 			} else {

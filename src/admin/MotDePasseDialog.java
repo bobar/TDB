@@ -35,7 +35,8 @@ public class MotDePasseDialog extends JDialog {
 	int droits = 0;
 	boolean validation = false;
 
-	public class MotDePasseDialogListener implements KeyListener, ActionListener {
+	public class MotDePasseDialogListener implements KeyListener,
+			ActionListener {
 
 		public MotDePasseDialogListener() {
 			super();
@@ -51,9 +52,11 @@ public class MotDePasseDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -75,11 +78,12 @@ public class MotDePasseDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
-//		if (!authentification.admin.pekin()) {
-//			throw new AuthException("Vous n'avez pas de compte admin.");
-//		}
+		// if (!authentification.admin.pekin()) {
+		// throw new AuthException("Vous n'avez pas de compte admin.");
+		// }
 		JLabel labelMDP1 = new JLabel("Mot de passe : ");
 		labelMDP1.setPreferredSize(new Dimension(120, 20));
 		champMDP1 = new JPasswordField();
@@ -122,7 +126,8 @@ public class MotDePasseDialog extends JDialog {
 			String mdp1 = MD5Hex(champMDP1.getPassword());
 			String mdp2 = MD5Hex(champMDP2.getPassword());
 			if (!mdp1.equals(mdp2)) {
-				throw new AuthException("Les mots de passe ne correspondent pas");
+				throw new AuthException(
+						"Les mots de passe ne correspondent pas");
 			} else {
 				authentification.admin.setPasswd(mdp1);
 				JOptionPane.showMessageDialog(this, "Mot de passe changé", "",

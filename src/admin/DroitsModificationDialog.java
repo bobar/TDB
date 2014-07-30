@@ -32,7 +32,8 @@ public class DroitsModificationDialog extends JDialog {
 
 	protected boolean validation = false;
 
-	public class DroitsCreationDialogListener implements KeyListener, ActionListener {
+	public class DroitsCreationDialogListener implements KeyListener,
+			ActionListener {
 
 		protected DroitsCreationDialogListener() {
 			super();
@@ -48,9 +49,11 @@ public class DroitsModificationDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {

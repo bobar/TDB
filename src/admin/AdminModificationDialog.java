@@ -33,7 +33,8 @@ public class AdminModificationDialog extends JDialog {
 
 	boolean validation = false;
 
-	public class AdminModificationDialogListener implements KeyListener, ActionListener {
+	public class AdminModificationDialogListener implements KeyListener,
+			ActionListener {
 
 		public AdminModificationDialogListener() {
 			super();
@@ -49,9 +50,11 @@ public class AdminModificationDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -88,7 +91,8 @@ public class AdminModificationDialog extends JDialog {
 		labelCategorie.setPreferredSize(new Dimension(120, 20));
 
 		Map<Integer, String> status = Droits.getStatuses(parent);
-		champCategorie = new JComboBox<String>(status.values().toArray(new String[0]));
+		champCategorie = new JComboBox<String>(status.values().toArray(
+				new String[0]));
 		champCategorie.setPreferredSize(new Dimension(150, 20));
 		champCategorie.setSelectedIndex(permissions);
 		champCategorie.addKeyListener(listener);

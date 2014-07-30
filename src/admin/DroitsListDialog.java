@@ -54,7 +54,8 @@ public class DroitsListDialog extends JDialog {
 
 	private JScrollPane resultatsScrollPane;
 
-	public class DroitsListDialogListener implements ActionListener, KeyListener {
+	public class DroitsListDialogListener implements ActionListener,
+			KeyListener {
 
 		DroitsListDialogListener() {
 			super();
@@ -66,14 +67,17 @@ public class DroitsListDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent arg0) {
 			try {
 				if (arg0.getSource().equals(creerButton)) {
-					DroitsCreationDialog dialog = new DroitsCreationDialog(parent);
+					DroitsCreationDialog dialog = new DroitsCreationDialog(
+							parent);
 					dialog.executer();
 					refresh();
 				} else if (arg0.getSource().equals(modifierButton)) {
@@ -84,21 +88,23 @@ public class DroitsListDialog extends JDialog {
 					int confirmation = JOptionPane.OK_OPTION;
 					if (Droits.droitsUtilises(parent,
 							(String) listeDroits.getValueAt(ligneChoisie, 0))) {
-						confirmation =
-								JOptionPane
-										.showConfirmDialog(
-												parent,
-												"Les droits "
-														+ listeDroits.getValueAt(ligneChoisie, 0)
-														+ " sont actuellement utilisés. Etes-vous sûr de vouloir les modifier ?",
-												"Confirmation", JOptionPane.OK_CANCEL_OPTION,
-												JOptionPane.QUESTION_MESSAGE, null);
+						confirmation = JOptionPane
+								.showConfirmDialog(
+										parent,
+										"Les droits "
+												+ listeDroits.getValueAt(
+														ligneChoisie, 0)
+												+ " sont actuellement utilisés. Etes-vous sûr de vouloir les modifier ?",
+										"Confirmation",
+										JOptionPane.OK_CANCEL_OPTION,
+										JOptionPane.QUESTION_MESSAGE, null);
 					}
 					if (confirmation == JOptionPane.OK_OPTION) {
-						Droits droits =
-								new Droits(parent, (String) listeDroits.getValueAt(ligneChoisie, 0));
-						DroitsModificationDialog dialog =
-								new DroitsModificationDialog(parent, droits);
+						Droits droits = new Droits(parent,
+								(String) listeDroits
+										.getValueAt(ligneChoisie, 0));
+						DroitsModificationDialog dialog = new DroitsModificationDialog(
+								parent, droits);
 						dialog.executer();
 					}
 				} else if (arg0.getSource().equals(supprimerButton)) {
@@ -106,18 +112,16 @@ public class DroitsListDialog extends JDialog {
 					if (ligneChoisie == -1) {
 						throw new TDBException("Pas de droits sélectionnés");
 					}
-					int confirmation =
-							JOptionPane.showConfirmDialog(
-									parent,
-									"Etes-vous sur de vouloir supprimer les droits "
-											+ listeDroits.getValueAt(ligneChoisie, 0),
-									"Confirmation", JOptionPane.OK_CANCEL_OPTION,
-									JOptionPane.QUESTION_MESSAGE, null);
+					int confirmation = JOptionPane.showConfirmDialog(parent,
+							"Etes-vous sur de vouloir supprimer les droits "
+									+ listeDroits.getValueAt(ligneChoisie, 0),
+							"Confirmation", JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null);
 					if (confirmation == JOptionPane.OK_OPTION) {
-						if (!Droits.droitsUtilises(parent,
-								(String) listeDroits.getValueAt(ligneChoisie, 0))) {
-							Droits droits =
-									new Droits(parent, (String) listeDroits.getValueAt(
+						if (!Droits.droitsUtilises(parent, (String) listeDroits
+								.getValueAt(ligneChoisie, 0))) {
+							Droits droits = new Droits(parent,
+									(String) listeDroits.getValueAt(
 											ligneChoisie, 0));
 							droits.delete();
 						} else {
@@ -141,7 +145,8 @@ public class DroitsListDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 
 		if (!authentification.admin.has_droit("gestion_admin")) {
@@ -172,7 +177,8 @@ public class DroitsListDialog extends JDialog {
 		listeDroits.setModel(modele);
 		listeDroits.getColumnModel().getColumn(0).setPreferredWidth(100);
 		for (int i = 0; i < Droits.nom_droits.length; ++i) {
-			listeDroits.getColumnModel().getColumn(i + 1).setHeaderRenderer(headerRenderer);
+			listeDroits.getColumnModel().getColumn(i + 1)
+					.setHeaderRenderer(headerRenderer);
 			listeDroits.getColumnModel().getColumn(i + 1).setPreferredWidth(20);
 		}
 		listeDroits.repaint();
@@ -216,6 +222,7 @@ public class DroitsListDialog extends JDialog {
 
 		this.setVisible(true);
 	}
+
 	// On crée une petite fonction refresh pour après les modifs
 	public void refresh() throws Exception {
 		for (int i = modele.getRowCount() - 1; i >= 0; i--) {

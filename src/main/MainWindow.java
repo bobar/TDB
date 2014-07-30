@@ -107,12 +107,16 @@ public class MainWindow extends JFrame {
 	JMenuItem debiterFichier = new JMenuItem("Débiter depuis un fichier");
 	JMenuItem positivation = new JMenuItem("Positivation");
 	JMenuItem exporter = new JMenuItem("Exporter la base");
-	JMenuItem reinitialiserHistorique = new JMenuItem("Reinitialiser les historiques");
-	JMenuItem reinitialiserConso = new JMenuItem("Reinitialiser les chiffres d'affaires");
+	JMenuItem reinitialiserHistorique = new JMenuItem(
+			"Reinitialiser les historiques");
+	JMenuItem reinitialiserConso = new JMenuItem(
+			"Reinitialiser les chiffres d'affaires");
 
 	JMenu menuAdmin = new JMenu("Menu Administration");
-	JMenuItem ouvrirModeAdmin = new JMenuItem("Lancer le mode super-administrateur");
-	JMenuItem fermerModeAdmin = new JMenuItem("Fermer le mode super-administrateur");
+	JMenuItem ouvrirModeAdmin = new JMenuItem(
+			"Lancer le mode super-administrateur");
+	JMenuItem fermerModeAdmin = new JMenuItem(
+			"Fermer le mode super-administrateur");
 	JMenuItem ouvrirBinet = new JMenuItem("Ouvrir banque binet");
 	JMenuItem fermerBinet = new JMenuItem("Fermer banque binet");
 	JMenuItem changerMDP = new JMenuItem("Changer son mot de passe");
@@ -126,7 +130,8 @@ public class MainWindow extends JFrame {
 	JTable historique = new JTable() {
 		private static final long serialVersionUID = 1L;
 
-		public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+		public Component prepareRenderer(TableCellRenderer renderer, int row,
+				int column) {
 			Component c = super.prepareRenderer(renderer, row, column);
 			if ((row % 2) == 1) {
 				c.setBackground(new Color((float) 0.9, (float) 0.9, (float) 0.9));
@@ -157,7 +162,8 @@ public class MainWindow extends JFrame {
 	JLabel turnoverLabel;
 	JLabel photo;
 
-	public MainWindow() {}
+	public MainWindow() {
+	}
 
 	public void connecter() throws Exception {
 		Database database = new Database();
@@ -182,7 +188,8 @@ public class MainWindow extends JFrame {
 	}
 
 	public void ouvrirModeAdmin() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(this);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				this);
 		authentification.executer();
 		if (!authentification.admin.has_droit("super_admin")) {
 			throw new AuthException();
@@ -199,7 +206,8 @@ public class MainWindow extends JFrame {
 	}
 
 	public void ouvrirBanqueBinet() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(this);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				this);
 		authentification.executer();
 		if (!authentification.admin.has_droit("banque_binet")) {
 			throw new AuthException();
@@ -217,7 +225,8 @@ public class MainWindow extends JFrame {
 	}
 
 	public void fermerBanqueBinet() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(this);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				this);
 		authentification.executer();
 		if (!authentification.admin.has_droit("banque_binet")) {
 			throw new AuthException();
@@ -228,7 +237,8 @@ public class MainWindow extends JFrame {
 	}
 
 	public void reinitialiserTurnover() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(this);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				this);
 		authentification.executer();
 		if (!authentification.admin.has_droit("reinitialiser")) {
 			throw new AuthException();
@@ -240,12 +250,14 @@ public class MainWindow extends JFrame {
 		stmt.executeUpdate("UPDATE accounts SET turnover=balance");
 		stmt.executeUpdate("UPDATE accounts SET turnover=0 WHERE status=2");
 		refresh();
-		JOptionPane.showMessageDialog(this, "Chiffres d'affaires réinitialisés", "",
+		JOptionPane.showMessageDialog(this,
+				"Chiffres d'affaires réinitialisés", "",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public void reinitialiserHistorique() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(this);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				this);
 		authentification.executer();
 		if (!authentification.admin.has_droit("reinitialiser")) {
 			throw new AuthException();
@@ -281,22 +293,25 @@ public class MainWindow extends JFrame {
 	}
 
 	private String getExecutionPath() {
-		String absolutePath =
-				getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		String absolutePath = getClass().getProtectionDomain().getCodeSource()
+				.getLocation().getPath();
 		absolutePath = absolutePath.substring(0, absolutePath.lastIndexOf("/"));
-		absolutePath = absolutePath.replaceAll("%20", " "); // Surely need to do this here
+		absolutePath = absolutePath.replaceAll("%20", " "); // Surely need to do
+															// this here
 		if (absolutePath.substring(absolutePath.length() - 3).equals("bin")) {
 			absolutePath += "/.."; // Hack sordide pour l'éxécution dans Eclipse
 		}
 		return absolutePath;
 	}
 
-	public static void main(String[] args) throws AddressException, MessagingException {
+	public static void main(String[] args) throws AddressException,
+			MessagingException {
 		MainWindow TDB = new MainWindow();
 		try {
 			String trigrammeBanque = "BOB";
 			String absolutePath = TDB.getExecutionPath();
-			InputStream ips = new FileInputStream(absolutePath + "/src//TDB.config");
+			InputStream ips = new FileInputStream(absolutePath
+					+ "/src//TDB.config");
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String ligne;
@@ -304,7 +319,8 @@ public class MainWindow extends JFrame {
 				if (ligne.charAt(0) != '#') {
 					int pos = ligne.indexOf('=');
 					String debut = ligne.substring(0, pos).trim();
-					String fin = ligne.substring(pos + 1, ligne.length()).trim();
+					String fin = ligne.substring(pos + 1, ligne.length())
+							.trim();
 					if (debut.equals("trigrammeBanque") && fin.length() == 3) {
 						trigrammeBanque = fin;
 					}
@@ -322,21 +338,23 @@ public class MainWindow extends JFrame {
 
 	public void afficherErreur(Exception e) {
 		e.printStackTrace();
-		JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur",
+				JOptionPane.ERROR_MESSAGE);
 		if (e.getClass() == SQLException.class) {
 			try {
 				this.deconnecter();
 				this.connecter();
-			} catch (Exception e1) {}
+			} catch (Exception e1) {
+			}
 		}
 		if (!TDBException.class.isAssignableFrom(e.getClass())) {
 			try {
 				String absolutePath = this.getExecutionPath();
-				PrintWriter out =
-						new PrintWriter(new BufferedWriter(new FileWriter(
-								absolutePath + "//logTDB", true)));
+				PrintWriter out = new PrintWriter(new BufferedWriter(
+						new FileWriter(absolutePath + "//logTDB", true)));
 				out.println(e.getMessage());
-				SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				SimpleDateFormat formater = new SimpleDateFormat(
+						"yyyy-MM-dd HH:mm:ss");
 				String date = formater.format(new Date());
 				out.println(date);
 				out.println();
@@ -355,7 +373,8 @@ public class MainWindow extends JFrame {
 		JOptionPane.showMessageDialog(
 				this,
 				"Plap zdé mythe" + "\n\nReset chiffres d'affaires : "
-						+ prefs.get("dateResetTurnover", "") + "\nReset historiques : "
+						+ prefs.get("dateResetTurnover", "")
+						+ "\nReset historiques : "
 						+ prefs.get("dateResetHistorique", ""), "Mythe",
 				JOptionPane.INFORMATION_MESSAGE);
 		JOptionPane.showMessageDialog(this, "Manou Manou Manou Manou", "Mythe",
@@ -365,23 +384,26 @@ public class MainWindow extends JFrame {
 	public void initialiser(String trigrammeBanque) throws Exception {
 		this.setTitle("TDB");
 		Dimension tailleEcran = Toolkit.getDefaultToolkit().getScreenSize();
-		tailleEcran.setSize(tailleEcran.getWidth() - 60, tailleEcran.getHeight());
+		tailleEcran.setSize(tailleEcran.getWidth() - 60,
+				tailleEcran.getHeight());
 		// hack sordide, a cause du lanceur Unity a gauche
 		this.setSize(tailleEcran);
 
 		// Création de tous les menus
 		ouvrirTrigramme.addActionListener(mainWindowListener);
 		fermerTrigramme.addActionListener(mainWindowListener);
-		fermerTrigramme.setAccelerator(KeyStroke.getKeyStroke((char) KeyEvent.VK_ESCAPE));
+		fermerTrigramme.setAccelerator(KeyStroke
+				.getKeyStroke((char) KeyEvent.VK_ESCAPE));
 		voirHistorique.addActionListener(mainWindowListener);
 		voirHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
 				InputEvent.CTRL_DOWN_MASK));
 		voirAncienHistorique.addActionListener(mainWindowListener);
-		voirAncienHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
-				InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
+		voirAncienHistorique.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK
+						+ InputEvent.SHIFT_DOWN_MASK));
 		rechercherTrigramme.addActionListener(mainWindowListener);
-		rechercherTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
-				InputEvent.CTRL_DOWN_MASK));
+		rechercherTrigramme.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
 		debiterTrigramme.addActionListener(mainWindowListener);
 		acheterClopes.addActionListener(mainWindowListener);
 		acheterClopes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
@@ -390,7 +412,8 @@ public class MainWindow extends JFrame {
 		pinteDeKroPourSIE.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K,
 				InputEvent.CTRL_DOWN_MASK + InputEvent.ALT_DOWN_MASK));
 		annuler.addActionListener(mainWindowListener);
-		annuler.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+		annuler.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+				InputEvent.CTRL_DOWN_MASK));
 
 		menuStandard.add(ouvrirTrigramme);
 		menuStandard.add(fermerTrigramme);
@@ -411,7 +434,8 @@ public class MainWindow extends JFrame {
 		approvisionner.addActionListener(mainWindowListener);
 		approvisionner.setAccelerator(KeyStroke.getKeyStroke('+'));
 		transfert.addActionListener(mainWindowListener);
-		transfert.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
+		transfert.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
+				InputEvent.CTRL_DOWN_MASK));
 		modifierMail.addActionListener(mainWindowListener);
 		creerTrigramme.addActionListener(mainWindowListener);
 		creerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
@@ -481,8 +505,8 @@ public class MainWindow extends JFrame {
 		historiqueScrollPane = new JScrollPane(historique);
 		historiqueScrollPane
 				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		historiqueScrollPane.setPreferredSize(new Dimension((this.getWidth() - 20) * 2 / 3, this
-				.getHeight() - 80));
+		historiqueScrollPane.setPreferredSize(new Dimension(
+				(this.getWidth() - 20) * 2 / 3, this.getHeight() - 80));
 
 		String[] header = { "Montant", "Banque", "Admin", "Commentaire", "Date" };
 		modele.setColumnIdentifiers(header);
@@ -492,15 +516,19 @@ public class MainWindow extends JFrame {
 		historique.getColumnModel().getColumn(0).setPreferredWidth(65);
 		historique.getColumnModel().getColumn(1).setPreferredWidth(60);
 		historique.getColumnModel().getColumn(2).setPreferredWidth(50);
-		historique.getColumnModel().getColumn(3)
-				.setPreferredWidth(historiqueScrollPane.getPreferredSize().width - 340);
+		historique
+				.getColumnModel()
+				.getColumn(3)
+				.setPreferredWidth(
+						historiqueScrollPane.getPreferredSize().width - 340);
 		historique.getColumnModel().getColumn(4).setPreferredWidth(140);
 		historique.setShowGrid(false);
 		historique.repaint();
 
 		// Création du panneau d'infos de droite
 		infos = new JPanel();
-		infos.setPreferredSize(new Dimension((this.getWidth() - 20) * 1 / 3, this.getHeight() - 80));
+		infos.setPreferredSize(new Dimension((this.getWidth() - 20) * 1 / 3,
+				this.getHeight() - 80));
 		infos.setLayout(new FlowLayout(SwingConstants.CENTER));
 		infos.setBackground(null);
 
@@ -510,23 +538,23 @@ public class MainWindow extends JFrame {
 			bobBanqueBouton = new JButton(trigrammeBanque);
 		}
 		bobBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
-		bobBanqueBouton.setPreferredSize(new Dimension(
-				(int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
+		bobBanqueBouton.setPreferredSize(new Dimension((int) (infos
+				.getPreferredSize().getWidth() - 20) / 2, 60));
 
 		binetBanqueBouton = new JButton("Mythe");
 		binetBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
-		binetBanqueBouton.setPreferredSize(new Dimension(
-				(int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
+		binetBanqueBouton.setPreferredSize(new Dimension((int) (infos
+				.getPreferredSize().getWidth() - 20) / 2, 60));
 
 		trigrammeLabel = new JLabel();
-		trigrammeLabel.setPreferredSize(new Dimension(
-				(int) (infos.getPreferredSize().getWidth() - 20), 60));
+		trigrammeLabel.setPreferredSize(new Dimension((int) (infos
+				.getPreferredSize().getWidth() - 20), 60));
 		trigrammeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		trigrammeLabel.setFont(new Font("ARIAL", Font.BOLD, 40));
 
 		nomLabel = new JTextPane();
-		nomLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10),
-				150));
+		nomLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize()
+				.getWidth() - 10), 150));
 		nomLabel.setOpaque(true);
 		StyledDocument doc = nomLabel.getStyledDocument();
 		MutableAttributeSet center = new SimpleAttributeSet();
@@ -539,19 +567,20 @@ public class MainWindow extends JFrame {
 		nomLabel.setFocusable(false);
 
 		balanceLabel = new JLabel();
-		balanceLabel.setPreferredSize(new Dimension(
-				(int) (infos.getPreferredSize().getWidth() - 10), 100));
+		balanceLabel.setPreferredSize(new Dimension((int) (infos
+				.getPreferredSize().getWidth() - 10), 100));
 		balanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		balanceLabel.setFont(new Font("ARIAL", Font.BOLD, 40));
 
 		turnoverLabel = new JLabel();
-		turnoverLabel.setPreferredSize(new Dimension(
-				(int) (infos.getPreferredSize().getWidth() - 10), 40));
+		turnoverLabel.setPreferredSize(new Dimension((int) (infos
+				.getPreferredSize().getWidth() - 10), 40));
 		turnoverLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		turnoverLabel.setFont(new Font("ARIAL", Font.PLAIN, 12));
 
 		photo = new JLabel();
-		photo.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 200));
+		photo.setPreferredSize(new Dimension((int) (infos.getPreferredSize()
+				.getWidth() - 10), 200));
 		photo.setHorizontalAlignment(SwingConstants.CENTER);
 
 		infos.add(bobBanqueBouton);
@@ -631,10 +660,11 @@ public class MainWindow extends JFrame {
 				trigrammeLabel.setForeground(Color.BLUE);
 			}
 
-			LinkedList<Historique.Entry> histo = Historique.getHistorique(this, trigrammeActif, 50);
+			LinkedList<Historique.Entry> histo = Historique.getHistorique(this,
+					trigrammeActif, 50);
 			for (Historique.Entry entry : histo) {
-				String[] ligne =
-						{ entry.price + "", entry.banque, entry.admin, entry.comment, entry.date };
+				String[] ligne = { entry.price + "", entry.banque, entry.admin,
+						entry.comment, entry.date };
 				modele.addRow(ligne);
 			}
 
@@ -644,16 +674,18 @@ public class MainWindow extends JFrame {
 				promo = "" + trigrammeActif.promo;
 			}
 			if (!trigrammeActif.nickname.equals("")) {
-				nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " ("
+				nomLabel.setText(trigrammeActif.name + " "
+						+ trigrammeActif.first_name + " ("
 						+ trigrammeActif.nickname + ") " + promo);
 			} else {
-				nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " "
-						+ promo);
+				nomLabel.setText(trigrammeActif.name + " "
+						+ trigrammeActif.first_name + " " + promo);
 			}
 			balanceLabel.setText("" + (double) trigrammeActif.balance / 100);
 			if (trigrammeActif.status == 2) {
-				turnoverLabel.setText(((double) (trigrammeActif.turnover) / 100)
-						+ "€ gagnés depuis dernier reset.");
+				turnoverLabel
+						.setText(((double) (trigrammeActif.turnover) / 100)
+								+ "€ gagnés depuis dernier reset.");
 			} else {
 				turnoverLabel
 						.setText(((double) (trigrammeActif.turnover - trigrammeActif.balance) / 100)
@@ -661,14 +693,18 @@ public class MainWindow extends JFrame {
 			}
 			if (trigrammeActif.picture != "") {
 				try {
-					Image image = ImageIO.read(new File(trigrammeActif.picture));
+					Image image = ImageIO
+							.read(new File(trigrammeActif.picture));
 					new ImageIcon(image);
-					double zoom =
-							Math.min((double) photo.getWidth() / (double) image.getWidth(null),
-									(double) photo.getHeight() / (double) image.getHeight(null));
+					double zoom = Math.min(
+							(double) photo.getWidth()
+									/ (double) image.getWidth(null),
+							(double) photo.getHeight()
+									/ (double) image.getHeight(null));
 					photo.setIcon(new ImageIcon(image.getScaledInstance(
 							(int) (image.getWidth(null) * zoom),
-							(int) (image.getHeight(null) * zoom), Image.SCALE_FAST)));
+							(int) (image.getHeight(null) * zoom),
+							Image.SCALE_FAST)));
 					photo.repaint();
 				} catch (IOException e) {
 					photo.setIcon(null);
@@ -689,6 +725,7 @@ public class MainWindow extends JFrame {
 		historique.repaint();
 		this.repaint();
 	}
+
 	public void refreshHistorique() throws Exception {
 
 		// En gros, ca met à jour l'historique au complet (dans la précédente,
@@ -698,10 +735,11 @@ public class MainWindow extends JFrame {
 		}
 
 		if (trigrammeActif != null) {
-			LinkedList<Historique.Entry> histo = Historique.getHistorique(this, trigrammeActif, -1);
+			LinkedList<Historique.Entry> histo = Historique.getHistorique(this,
+					trigrammeActif, -1);
 			for (Historique.Entry entry : histo) {
-				String[] ligne =
-						{ entry.price + "", entry.banque, entry.admin, entry.comment, entry.date };
+				String[] ligne = { entry.price + "", entry.banque, entry.admin,
+						entry.comment, entry.date };
 				modele.addRow(ligne);
 			}
 			infos.repaint();
@@ -710,6 +748,7 @@ public class MainWindow extends JFrame {
 			this.repaint();
 		}
 	}
+
 	public void refreshOldHistorique() throws Exception {
 
 		// Cette fois, ca affiche l'historique de l'historique et l'historique
@@ -718,17 +757,18 @@ public class MainWindow extends JFrame {
 		}
 
 		if (trigrammeActif != null) {
-			LinkedList<Historique.Entry> histo = Historique.getHistorique(this, trigrammeActif, -1);
+			LinkedList<Historique.Entry> histo = Historique.getHistorique(this,
+					trigrammeActif, -1);
 			for (Historique.Entry entry : histo) {
-				String[] ligne =
-						{ entry.price + "", entry.banque, entry.admin, entry.comment, entry.date };
+				String[] ligne = { entry.price + "", entry.banque, entry.admin,
+						entry.comment, entry.date };
 				modele.addRow(ligne);
 			}
-			LinkedList<Historique.Entry> oldhisto =
-					Historique.getOldHistorique(this, trigrammeActif, -1);
+			LinkedList<Historique.Entry> oldhisto = Historique
+					.getOldHistorique(this, trigrammeActif, -1);
 			for (Historique.Entry entry : oldhisto) {
-				String[] ligne =
-						{ entry.price + "", entry.banque, entry.admin, entry.comment, entry.date };
+				String[] ligne = { entry.price + "", entry.banque, entry.admin,
+						entry.comment, entry.date };
 				modele.addRow(ligne);
 			}
 			infos.repaint();

@@ -17,8 +17,8 @@ public class Trigramme {
 	public static final int Personnel = 3;
 	public static final int Etudiant = 4;
 	public static final int Autre = 5;
-	public static final String[] categoriesList = { "X Platalien", "X Ancien", "Binet",
-			"Personnel", "Etudiant non X", "Autre" };
+	public static final String[] categoriesList = { "X Platalien", "X Ancien",
+			"Binet", "Personnel", "Etudiant non X", "Autre" };
 
 	public MainWindow parent;
 	public int id;
@@ -38,7 +38,9 @@ public class Trigramme {
 	public Trigramme(MainWindow parent, String tri) throws Exception {
 		this.parent = parent;
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM accounts WHERE trigramme='" + tri + "'");
+		ResultSet rs = stmt
+				.executeQuery("SELECT * FROM accounts WHERE trigramme='" + tri
+						+ "'");
 		if (rs.next()) {
 			id = rs.getInt("id");
 			trigramme = rs.getString("trigramme");
@@ -60,9 +62,9 @@ public class Trigramme {
 		}
 	}
 
-	public Trigramme(MainWindow parent, String trigramme, String name, String first_name,
-			String nickname, String casert, int status, int promo, String mail, String picture,
-			int balance, int turnover) {
+	public Trigramme(MainWindow parent, String trigramme, String name,
+			String first_name, String nickname, String casert, int status,
+			int promo, String mail, String picture, int balance, int turnover) {
 		this.parent = parent;
 		this.trigramme = trigramme;
 		this.name = name;
@@ -80,7 +82,8 @@ public class Trigramme {
 	public Trigramme(MainWindow parent, int id) throws Exception {
 		this.parent = parent;
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM accounts WHERE id=" + id);
+		ResultSet rs = stmt.executeQuery("SELECT * FROM accounts WHERE id="
+				+ id);
 		if (rs.next()) {
 			this.id = rs.getInt("id");
 			trigramme = rs.getString("trigramme");
@@ -100,19 +103,20 @@ public class Trigramme {
 	public void creer(Admin admin) throws Exception {
 
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT MAX(id) as maxid FROM accounts");
+		ResultSet rs = stmt
+				.executeQuery("SELECT MAX(id) as maxid FROM accounts");
 		int id = 1;
 		if (rs.next()) {
 			id = rs.getInt("maxid") + 1;
 		}
-		ResultSet rs1 =
-				stmt.executeQuery("SELECT id FROM accounts WHERE trigramme='" + trigramme + "'");
+		ResultSet rs1 = stmt
+				.executeQuery("SELECT id FROM accounts WHERE trigramme='"
+						+ trigramme + "'");
 		if (rs1.first()) {
 			throw new TrigException("Trigramme existant");
 		}
-		PreparedStatement stmt2 =
-				parent.connexion
-						.prepareStatement("INSERT INTO accounts (id,trigramme, name, first_name, nickname, casert, status, promo, mail, picture, balance, turnover) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+		PreparedStatement stmt2 = parent.connexion
+				.prepareStatement("INSERT INTO accounts (id,trigramme, name, first_name, nickname, casert, status, promo, mail, picture, balance, turnover) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 		stmt2.setInt(1, id);
 		stmt2.setString(2, trigramme);
 		stmt2.setString(3, name);
@@ -131,17 +135,17 @@ public class Trigramme {
 		stmt2.setInt(12, 0);
 		stmt2.executeUpdate();
 
-		Transaction transaction =
-				new Transaction(id, balance, "Création de trigramme", admin, null,
-						parent.banqueBob.id);
+		Transaction transaction = new Transaction(id, balance,
+				"Création de trigramme", admin, null, parent.banqueBob.id);
 		transaction.WriteToDB(parent);
 		parent.setTrigrammeActif(new Trigramme(parent, trigramme));
 	}
 
 	public int getId() throws Exception {
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs =
-				stmt.executeQuery("SELECT id FROM accounts WHERE trigramme='" + trigramme + "'");
+		ResultSet rs = stmt
+				.executeQuery("SELECT id FROM accounts WHERE trigramme='"
+						+ trigramme + "'");
 		if (rs.next()) {
 			int id = rs.getInt("id");
 			if (rs.next()) {
@@ -157,9 +161,8 @@ public class Trigramme {
 
 	public String getMail() {
 		if (mail == null || mail.isEmpty()) {
-			String email =
-					first_name.toLowerCase().replace(' ', '-') + "."
-							+ name.toLowerCase().replace(' ', '-');
+			String email = first_name.toLowerCase().replace(' ', '-') + "."
+					+ name.toLowerCase().replace(' ', '-');
 			email = Normalizer.normalize(email, Normalizer.Form.NFD);
 			email = email.replaceAll("[^\\p{ASCII}]", "");
 			email += "@polytechnique.edu";
@@ -170,20 +173,21 @@ public class Trigramme {
 	}
 
 	public void setMail(String email) throws Exception {
-		PreparedStatement stmt =
-				parent.connexion.prepareStatement("UPDATE accounts SET mail=? WHERE id=?");
+		PreparedStatement stmt = parent.connexion
+				.prepareStatement("UPDATE accounts SET mail=? WHERE id=?");
 		stmt.setString(1, email);
 		stmt.setInt(2, id);
 		stmt.executeUpdate();
 	}
+
 	public void modifier(int id, Admin admin) throws Exception {
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT trigramme FROM accounts WHERE id=" + id);
+		ResultSet rs = stmt
+				.executeQuery("SELECT trigramme FROM accounts WHERE id=" + id);
 
 		if (rs.first()) {
-			PreparedStatement stmt2 =
-					parent.connexion
-							.prepareStatement("UPDATE accounts SET trigramme = ?, name = ?, first_name = ?, nickname = ?, casert = ?, status = ?, promo = ?, picture = ? WHERE id=?");
+			PreparedStatement stmt2 = parent.connexion
+					.prepareStatement("UPDATE accounts SET trigramme = ?, name = ?, first_name = ?, nickname = ?, casert = ?, status = ?, promo = ?, picture = ? WHERE id=?");
 			stmt2.setString(1, trigramme);
 			stmt2.setString(2, name);
 			stmt2.setString(3, first_name);
@@ -199,9 +203,10 @@ public class Trigramme {
 			stmt2.setInt(9, id);
 			stmt2.executeUpdate();
 
-			Transaction transaction =
-					new Transaction(id, 0, "Modification du trigramme (ancien trigramme : "
-							+ rs.getString("trigramme") + ")", admin, null, parent.banqueBob.id);
+			Transaction transaction = new Transaction(id, 0,
+					"Modification du trigramme (ancien trigramme : "
+							+ rs.getString("trigramme") + ")", admin, null,
+					parent.banqueBob.id);
 			transaction.WriteToDB(parent);
 		} else {
 			throw new TrigException("Trigramme inexistant");
@@ -210,11 +215,13 @@ public class Trigramme {
 
 	public void debiter(int montant) throws Exception {
 		if (Math.abs(montant) > 1000000) {
-			throw new TDBException("Opération annulée car le montant est trop élevé.");
+			throw new TDBException(
+					"Opération annulée car le montant est trop élevé.");
 		}
 		if (montant >= 0 && montant <= 2000) {
 			if (balance - montant < 0 && status != Trigramme.XPlatal) {
-				AuthentificationDialog authentification = new AuthentificationDialog(parent);
+				AuthentificationDialog authentification = new AuthentificationDialog(
+						parent);
 				authentification.executer();
 				if (!authentification.admin.has_droit("log_eleve")) {
 					throw new AuthException(
@@ -225,11 +232,13 @@ public class Trigramme {
 			if (!parent.banqueBobActif) {
 				banqueId = parent.banqueBinet.id;
 			}
-			Transaction transaction = new Transaction(id, -montant, "", null, null, banqueId);
+			Transaction transaction = new Transaction(id, -montant, "", null,
+					null, banqueId);
 			transaction.WriteToDB(parent);
 			parent.dernieresActions.add(transaction);
 		} else if (montant > 2000) {
-			AuthentificationDialog authentification = new AuthentificationDialog(parent);
+			AuthentificationDialog authentification = new AuthentificationDialog(
+					parent);
 			authentification.executer();
 			if (!authentification.admin.has_droit("log_eleve")) {
 				throw new AuthException();
@@ -238,19 +247,19 @@ public class Trigramme {
 			if (!parent.banqueBobActif) {
 				banqueId = parent.banqueBinet.id;
 			}
-			Transaction transaction =
-					new Transaction(id, -montant, "", authentification.admin, null, banqueId);
+			Transaction transaction = new Transaction(id, -montant, "",
+					authentification.admin, null, banqueId);
 			parent.dernieresActions.add(transaction);
 			transaction.WriteToDB(parent);
 		} else {
-			AuthentificationDialog authentification = new AuthentificationDialog(parent);
+			AuthentificationDialog authentification = new AuthentificationDialog(
+					parent);
 			authentification.executer();
 			if (!authentification.admin.has_droit("credit")) {
 				throw new AuthException();
 			}
-			Transaction transaction =
-					new Transaction(id, -montant, "", authentification.admin, null,
-							parent.banqueBob.id);
+			Transaction transaction = new Transaction(id, -montant, "",
+					authentification.admin, null, parent.banqueBob.id);
 			transaction.WriteToDB(parent);
 			parent.dernieresActions.add(transaction);
 		}
@@ -260,21 +269,26 @@ public class Trigramme {
 
 	}
 
-	public void crediter(int montant, String commentaire, Admin admin) throws Exception {
+	public void crediter(int montant, String commentaire, Admin admin)
+			throws Exception {
 		if (Math.abs(montant) > 100000) {
-			throw new TDBException("Opération annulée car le montant est trop élevé.");
+			throw new TDBException(
+					"Opération annulée car le montant est trop élevé.");
 		}
 		int banqueId = parent.banqueBob.id;
 
-		Transaction transaction = new Transaction(id, montant, commentaire, admin, null, banqueId);
+		Transaction transaction = new Transaction(id, montant, commentaire,
+				admin, null, banqueId);
 		transaction.WriteToDB(parent);
 		parent.dernieresActions.add(transaction);
-		parent.trigrammeActif = new Trigramme(parent, parent.trigrammeActif.trigramme);
+		parent.trigrammeActif = new Trigramme(parent,
+				parent.trigrammeActif.trigramme);
 		parent.refresh();
 	}
 
 	public void supprimer() throws Exception {
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 		if (!authentification.admin.has_droit("supprimer_tri")) {
 			throw new AuthException();
@@ -285,19 +299,22 @@ public class Trigramme {
 			stmt.executeUpdate("DELETE FROM admins WHERE id=" + id);
 			stmt.executeUpdate("DELETE FROM transactions WHERE id=" + id);
 			stmt.executeUpdate("DELETE FROM transactions WHERE id2=" + id);
-			stmt.executeUpdate("DELETE FROM transactions_history WHERE id=" + id);
-			stmt.executeUpdate("DELETE FROM transactions_history WHERE id2=" + id);
+			stmt.executeUpdate("DELETE FROM transactions_history WHERE id="
+					+ id);
+			stmt.executeUpdate("DELETE FROM transactions_history WHERE id2="
+					+ id);
 			stmt.closeOnCompletion();
 		} else {
 			throw new TDBException("Le trigramme doit être à 0.");
 		}
 	}
 
-	public static boolean exists(MainWindow parent, String tri) throws Exception {
+	public static boolean exists(MainWindow parent, String tri)
+			throws Exception {
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs =
-				stmt.executeQuery("SELECT count(*) as c FROM accounts WHERE trigramme='" + tri
-						+ "'");
+		ResultSet rs = stmt
+				.executeQuery("SELECT count(*) as c FROM accounts WHERE trigramme='"
+						+ tri + "'");
 		if (rs.next()) {
 			return (rs.getInt("c") > 0);
 		} else {
@@ -305,11 +322,13 @@ public class Trigramme {
 		}
 	}
 
-	public static LinkedList<Trigramme> rechercher(MainWindow parent, String str) throws Exception {
+	public static LinkedList<Trigramme> rechercher(MainWindow parent, String str)
+			throws Exception {
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs =
-				stmt.executeQuery("SELECT id FROM accounts WHERE name LIKE '%" + str
-						+ "%' OR first_name LIKE '%" + str + "%' OR nickname LIKE '%" + str + "%'");
+		ResultSet rs = stmt
+				.executeQuery("SELECT id FROM accounts WHERE name LIKE '%"
+						+ str + "%' OR first_name LIKE '%" + str
+						+ "%' OR nickname LIKE '%" + str + "%'");
 		LinkedList<Trigramme> res = new LinkedList<Trigramme>();
 		while (rs.next()) {
 			Trigramme zou = new Trigramme(parent, rs.getInt("id"));
@@ -322,7 +341,8 @@ public class Trigramme {
 	// if (status == 0 && balance < 0) {
 	// String message = "Salut,\n\nT'es en négatif au BôB, tu nous dois ";
 	// message += ((-(double) balance / 100) + "").replace('.', ',');
-	// message += " €.\nApporte nous un chèque.\n\nLe BôB, qui t'enkhûle avec affection.";
+	// message +=
+	// " €.\nApporte nous un chèque.\n\nLe BôB, qui t'enkhûle avec affection.";
 	// String mail =
 	// first_name.toLowerCase().replace(' ', '-') + "."
 	// + name.toLowerCase().replace(' ', '-');
@@ -330,7 +350,8 @@ public class Trigramme {
 	// mail = mail.replaceAll("[^\\p{ASCII}]", "");
 	// mail += "@polytechnique.edu";
 	// System.out.println(mail);
-	// GoogleMail.Send("bobar.negatif", "plapzderas", mail, "T'es en négatif", message);
+	// GoogleMail.Send("bobar.negatif", "plapzderas", mail, "T'es en négatif",
+	// message);
 	// }
 	// }
 
@@ -343,18 +364,21 @@ public class Trigramme {
 			String objet = trigramme + ", t'es en négatif.";
 			// System.out.println(mail);
 			try {
-				PolytechniqueMail.Send("bobar.negatif", "plapzderas", mail, objet, message);
+				PolytechniqueMail.Send("bobar.negatif", "plapzderas", mail,
+						objet, message);
 			} catch (AddressException e) {
-				throw new TDBException("Adresse " + mail + " non valide (trigramme : " + trigramme
-						+ ").");
+				throw new TDBException("Adresse " + mail
+						+ " non valide (trigramme : " + trigramme + ").");
 			}
 		}
 	}
 
-	public static LinkedList<Trigramme> getAllNegatifAccounts(MainWindow parent) throws Exception {
+	public static LinkedList<Trigramme> getAllNegatifAccounts(MainWindow parent)
+			throws Exception {
 		LinkedList<Trigramme> res = new LinkedList<Trigramme>();
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT id FROM accounts WHERE balance<0 AND status=0");
+		ResultSet rs = stmt
+				.executeQuery("SELECT id FROM accounts WHERE balance<0 AND status=0");
 		while (rs.next()) {
 			res.add(new Trigramme(parent, rs.getInt("id")));
 		}

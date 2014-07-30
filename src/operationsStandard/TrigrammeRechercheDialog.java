@@ -45,10 +45,11 @@ public class TrigrammeRechercheDialog extends JDialog {
 	DefaultTableColumnModel modeleColonnes;
 	JScrollPane resultatsScrollPane;
 
-	public class TrigrammeRechercheDialogListener implements ActionListener, KeyListener,
-			MouseListener {
+	public class TrigrammeRechercheDialogListener implements ActionListener,
+			KeyListener, MouseListener {
 
-		TrigrammeRechercheDialogListener() {}
+		TrigrammeRechercheDialogListener() {
+		}
 
 		public void keyPressed(KeyEvent arg0) {
 			if (arg0.getKeyChar() == KeyEvent.VK_ESCAPE) {
@@ -70,7 +71,8 @@ public class TrigrammeRechercheDialog extends JDialog {
 			}
 		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent arg0) {
 			if (arg0.getSource() == fermerButton) {
@@ -78,8 +80,8 @@ public class TrigrammeRechercheDialog extends JDialog {
 			} else if (arg0.getSource() == ouvrirButton) {
 				int ligneChoisie = resultats.getSelectedRow();
 				try {
-					parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
-							ligneChoisie, 0)));
+					parent.setTrigrammeActif(new Trigramme(parent,
+							(String) resultats.getValueAt(ligneChoisie, 0)));
 					dispose();
 				} catch (Exception e) {
 					parent.afficherErreur(e);
@@ -98,7 +100,8 @@ public class TrigrammeRechercheDialog extends JDialog {
 				int ligneChoisie = resultats.getSelectedRow();
 				try {
 					parent.setTrigrammeActif(new Trigramme(parent, Integer
-							.parseInt((String) resultats.getValueAt(ligneChoisie, 4))));
+							.parseInt((String) resultats.getValueAt(
+									ligneChoisie, 4))));
 					dispose();
 				} catch (Exception e) {
 					parent.afficherErreur(e);
@@ -106,13 +109,17 @@ public class TrigrammeRechercheDialog extends JDialog {
 			}
 		}
 
-		public void mouseEntered(MouseEvent arg0) {}
+		public void mouseEntered(MouseEvent arg0) {
+		}
 
-		public void mouseExited(MouseEvent arg0) {}
+		public void mouseExited(MouseEvent arg0) {
+		}
 
-		public void mousePressed(MouseEvent arg0) {}
+		public void mousePressed(MouseEvent arg0) {
+		}
 
-		public void mouseReleased(MouseEvent arg0) {}
+		public void mouseReleased(MouseEvent arg0) {
+		}
 	}
 
 	public TrigrammeRechercheDialog(MainWindow parent) {
@@ -190,11 +197,11 @@ public class TrigrammeRechercheDialog extends JDialog {
 		for (int i = modele.getRowCount() - 1; i >= 0; i--) {
 			modele.removeRow(i);
 		}
-		LinkedList<Trigramme> trigrammes = Trigramme.rechercher(parent, champSaisie.getText());
+		LinkedList<Trigramme> trigrammes = Trigramme.rechercher(parent,
+				champSaisie.getText());
 		for (Trigramme trigramme : trigrammes) {
-			String[] ligne =
-					{ trigramme.trigramme, trigramme.name, trigramme.first_name,
-							trigramme.nickname, "" + trigramme.id };
+			String[] ligne = { trigramme.trigramme, trigramme.name,
+					trigramme.first_name, trigramme.nickname, "" + trigramme.id };
 			modele.addRow(ligne);
 		}
 		resultats.setModel(modele);

@@ -41,7 +41,8 @@ public class ComptesChoixDialog extends JDialog {
 
 	JPanel fond;
 
-	public class ComptesChoixDialogListener implements ActionListener, KeyListener {
+	public class ComptesChoixDialogListener implements ActionListener,
+			KeyListener {
 
 		ComptesChoixDialog parent;
 
@@ -73,9 +74,11 @@ public class ComptesChoixDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent arg0) {
 			if (arg0.getSource() == okButton) {
@@ -102,7 +105,8 @@ public class ComptesChoixDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 
 		if (authentification.admin.has_droit("voir_comptes")) {

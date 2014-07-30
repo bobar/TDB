@@ -14,17 +14,19 @@ public class Database {
 	Connection connexion;
 
 	private String getExecutionPath() {
-		String absolutePath =
-				getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		String absolutePath = getClass().getProtectionDomain().getCodeSource()
+				.getLocation().getPath();
 		absolutePath = absolutePath.substring(0, absolutePath.lastIndexOf("/"));
-		absolutePath = absolutePath.replaceAll("%20", "\\ "); // Surely need to do this here
+		absolutePath = absolutePath.replaceAll("%20", "\\ "); // Surely need to
+																// do this here
 		if (absolutePath.substring(absolutePath.length() - 3).equals("bin")) {
 			absolutePath += "/.."; // Hack sordide pour l'éxécution dans Eclipse
 		}
 		return absolutePath;
 	}
 
-	public void connecter() throws SQLException, ClassNotFoundException, IOException {
+	public void connecter() throws SQLException, ClassNotFoundException,
+			IOException {
 		Class.forName("com.mysql.jdbc.Driver");
 		String user = "root";
 		String passwd = "";
@@ -52,8 +54,8 @@ public class Database {
 			}
 		}
 		br.close();
-		this.connexion =
-				DriverManager.getConnection("jdbc:mysql://" + host + "/" + db, user, passwd);
+		this.connexion = DriverManager.getConnection("jdbc:mysql://" + host
+				+ "/" + db, user, passwd);
 	}
 
 	public boolean deconnecter() throws SQLException {

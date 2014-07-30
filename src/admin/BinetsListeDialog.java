@@ -42,7 +42,8 @@ public class BinetsListeDialog extends JDialog {
 	DefaultTableColumnModel modeleColonnes;
 	JScrollPane resultatsScrollPane;
 
-	public class BinetsListeDialogListener implements ActionListener, KeyListener {
+	public class BinetsListeDialogListener implements ActionListener,
+			KeyListener {
 
 		BinetsListeDialogListener() {
 			super();
@@ -54,8 +55,8 @@ public class BinetsListeDialog extends JDialog {
 			} else if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
 				int ligneChoisie = resultats.getSelectedRow();
 				try {
-					parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
-							ligneChoisie, 0)));
+					parent.setTrigrammeActif(new Trigramme(parent,
+							(String) resultats.getValueAt(ligneChoisie, 0)));
 					dispose();
 				} catch (Exception e) {
 					parent.afficherErreur(e);
@@ -63,9 +64,11 @@ public class BinetsListeDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent arg0) {
 			if (arg0.getSource() == fermerButton) {
@@ -73,8 +76,8 @@ public class BinetsListeDialog extends JDialog {
 			} else if (arg0.getSource() == ouvrirButton) {
 				int ligneChoisie = resultats.getSelectedRow();
 				try {
-					parent.setTrigrammeActif(new Trigramme(parent, (String) resultats.getValueAt(
-							ligneChoisie, 0)));
+					parent.setTrigrammeActif(new Trigramme(parent,
+							(String) resultats.getValueAt(ligneChoisie, 0)));
 					dispose();
 				} catch (Exception e) {
 					parent.afficherErreur(e);
@@ -90,7 +93,8 @@ public class BinetsListeDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 
 		if (!authentification.admin.has_droit("voir_comptes")) {
@@ -156,20 +160,20 @@ public class BinetsListeDialog extends JDialog {
 		}
 		Statement stmt = parent.connexion.createStatement();
 
-		ResultSet rs =
-				stmt.executeQuery("SELECT trigramme,name,first_name,balance FROM accounts WHERE status=2 and balance<>0 ORDER BY balance ASC");
+		ResultSet rs = stmt
+				.executeQuery("SELECT trigramme,name,first_name,balance FROM accounts WHERE status=2 and balance<>0 ORDER BY balance ASC");
 		while (rs.next()) {
-			String[] item =
-					{ rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-							"" + ((double) (rs.getInt("balance")) / 100) };
+			String[] item = { rs.getString("trigramme"), rs.getString("name"),
+					rs.getString("first_name"),
+					"" + ((double) (rs.getInt("balance")) / 100) };
 			modele.addRow(item);
 		}
-		rs =
-				stmt.executeQuery("SELECT trigramme,name,first_name,balance FROM accounts WHERE status=2 and balance=0");
+		rs = stmt
+				.executeQuery("SELECT trigramme,name,first_name,balance FROM accounts WHERE status=2 and balance=0");
 		while (rs.next()) {
-			String[] item =
-					{ rs.getString("trigramme"), rs.getString("name"), rs.getString("first_name"),
-							"" + ((double) (rs.getInt("balance")) / 100) };
+			String[] item = { rs.getString("trigramme"), rs.getString("name"),
+					rs.getString("first_name"),
+					"" + ((double) (rs.getInt("balance")) / 100) };
 			modele.addRow(item);
 		}
 		resultats.setModel(modele);

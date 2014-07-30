@@ -29,7 +29,8 @@ public class PositivationDialog extends JDialog {
 
 	boolean validation = false;
 
-	public class PositivationDialogListener implements KeyListener, ActionListener {
+	public class PositivationDialogListener implements KeyListener,
+			ActionListener {
 
 		public PositivationDialogListener() {
 			super();
@@ -45,9 +46,11 @@ public class PositivationDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -68,7 +71,8 @@ public class PositivationDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(this.parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				this.parent);
 		authentification.executer();
 
 		if (!authentification.admin.has_droit("export")) {

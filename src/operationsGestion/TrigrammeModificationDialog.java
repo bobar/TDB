@@ -46,7 +46,8 @@ public class TrigrammeModificationDialog extends JDialog {
 
 	boolean validation = false;
 
-	public class TrigrammeModificationDialogListener implements KeyListener, ActionListener {
+	public class TrigrammeModificationDialogListener implements KeyListener,
+			ActionListener {
 
 		public TrigrammeModificationDialogListener() {
 			super();
@@ -65,16 +66,24 @@ public class TrigrammeModificationDialog extends JDialog {
 
 		public void keyReleased(KeyEvent arg0) {
 			if (arg0.getSource().equals(champTrigramme)) {
-				champTrigramme.setText(champTrigramme.getText().toUpperCase()
-						.substring(0, Math.min(3, champTrigramme.getText().length())));
+				champTrigramme
+						.setText(champTrigramme
+								.getText()
+								.toUpperCase()
+								.substring(
+										0,
+										Math.min(3, champTrigramme.getText()
+												.length())));
 				if (champTrigramme.getText().length() < 3) {
 					champTrigramme.setBackground(null);
 				} else {
-					if (champTrigramme.getText().equals(parent.trigrammeActif.trigramme)) {
+					if (champTrigramme.getText().equals(
+							parent.trigrammeActif.trigramme)) {
 						champTrigramme.setBackground(Color.GREEN);
 					} else {
 						try {
-							if (!Trigramme.exists(parent, champTrigramme.getText())) {
+							if (!Trigramme.exists(parent,
+									champTrigramme.getText())) {
 								champTrigramme.setBackground(Color.GREEN);
 							} else {
 								champTrigramme.setBackground(Color.RED);
@@ -89,7 +98,8 @@ public class TrigrammeModificationDialog extends JDialog {
 			}
 		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -103,9 +113,13 @@ public class TrigrammeModificationDialog extends JDialog {
 				chooser.setFileFilter(new FileFilter() {
 
 					public boolean accept(File arg0) {
-						return (arg0.isDirectory() || arg0.getName().toLowerCase().contains(".gif")
-								|| arg0.getName().toLowerCase().contains(".jpg")
-								|| arg0.getName().toLowerCase().contains(".jpeg") || arg0.getName()
+						return (arg0.isDirectory()
+								|| arg0.getName().toLowerCase()
+										.contains(".gif")
+								|| arg0.getName().toLowerCase()
+										.contains(".jpg")
+								|| arg0.getName().toLowerCase()
+										.contains(".jpeg") || arg0.getName()
 								.toLowerCase().contains(".png"));
 					}
 
@@ -116,7 +130,8 @@ public class TrigrammeModificationDialog extends JDialog {
 				});
 				int returnVal = chooser.showOpenDialog(parent);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					champPhoto.setText(chooser.getSelectedFile().getAbsolutePath());
+					champPhoto.setText(chooser.getSelectedFile()
+							.getAbsolutePath());
 				}
 			}
 		}
@@ -135,7 +150,8 @@ public class TrigrammeModificationDialog extends JDialog {
 			dialog.executer();
 		}
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 
 		if (!authentification.admin.has_droit("modifier_tri")) {
@@ -248,18 +264,23 @@ public class TrigrammeModificationDialog extends JDialog {
 
 		if (validation && champTrigramme.getBackground().equals(Color.GREEN)) {
 			String nom = champNom.getText().toUpperCase().replace(',', ';');
-			String prenom = MainWindow.formatString(champPrenom.getText().toLowerCase());
+			String prenom = MainWindow.formatString(champPrenom.getText()
+					.toLowerCase());
 			if (!prenom.isEmpty())
-				prenom = ("" + prenom.charAt(0)).toUpperCase() + prenom.substring(1);
+				prenom = ("" + prenom.charAt(0)).toUpperCase()
+						+ prenom.substring(1);
 			String surnom = champSurnom.getText().replace(",", ";");
 
 			if (champTrigramme.getBackground().equals(Color.GREEN)) {
-				Trigramme trigramme =
-						new Trigramme(parent, champTrigramme.getText(), nom, prenom, surnom,
-								champCasert.getText(), champCategorie.getSelectedIndex(),
-								Integer.parseInt(champPromo.getText()), "", champPhoto.getText(),
-								parent.trigrammeActif.balance, parent.trigrammeActif.turnover);
-				trigramme.modifier(parent.trigrammeActif.id, authentification.admin);
+				Trigramme trigramme = new Trigramme(parent,
+						champTrigramme.getText(), nom, prenom, surnom,
+						champCasert.getText(),
+						champCategorie.getSelectedIndex(),
+						Integer.parseInt(champPromo.getText()), "",
+						champPhoto.getText(), parent.trigrammeActif.balance,
+						parent.trigrammeActif.turnover);
+				trigramme.modifier(parent.trigrammeActif.id,
+						authentification.admin);
 			} else {
 				throw new TrigException("Trigramme déjà pris.");
 			}

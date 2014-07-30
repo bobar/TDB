@@ -34,7 +34,8 @@ public class VerifierTotalDialog extends JDialog {
 
 	boolean validation = false;
 
-	public class VerifierTotalDialogListener implements KeyListener, ActionListener {
+	public class VerifierTotalDialogListener implements KeyListener,
+			ActionListener {
 
 		public VerifierTotalDialogListener() {
 			super();
@@ -43,14 +44,15 @@ public class VerifierTotalDialog extends JDialog {
 		public void keyPressed(KeyEvent arg0) {
 			if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
 				try {
-					int confirmation =
-							JOptionPane.showConfirmDialog(parent, "Etes-vous sur ?",
-									"Confirmation", JOptionPane.YES_NO_OPTION,
-									JOptionPane.QUESTION_MESSAGE, null);
+					int confirmation = JOptionPane.showConfirmDialog(parent,
+							"Etes-vous sur ?", "Confirmation",
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null);
 					if (confirmation == JOptionPane.YES_OPTION) {
 						Statement stmt = parent.connexion.createStatement();
-						stmt.executeUpdate("UPDATE accounts SET balance=" + bobIdeal
-								+ " WHERE trigramme='" + parent.banqueBob.trigramme + "'");
+						stmt.executeUpdate("UPDATE accounts SET balance="
+								+ bobIdeal + " WHERE trigramme='"
+								+ parent.banqueBob.trigramme + "'");
 						dispose();
 					}
 				} catch (Exception e) {
@@ -62,21 +64,24 @@ public class VerifierTotalDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent arg0) {
 			if (arg0.getSource().equals(okButton)) {
 				try {
-					int confirmation =
-							JOptionPane.showConfirmDialog(parent, "Etes-vous sur ?",
-									"Confirmation", JOptionPane.YES_NO_OPTION,
-									JOptionPane.QUESTION_MESSAGE, null);
+					int confirmation = JOptionPane.showConfirmDialog(parent,
+							"Etes-vous sur ?", "Confirmation",
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null);
 					if (confirmation == JOptionPane.YES_OPTION) {
 						Statement stmt = parent.connexion.createStatement();
-						stmt.executeUpdate("UPDATE accounts SET balance=" + bobIdeal
-								+ " WHERE trigramme='" + parent.banqueBob.trigramme + "'");
+						stmt.executeUpdate("UPDATE accounts SET balance="
+								+ bobIdeal + " WHERE trigramme='"
+								+ parent.banqueBob.trigramme + "'");
 						dispose();
 					}
 				} catch (Exception e) {
@@ -96,7 +101,8 @@ public class VerifierTotalDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 
 		if (!authentification.admin.has_droit("somme_tri")) {
@@ -104,13 +110,13 @@ public class VerifierTotalDialog extends JDialog {
 		}
 
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT SUM(balance) as tot FROM accounts");
+		ResultSet rs = stmt
+				.executeQuery("SELECT SUM(balance) as tot FROM accounts");
 		if (rs.next()) {
 			totalActuel = Integer.parseInt(rs.getString("tot"));
 		}
-		rs =
-				stmt.executeQuery("SELECT balance FROM accounts WHERE trigramme='"
-						+ parent.banqueBob.trigramme + "'");
+		rs = stmt.executeQuery("SELECT balance FROM accounts WHERE trigramme='"
+				+ parent.banqueBob.trigramme + "'");
 		if (rs.next()) {
 			bobActuel = Integer.parseInt(rs.getString("balance"));
 		}

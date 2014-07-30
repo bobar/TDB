@@ -15,10 +15,12 @@ public class TrigrammeTextField extends JFormattedTextField {
 			super();
 		}
 
-		public void keyPressed(KeyEvent e) {}
+		public void keyPressed(KeyEvent e) {
+		}
 
 		public void keyReleased(KeyEvent e) {
-			String avant = getText().substring(0, Math.min(3, getText().length()));
+			String avant = getText().substring(0,
+					Math.min(3, getText().length()));
 			String formatage = "";
 			for (int i = 0; i < avant.length(); i++) {
 				char a = avant.charAt(i);
@@ -41,7 +43,8 @@ public class TrigrammeTextField extends JFormattedTextField {
 			setText(formatage);
 		}
 
-		public void keyTyped(KeyEvent e) {}
+		public void keyTyped(KeyEvent e) {
+		}
 
 	}
 

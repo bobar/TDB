@@ -41,7 +41,8 @@ public class MainWindowListener implements KeyListener, ActionListener {
 			} else if (action.getSource().equals(parent.fermerTrigramme)) {
 				parent.fermerTrigrammeActif();
 			} else if (action.getSource().equals(parent.rechercherTrigramme)) {
-				TrigrammeRechercheDialog rechercheDialog = new TrigrammeRechercheDialog(parent);
+				TrigrammeRechercheDialog rechercheDialog = new TrigrammeRechercheDialog(
+						parent);
 				rechercheDialog.executer();
 			} else if (action.getSource().equals(parent.voirHistorique)) {
 				if (parent.trigrammeActif != null) {
@@ -103,10 +104,12 @@ public class MainWindowListener implements KeyListener, ActionListener {
 				MailDialog dialog = new MailDialog(parent);
 				dialog.executer();
 			} else if (action.getSource().equals(parent.creerTrigramme)) {
-				TrigrammeCreationDialog dialog = new TrigrammeCreationDialog(parent);
+				TrigrammeCreationDialog dialog = new TrigrammeCreationDialog(
+						parent);
 				dialog.executer();
 			} else if (action.getSource().equals(parent.modifierTrigramme)) {
-				TrigrammeModificationDialog dialog = new TrigrammeModificationDialog(parent);
+				TrigrammeModificationDialog dialog = new TrigrammeModificationDialog(
+						parent);
 				dialog.executer();
 			} else if (action.getSource().equals(parent.supprimerTrigramme)) {
 				parent.supprimerTrigramme();
@@ -128,7 +131,8 @@ public class MainWindowListener implements KeyListener, ActionListener {
 			} else if (action.getSource().equals(parent.exporter)) {
 				Export export = new Export(parent);
 				export.exporterBase();
-			} else if (action.getSource().equals(parent.reinitialiserHistorique)) {
+			} else if (action.getSource()
+					.equals(parent.reinitialiserHistorique)) {
 				parent.reinitialiserHistorique();
 			} else if (action.getSource().equals(parent.reinitialiserConso)) {
 				parent.reinitialiserTurnover();
@@ -176,8 +180,8 @@ public class MainWindowListener implements KeyListener, ActionListener {
 		try {
 			if ((arg0.getKeyChar() >= 'a' && arg0.getKeyChar() <= 'z')
 					|| (arg0.getKeyChar() >= 'A' && arg0.getKeyChar() <= 'Z')) {
-				TrigrammeDialog dialog =
-						new TrigrammeDialog(parent, ("" + arg0.getKeyChar()).toUpperCase());
+				TrigrammeDialog dialog = new TrigrammeDialog(parent,
+						("" + arg0.getKeyChar()).toUpperCase());
 				dialog.executer();
 			} else if ((arg0.getKeyChar() >= '0' && arg0.getKeyChar() <= '9')
 					|| arg0.getKeyChar() == '.') {
@@ -185,7 +189,8 @@ public class MainWindowListener implements KeyListener, ActionListener {
 					TrigrammeDialog dialog = new TrigrammeDialog(parent, "");
 					dialog.executer();
 				}
-				DebitDialog dialog = new DebitDialog(parent, arg0.getKeyChar() + "");
+				DebitDialog dialog = new DebitDialog(parent, arg0.getKeyChar()
+						+ "");
 				dialog.executer();
 			} else if (arg0.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
 				parent.annuler();
@@ -204,7 +209,9 @@ public class MainWindowListener implements KeyListener, ActionListener {
 		}
 	}
 
-	public void keyReleased(KeyEvent arg0) {}
+	public void keyReleased(KeyEvent arg0) {
+	}
 
-	public void keyTyped(KeyEvent arg0) {}
+	public void keyTyped(KeyEvent arg0) {
+	}
 }

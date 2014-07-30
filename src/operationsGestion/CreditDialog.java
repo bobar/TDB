@@ -48,9 +48,11 @@ public class CreditDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -71,7 +73,8 @@ public class CreditDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 		if (!authentification.admin.has_droit("credit")) {
 			throw new AuthException();
@@ -126,14 +129,16 @@ public class CreditDialog extends JDialog {
 		this.setVisible(true);
 
 		if (validation) {
-			int montant = (int) (100 * Double.parseDouble(champMontant.getText()));
+			int montant = (int) (100 * Double.parseDouble(champMontant
+					.getText()));
 			String comment = "";
 			if (champCommentaire.getText().equals("")) {
 				comment = (String) modeDeDepot.getSelectedItem();
 			} else {
 				comment = champCommentaire.getText();
 			}
-			parent.trigrammeActif.crediter(montant, comment, authentification.admin);
+			parent.trigrammeActif.crediter(montant, comment,
+					authentification.admin);
 		}
 	}
 

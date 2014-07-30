@@ -10,15 +10,18 @@ import java.util.Vector;
 
 public class Droits {
 
-	public static final String[] possibilites = { "log_eleve", "credit", "log_groupe", "transfert",
-			"creer_tri", "modifier_tri", "supprimer_tri", "somme_tri", "voir_comptes",
-			"debit_fichier", "export", "reinitialiser", "super_admin", "banque_binet",
+	public static final String[] possibilites = { "log_eleve", "credit",
+			"log_groupe", "transfert", "creer_tri", "modifier_tri",
+			"supprimer_tri", "somme_tri", "voir_comptes", "debit_fichier",
+			"export", "reinitialiser", "super_admin", "banque_binet",
 			"gestion_clopes", "gestion_admin" };
 
-	public static final String[] nom_droits = { "Log>20€", "Crediter", "Log groupé", "Transfert",
-			"Créer un trigramme", "Modifier un trigramme", "Supprimer un trigramme",
-			"Vérifier somme=0", "Voir des comptes par critère", "Débiter un fichier", "Exports",
-			"Réinitialisation", "Mode super-administrateur", "Ouvrir/fermer un binet",
+	public static final String[] nom_droits = { "Log>20€", "Crediter",
+			"Log groupé", "Transfert", "Créer un trigramme",
+			"Modifier un trigramme", "Supprimer un trigramme",
+			"Vérifier somme=0", "Voir des comptes par critère",
+			"Débiter un fichier", "Exports", "Réinitialisation",
+			"Mode super-administrateur", "Ouvrir/fermer un binet",
 			"Gérer les clopes", "Gérer les admins" };
 
 	private int permissions;
@@ -27,12 +30,15 @@ public class Droits {
 
 	public MainWindow parent;
 
-	public Droits(MainWindow parent, int permissions) throws SQLException, TrigException {
+	public Droits(MainWindow parent, int permissions) throws SQLException,
+			TrigException {
 		this.parent = parent;
 		this.permissions = permissions;
 		this.droits = new HashMap<String, Boolean>();
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM droits WHERE permissions=" + permissions);
+		ResultSet rs = stmt
+				.executeQuery("SELECT * FROM droits WHERE permissions="
+						+ permissions);
 		if (rs.next()) {
 			this.nom = rs.getString("nom");
 			for (String type : possibilites) {
@@ -43,12 +49,14 @@ public class Droits {
 		}
 	}
 
-	public Droits(MainWindow parent, String name) throws SQLException, TrigException {
+	public Droits(MainWindow parent, String name) throws SQLException,
+			TrigException {
 		this.parent = parent;
 		this.nom = name;
 		this.droits = new HashMap<String, Boolean>();
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM droits WHERE nom='" + name + "'");
+		ResultSet rs = stmt.executeQuery("SELECT * FROM droits WHERE nom='"
+				+ name + "'");
 		if (rs.next()) {
 			this.permissions = rs.getInt("permissions");
 			for (String type : possibilites) {
@@ -59,11 +67,13 @@ public class Droits {
 		}
 	}
 
-	public Droits(MainWindow parent, String nom, Vector<String> granted) throws SQLException {
+	public Droits(MainWindow parent, String nom, Vector<String> granted)
+			throws SQLException {
 		this.parent = parent;
 		this.nom = nom;
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT max(permissions) as mp FROM droits");
+		ResultSet rs = stmt
+				.executeQuery("SELECT max(permissions) as mp FROM droits");
 		this.permissions = 0;
 		if (rs.next()) {
 			this.permissions = 1 + rs.getInt("mp");
@@ -108,7 +118,8 @@ public class Droits {
 
 	public void delete() throws SQLException {
 		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("DELETE FROM droits WHERE permissions=" + this.permissions);
+		stmt.executeUpdate("DELETE FROM droits WHERE permissions="
+				+ this.permissions);
 	}
 
 	public void creer() throws SQLException {
@@ -125,7 +136,8 @@ public class Droits {
 		stmt.executeUpdate(query);
 	}
 
-	public static Map<Integer, String> getStatuses(MainWindow parent) throws SQLException {
+	public static Map<Integer, String> getStatuses(MainWindow parent)
+			throws SQLException {
 		Statement stmt = parent.connexion.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT permissions,nom FROM droits");
 		Map<Integer, String> res = new HashMap<Integer, String>();
@@ -135,7 +147,8 @@ public class Droits {
 		return res;
 	}
 
-	public static Map<String, Integer> getStatusId(MainWindow parent) throws SQLException {
+	public static Map<String, Integer> getStatusId(MainWindow parent)
+			throws SQLException {
 		Statement stmt = parent.connexion.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT permissions,nom FROM droits");
 		Map<String, Integer> res = new HashMap<String, Integer>();
@@ -145,8 +158,8 @@ public class Droits {
 		return res;
 	}
 
-	public static LinkedList<Droits> getAllDroits(MainWindow parent) throws SQLException,
-			TrigException {
+	public static LinkedList<Droits> getAllDroits(MainWindow parent)
+			throws SQLException, TrigException {
 		Statement stmt = parent.connexion.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT permissions FROM droits");
 		LinkedList<Droits> res = new LinkedList<Droits>();
@@ -157,11 +170,11 @@ public class Droits {
 		return res;
 	}
 
-	public static boolean droitsUtilises(MainWindow parent, String nom) throws SQLException,
-			DBException {
+	public static boolean droitsUtilises(MainWindow parent, String nom)
+			throws SQLException, DBException {
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs =
-				stmt.executeQuery("SELECT count(*) as c FROM admins NATURAL JOIN droits WHERE nom='"
+		ResultSet rs = stmt
+				.executeQuery("SELECT count(*) as c FROM admins NATURAL JOIN droits WHERE nom='"
 						+ nom + "'");
 		if (rs.next()) {
 			return rs.getInt("c") > 0;
@@ -170,10 +183,12 @@ public class Droits {
 		}
 	}
 
-	public static boolean existe(MainWindow parent, String nom) throws SQLException, DBException {
+	public static boolean existe(MainWindow parent, String nom)
+			throws SQLException, DBException {
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs =
-				stmt.executeQuery("SELECT count(*) as c FROM droits WHERE nom='" + nom + "'");
+		ResultSet rs = stmt
+				.executeQuery("SELECT count(*) as c FROM droits WHERE nom='"
+						+ nom + "'");
 		if (rs.next()) {
 			return rs.getInt("c") == 1;
 		} else {

@@ -58,9 +58,11 @@ public class AdminListDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent arg0) {
 			try {
@@ -73,11 +75,12 @@ public class AdminListDialog extends JDialog {
 						throw new TDBException("Pas d'admin sélectionné");
 					}
 					int permissions = 0;
-					String perms = (String) listeAdmin.getValueAt(ligneChoisie, 3);
+					String perms = (String) listeAdmin.getValueAt(ligneChoisie,
+							3);
 					Map<String, Integer> statusIds = Droits.getStatusId(parent);
 					permissions = statusIds.get(perms);
-					AdminModificationDialog dialog =
-							new AdminModificationDialog(parent, (String) listeAdmin.getValueAt(
+					AdminModificationDialog dialog = new AdminModificationDialog(
+							parent, (String) listeAdmin.getValueAt(
 									ligneChoisie, 0), permissions);
 					dialog.executer();
 				} else if (arg0.getSource().equals(supprimerButton)) {
@@ -85,17 +88,18 @@ public class AdminListDialog extends JDialog {
 					if (ligneChoisie == -1) {
 						throw new TDBException("Pas d'admin sélectionné");
 					}
-					Trigramme trigramme =
-							new Trigramme(parent, (String) listeAdmin.getValueAt(ligneChoisie, 0));
-					int confirmation =
-							JOptionPane.showConfirmDialog(parent,
-									"Etes-vous sur de vouloir supprimer " + trigramme.trigramme
-											+ " (" + trigramme.name + " " + trigramme.first_name
-											+ ")", "Confirmation", JOptionPane.OK_CANCEL_OPTION,
-									JOptionPane.QUESTION_MESSAGE, null);
+					Trigramme trigramme = new Trigramme(parent,
+							(String) listeAdmin.getValueAt(ligneChoisie, 0));
+					int confirmation = JOptionPane.showConfirmDialog(parent,
+							"Etes-vous sur de vouloir supprimer "
+									+ trigramme.trigramme + " ("
+									+ trigramme.name + " "
+									+ trigramme.first_name + ")",
+							"Confirmation", JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null);
 					if (confirmation == JOptionPane.OK_OPTION) {
-						Admin admin =
-								new Admin(parent, (String) listeAdmin.getValueAt(ligneChoisie, 0));
+						Admin admin = new Admin(parent,
+								(String) listeAdmin.getValueAt(ligneChoisie, 0));
 						admin.supprimer();
 					}
 				} else if (arg0.getSource() == fermerButton) {
@@ -115,7 +119,8 @@ public class AdminListDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 
 		if (!authentification.admin.has_droit("gestion_admin")) {
@@ -184,6 +189,7 @@ public class AdminListDialog extends JDialog {
 
 		this.setVisible(true);
 	}
+
 	// On crée une petite fonction refresh pour après les modifs
 	public void refresh() throws Exception {
 		Map<Integer, String> status = Droits.getStatuses(parent);
@@ -192,8 +198,8 @@ public class AdminListDialog extends JDialog {
 		}
 		LinkedList<Admin.AdminData> admins = Admin.getAllAdmins(parent);
 		for (Admin.AdminData admin : admins) {
-			String[] ligne =
-					{ admin.trigramme, admin.name, admin.firstname, status.get(admin.permissions) };
+			String[] ligne = { admin.trigramme, admin.name, admin.firstname,
+					status.get(admin.permissions) };
 			modele.addRow(ligne);
 		}
 		listeAdmin.setModel(modele);

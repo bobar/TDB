@@ -16,7 +16,8 @@ import com.sun.mail.smtp.SMTPTransport;
  * @author doraemon
  */
 public class GoogleMail {
-	private GoogleMail() {}
+	private GoogleMail() {
+	}
 
 	/**
 	 * Send email using GMail SMTP server.
@@ -34,11 +35,12 @@ public class GoogleMail {
 	 * @throws AddressException
 	 *             if the email address parse failed
 	 * @throws MessagingException
-	 *             if the connection is dead or not in the connected state or if the message is not
-	 *             a MimeMessage
+	 *             if the connection is dead or not in the connected state or if
+	 *             the message is not a MimeMessage
 	 */
-	public static void Send(final String username, final String password, String recipientEmail,
-			String title, String message) throws AddressException, MessagingException {
+	public static void Send(final String username, final String password,
+			String recipientEmail, String title, String message)
+			throws AddressException, MessagingException {
 		GoogleMail.Send(username, password, recipientEmail, "", title, message);
 	}
 
@@ -60,12 +62,12 @@ public class GoogleMail {
 	 * @throws AddressException
 	 *             if the email address parse failed
 	 * @throws MessagingException
-	 *             if the connection is dead or not in the connected state or if the message is not
-	 *             a MimeMessage
+	 *             if the connection is dead or not in the connected state or if
+	 *             the message is not a MimeMessage
 	 */
-	public static void Send(final String username, final String password, String recipientEmail,
-			String ccEmail, String title, String message) throws AddressException,
-			MessagingException {
+	public static void Send(final String username, final String password,
+			String recipientEmail, String ccEmail, String title, String message)
+			throws AddressException, MessagingException {
 		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 		final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
 
@@ -78,14 +80,15 @@ public class GoogleMail {
 		props.setProperty("mail.smtp.socketFactory.port", "465");
 		props.setProperty("mail.smtps.auth", "true");
 
-		/* If set to false, the QUIT command is sent and the connection is immediately closed. If
-		 * set to true (the default), causes the transport to wait for the response to the QUIT
-		 * command.
-		 * 
-		 * ref :
-		 * http://java.sun.com/products/javamail/javadocs/com/sun/mail/smtp/package-summary.html
-		 * http://forum.java.sun.com/thread.jspa?threadID=5205249 smtpsend.java - demo program from
-		 * javamail */
+		/*
+		 * If set to false, the QUIT command is sent and the connection is
+		 * immediately closed. If set to true (the default), causes the
+		 * transport to wait for the response to the QUIT command. ref :
+		 * http://java
+		 * .sun.com/products/javamail/javadocs/com/sun/mail/smtp/package
+		 * -summary.html http://forum.java.sun.com/thread.jspa?threadID=5205249
+		 * smtpsend.java - demo program from javamail
+		 */
 		props.put("mail.smtps.quitwait", "false");
 
 		Session session = Session.getInstance(props, null);
@@ -95,10 +98,12 @@ public class GoogleMail {
 
 		// -- Set the FROM and TO fields --
 		msg.setFrom(new InternetAddress(username + "@gmail.com"));
-		msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail, false));
+		msg.setRecipients(Message.RecipientType.TO,
+				InternetAddress.parse(recipientEmail, false));
 
 		if (ccEmail.length() > 0) {
-			msg.setRecipients(Message.RecipientType.CC, InternetAddress.parse(ccEmail, false));
+			msg.setRecipients(Message.RecipientType.CC,
+					InternetAddress.parse(ccEmail, false));
 		}
 
 		msg.setSubject(title);

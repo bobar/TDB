@@ -55,9 +55,11 @@ public class ClopesDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(okButton)) {
@@ -140,7 +142,8 @@ public class ClopesDialog extends JDialog {
 			if (quantite * clopes.prix() > 2000
 					|| (parent.trigrammeActif.status != Trigramme.XPlatal && parent.trigrammeActif.balance < quantite
 							* clopes.prix())) {
-				AuthentificationDialog authentification = new AuthentificationDialog(parent);
+				AuthentificationDialog authentification = new AuthentificationDialog(
+						parent);
 				authentification.executer();
 
 				if (authentification.admin.has_droit("log_eleve")) {

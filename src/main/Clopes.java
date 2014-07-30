@@ -16,7 +16,8 @@ public class Clopes {
 	public Clopes(MainWindow parent, String marque) throws Exception {
 		this.parent = parent;
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM clopes WHERE marque='" + marque + "'");
+		ResultSet rs = stmt.executeQuery("SELECT * FROM clopes WHERE marque='"
+				+ marque + "'");
 		if (rs.next()) {
 			id = rs.getInt("id");
 			this.marque = marque;
@@ -51,36 +52,39 @@ public class Clopes {
 
 	public void creer(Admin admin) throws Exception {
 		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("INSERT INTO clopes (marque,prix,quantite) VALUES ('" + marque + "',"
-				+ prix + ",0)");
+		stmt.executeUpdate("INSERT INTO clopes (marque,prix,quantite) VALUES ('"
+				+ marque + "'," + prix + ",0)");
 		stmt.close();
-		Transaction transaction =
-				new Transaction(parent.banqueBob.id, 0, "Création clopes : " + marque, admin, null,
-						parent.banqueBob.id);
+		Transaction transaction = new Transaction(parent.banqueBob.id, 0,
+				"Création clopes : " + marque, admin, null, parent.banqueBob.id);
 		transaction.WriteToDB(parent);
 	}
 
-	public void vendre(Trigramme trigramme, Admin admin, int quantite) throws Exception {
-		Transaction transaction =
-				new Transaction(trigramme.id, -quantite * prix, quantite + " " + marque, admin,
-						null, parent.banqueBob.id);
+	public void vendre(Trigramme trigramme, Admin admin, int quantite)
+			throws Exception {
+		Transaction transaction = new Transaction(trigramme.id, -quantite
+				* prix, quantite + " " + marque, admin, null,
+				parent.banqueBob.id);
 		transaction.is_clopes = true;
 		parent.dernieresActions.add(transaction);
 		transaction.WriteToDB(parent);
 		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("UPDATE clopes SET quantite=quantite+" + quantite + " WHERE marque='"
-				+ marque + "'");
+		stmt.executeUpdate("UPDATE clopes SET quantite=quantite+" + quantite
+				+ " WHERE marque='" + marque + "'");
 	}
 
 	public void setPrix(int prix) throws Exception {
 		Statement stmt = parent.connexion.createStatement();
-		stmt.executeUpdate("UPDATE clopes SET prix=" + prix + " WHERE id='" + id + "'");
+		stmt.executeUpdate("UPDATE clopes SET prix=" + prix + " WHERE id='"
+				+ id + "'");
 		this.prix = prix;
 	}
 
-	public static LinkedList<String> getMarques(MainWindow parent) throws Exception {
+	public static LinkedList<String> getMarques(MainWindow parent)
+			throws Exception {
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT marque FROM clopes ORDER BY quantite DESC");
+		ResultSet rs = stmt
+				.executeQuery("SELECT marque FROM clopes ORDER BY quantite DESC");
 		LinkedList<String> listeMarques = new LinkedList<String>();
 		while (rs.next()) {
 			listeMarques.add(rs.getString("marque"));
@@ -98,11 +102,12 @@ public class Clopes {
 		stmt.executeUpdate("UPDATE clopes SET quantite =0");
 	}
 
-	public static LinkedList<Clopes> getAllClopes(MainWindow parent) throws Exception {
+	public static LinkedList<Clopes> getAllClopes(MainWindow parent)
+			throws Exception {
 		LinkedList<Clopes> res = new LinkedList<Clopes>();
 		Statement stmt = parent.connexion.createStatement();
-		ResultSet rs =
-				stmt.executeQuery("SELECT marque FROM clopes ORDER BY quantite DESC, marque ASC");
+		ResultSet rs = stmt
+				.executeQuery("SELECT marque FROM clopes ORDER BY quantite DESC, marque ASC");
 		while (rs.next()) {
 			Clopes clopes = new Clopes(parent, rs.getString("marque"));
 			res.add(clopes);

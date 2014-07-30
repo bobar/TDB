@@ -46,7 +46,8 @@ public class ClopesListDialog extends JDialog {
 	DefaultTableColumnModel modeleColonnes;
 	JScrollPane resultatsScrollPane;
 
-	public class ClopesListDialogListener implements ActionListener, KeyListener {
+	public class ClopesListDialogListener implements ActionListener,
+			KeyListener {
 
 		ClopesListDialogListener() {
 			super();
@@ -58,22 +59,25 @@ public class ClopesListDialog extends JDialog {
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {}
+		public void keyReleased(KeyEvent arg0) {
+		}
 
-		public void keyTyped(KeyEvent arg0) {}
+		public void keyTyped(KeyEvent arg0) {
+		}
 
 		public void actionPerformed(ActionEvent arg0) {
 			try {
 				if (arg0.getSource().equals(creerButton)) {
-					ClopesCreationDialog dialog = new ClopesCreationDialog(parent);
+					ClopesCreationDialog dialog = new ClopesCreationDialog(
+							parent);
 					dialog.executer();
 				} else if (arg0.getSource().equals(modifierButton)) {
 					int ligneChoisie = listeClopes.getSelectedRow();
 					if (ligneChoisie == -1) {
 						throw new TDBException("Pas de clopes sélectionnées");
 					}
-					ClopesModificationDialog dialog =
-							new ClopesModificationDialog(parent, (String) listeClopes.getValueAt(
+					ClopesModificationDialog dialog = new ClopesModificationDialog(
+							parent, (String) listeClopes.getValueAt(
 									ligneChoisie, 0));
 					dialog.executer();
 				} else if (arg0.getSource().equals(supprimerButton)) {
@@ -81,23 +85,27 @@ public class ClopesListDialog extends JDialog {
 					if (ligneChoisie == -1) {
 						throw new TDBException("Pas de clopes sélectionnées");
 					}
-					int confirmation =
-							JOptionPane.showConfirmDialog(
+					int confirmation = JOptionPane
+							.showConfirmDialog(
 									parent,
 									"Etes-vous sur de vouloir supprimer "
-											+ modele.getValueAt(ligneChoisie, 0) + " ?",
-									"Confirmation", JOptionPane.OK_CANCEL_OPTION,
+											+ modele.getValueAt(ligneChoisie, 0)
+											+ " ?", "Confirmation",
+									JOptionPane.OK_CANCEL_OPTION,
 									JOptionPane.QUESTION_MESSAGE, null);
 					if (confirmation == JOptionPane.OK_OPTION) {
-						String marque = (String) modele.getValueAt(ligneChoisie, 0);
+						String marque = (String) modele.getValueAt(
+								ligneChoisie, 0);
 						Clopes clopes = new Clopes(parent, marque);
 						clopes.delete();
 					}
 				} else if (arg0.getSource().equals(resetButton)) {
-					int confirmation =
-							JOptionPane.showConfirmDialog(parent,
+					int confirmation = JOptionPane
+							.showConfirmDialog(
+									parent,
 									"Etes-vous sur de vouloir remettre les quantités à 0 ?",
-									"Confirmation", JOptionPane.OK_CANCEL_OPTION,
+									"Confirmation",
+									JOptionPane.OK_CANCEL_OPTION,
 									JOptionPane.QUESTION_MESSAGE, null);
 					if (confirmation == JOptionPane.OK_OPTION) {
 						Clopes.resetQuantites(parent);
@@ -119,7 +127,8 @@ public class ClopesListDialog extends JDialog {
 
 	public void executer() throws Exception {
 
-		AuthentificationDialog authentification = new AuthentificationDialog(parent);
+		AuthentificationDialog authentification = new AuthentificationDialog(
+				parent);
 		authentification.executer();
 
 		if (!authentification.admin.has_droit("gestion_clopes")) {
@@ -199,8 +208,8 @@ public class ClopesListDialog extends JDialog {
 		}
 		LinkedList<Clopes> clopes = Clopes.getAllClopes(parent);
 		for (Clopes clope : clopes) {
-			String[] data =
-					{ clope.marque(), "" + (double) clope.prix() / 100, "" + clope.quantite() };
+			String[] data = { clope.marque(), "" + (double) clope.prix() / 100,
+					"" + clope.quantite() };
 			modele.addRow(data);
 		}
 		listeClopes.setModel(modele);
