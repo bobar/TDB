@@ -5,7 +5,10 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -26,6 +29,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Stack;
 import java.util.prefs.Preferences;
+
 import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -52,6 +56,7 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
 import operationsStandard.TrigrammeDialog;
 import admin.AuthentificationDialog;
 
@@ -384,9 +389,15 @@ public class MainWindow extends JFrame {
 
 	public void initialiser(String trigrammeBanque) throws Exception {
 		this.setTitle("TDB");
-		Dimension tailleEcran = Toolkit.getDefaultToolkit().getScreenSize();
-		tailleEcran.setSize(tailleEcran.getWidth() - 60,
-				tailleEcran.getHeight());
+//		Dimension tailleEcran = Toolkit.getDefaultToolkit().getScreenSize();
+//		tailleEcran.setSize(tailleEcran.getWidth() - 60,
+//				tailleEcran.getHeight());
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		int width = gd.getDisplayMode().getWidth();
+		int height = gd.getDisplayMode().getHeight();
+		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
+		Dimension tailleEcran = new Dimension();
+		tailleEcran.setSize(width - scnMax.left, height - scnMax.bottom);
 		// hack sordide, a cause du lanceur Unity a gauche
 		this.setSize(tailleEcran);
 
