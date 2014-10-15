@@ -334,8 +334,6 @@ public class MainWindow extends JFrame {
 			br.close();
 			TDB.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			TDB.initialiser(trigrammeBanque);
-			// Trigramme GNI = new Trigramme(TDB, "GNI");
-			// GNI.sendPolytechniqueMail();
 		} catch (Exception e) {
 			TDB.afficherErreur(e);
 		}
@@ -389,16 +387,12 @@ public class MainWindow extends JFrame {
 
 	public void initialiser(String trigrammeBanque) throws Exception {
 		this.setTitle("TDB");
-//		Dimension tailleEcran = Toolkit.getDefaultToolkit().getScreenSize();
-//		tailleEcran.setSize(tailleEcran.getWidth() - 60,
-//				tailleEcran.getHeight());
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int width = gd.getDisplayMode().getWidth();
 		int height = gd.getDisplayMode().getHeight();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
 		Dimension tailleEcran = new Dimension();
 		tailleEcran.setSize(width - scnMax.left, height - scnMax.bottom);
-		// hack sordide, a cause du lanceur Unity a gauche
 		this.setSize(tailleEcran);
 
 		// Création de tous les menus
