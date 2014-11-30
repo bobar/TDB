@@ -127,8 +127,8 @@ public class DebitFichierDialog extends JDialog {
   }
 
   public static int Hamming(String a, String b) {
-    a = Normalizer.normalize(a, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-    b = Normalizer.normalize(b, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    a = Normalizer.normalize(a.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    b = Normalizer.normalize(b.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     int hamming = Math.abs(a.length() - b.length());
     for (int i = 0; i < Math.min(a.length(), b.length()); ++i) {
       if (a.charAt(i) != b.charAt(i)) {
@@ -235,28 +235,32 @@ public class DebitFichierDialog extends JDialog {
         try {
           Trigramme trigramme = new Trigramme(parent, (String) modele.getValueAt(i, 1));
           int montant = (int) (100 * Double.parseDouble((String) modele.getValueAt(i, 3)));
-          if (!trigramme.name.toUpperCase()
-              .equals(modele.getValueAt(i, 2).toString().toUpperCase())) {
-            erreur = 1;
-            comment = "Mauvais nom : " + trigramme.name;
-          } else if (montant < 0) {
+          int hamming = Hamming(trigramme.name, modele.getValueAt(i, 2).toString());
+          if (montant < 0) {
             lignesInterdites.add(i);
-            erreur = 2;
+            erreur = Math.max(erreur, 2);
             comment = "Montant négatif";
           } else if (trigramme.status != 0 && trigramme.balance < montant) {
-            erreur = 3;
+            erreur = Math.max(erreur, 2);
             comment =
-                "Compte non X en négatif (" + (double) (trigramme.balance - montant) / 100 + ")";
+                "Compte non X passe en négatif (" + (double) (trigramme.balance - montant) / 100
+                    + ")";
+          } else if (hamming >= 2) {
+            erreur = Math.max(erreur, 2);
+            comment = "Nom différent : " + trigramme.name;
           } else if (montant > 2000) {
-            erreur = 4;
+            erreur = Math.max(erreur, 1);
             comment = "Montant élevé";
           } else if (trigramme.balance < montant && trigramme.balance >= 0) {
-            erreur = 5;
+            erreur = Math.max(erreur, 1);
             comment =
                 "Le compte passe en négatif (" + (double) (trigramme.balance - montant) / 100 + ")";
+          } else if (hamming == 1) {
+            erreur = Math.max(erreur, 1);
+            comment = "Légère erreur dans le nom : " + trigramme.name;
           }
           modele.setValueAt(comment, i, 4);
-          if (erreur >= 1 && erreur <= 3) {
+          if (erreur == 2) {
             modele.setValueAt(Boolean.FALSE, i, 0);
           }
 
