@@ -1,6 +1,6 @@
 ## Setup on Ubuntu
 ### Clone the repository
-- `$ git clone https://github.com/bobar/TDB.git`
+- `$ git clone git@github.com:bobar/TDB.git`
 
 ### Install development packages
 - `$ sudo apt-get install openjdk-7-jre`
