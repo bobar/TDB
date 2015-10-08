@@ -48,3 +48,16 @@ dbName=tdb
 # gestionClopes=false
 # gestionAdmins=false
 # gestionDroits=false
+
+################################################################
+# Uncomment lines if you want to disable some trigramme fields #
+################################################################
+
+# champTrigramme=false
+# champNom=false
+# champPrenom=false
+# champSurnom=false
+# champCasert=false
+# champCategorie=false
+# champPromo=false
+# champPhoto=false

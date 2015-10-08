@@ -80,7 +80,7 @@ public class MainWindow extends JFrame {
   private MainWindowListener mainWindowListener = new MainWindowListener(this);
   Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
-  private Properties properties = new Properties();
+  public Properties properties = new Properties();
 
   // Création de tous les menus, on les met en variable global pour y avoir
   // accès dans le listener

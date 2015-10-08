@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.util.Properties;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -65,8 +67,8 @@ public class TrigrammeModificationDialog extends JDialog {
 
     public void keyReleased(KeyEvent arg0) {
       if (arg0.getSource().equals(champTrigramme)) {
-        champTrigramme.setText(champTrigramme.getText().toUpperCase()
-            .substring(0, Math.min(3, champTrigramme.getText().length())));
+        champTrigramme.setText(
+            champTrigramme.getText().toUpperCase().substring(0, Math.min(3, champTrigramme.getText().length())));
         if (champTrigramme.getText().length() < 3) {
           champTrigramme.setBackground(null);
         } else {
@@ -104,9 +106,8 @@ public class TrigrammeModificationDialog extends JDialog {
 
           public boolean accept(File arg0) {
             return (arg0.isDirectory() || arg0.getName().toLowerCase().contains(".gif")
-                || arg0.getName().toLowerCase().contains(".jpg")
-                || arg0.getName().toLowerCase().contains(".jpeg") || arg0.getName().toLowerCase()
-                .contains(".png"));
+                || arg0.getName().toLowerCase().contains(".jpg") || arg0.getName().toLowerCase().contains(".jpeg")
+                || arg0.getName().toLowerCase().contains(".png"));
           }
 
           public String getDescription() {
@@ -212,25 +213,40 @@ public class TrigrammeModificationDialog extends JDialog {
     cancelButton = new JButton("Annuler");
     cancelButton.addActionListener(listener);
     cancelButton.setPreferredSize(new Dimension(140, 20));
+    Properties properties = parent.properties;
 
     JPanel pane = new JPanel();
     pane.add(labelTrigramme);
     pane.add(champTrigramme);
-    pane.add(labelNom);
-    pane.add(champNom);
-    pane.add(labelPrenom);
-    pane.add(champPrenom);
-    pane.add(labelSurnom);
-    pane.add(champSurnom);
-    pane.add(labelCasert);
-    pane.add(champCasert);
-    pane.add(labelCategorie);
-    pane.add(champCategorie);
-    pane.add(labelPromo);
-    pane.add(champPromo);
-    pane.add(labelPhoto);
-    pane.add(champPhoto);
-    pane.add(photoButton);
+    if (!properties.getProperty("champNom", "true").equals("false")) {
+      pane.add(labelNom);
+      pane.add(champNom);
+    }
+    if (!properties.getProperty("champPrenom", "true").equals("false")) {
+      pane.add(labelPrenom);
+      pane.add(champPrenom);
+    }
+    if (!properties.getProperty("champSurnom", "true").equals("false")) {
+      pane.add(labelSurnom);
+      pane.add(champSurnom);
+    }
+    if (!properties.getProperty("champCasert", "true").equals("false")) {
+      pane.add(labelCasert);
+      pane.add(champCasert);
+    }
+    if (!properties.getProperty("champCategorie", "true").equals("false")) {
+      pane.add(labelCategorie);
+      pane.add(champCategorie);
+    }
+    if (!properties.getProperty("champPromo", "true").equals("false")) {
+      pane.add(labelPromo);
+      pane.add(champPromo);
+    }
+    if (!properties.getProperty("champPhoto", "true").equals("false")) {
+      pane.add(labelPhoto);
+      pane.add(champPhoto);
+      pane.add(photoButton);
+    }
     pane.add(okButton);
     pane.add(cancelButton);
 
@@ -241,8 +257,7 @@ public class TrigrammeModificationDialog extends JDialog {
     Container contentPane = this.getContentPane();
     contentPane.add(pane);
     this.pack();
-    this.setLocation((parent.getWidth() - this.getWidth()) / 2,
-        (parent.getHeight() - this.getHeight()) / 2);
+    this.setLocation((parent.getWidth() - this.getWidth()) / 2, (parent.getHeight() - this.getHeight()) / 2);
     this.setResizable(false);
     this.setVisible(true);
 
@@ -254,11 +269,9 @@ public class TrigrammeModificationDialog extends JDialog {
       String surnom = champSurnom.getText().replace(",", ";");
 
       if (champTrigramme.getBackground().equals(Color.GREEN)) {
-        Trigramme trigramme =
-            new Trigramme(parent, champTrigramme.getText(), nom, prenom, surnom,
-                champCasert.getText(), champCategorie.getSelectedIndex(),
-                Integer.parseInt(champPromo.getText()), "", champPhoto.getText(),
-                parent.trigrammeActif.balance, parent.trigrammeActif.turnover);
+        Trigramme trigramme = new Trigramme(parent, champTrigramme.getText(), nom, prenom, surnom,
+            champCasert.getText(), champCategorie.getSelectedIndex(), Integer.parseInt(champPromo.getText()), "",
+            champPhoto.getText(), parent.trigrammeActif.balance, parent.trigrammeActif.turnover);
         trigramme.modifier(parent.trigrammeActif.id, authentification.admin);
       } else {
         throw new TrigException("Trigramme déjà pris.");
