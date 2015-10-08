@@ -1,0 +1,50 @@
+trigrammeBanque=BOB
+dbUser=mysql_username
+dbPassword=mysql_password
+dbHost=mysql_database
+dbName=tdb
+
+################################################
+# Uncomment lines if you want to disable menus #
+################################################
+
+# Menu Standard
+# ouvrirTrigramme=false
+# fermerTrigramme=false
+# voirHistorique=false
+# voirAncienHistorique=false
+# rechercherTrigramme=false
+# debiterTrigramme=false
+# acheterClopes=false
+# pinteDeKroPourSIE=false
+# annuler=false
+
+# Menu Gestion
+# fasciserParMail=false
+# loggerAPlusieurs=false
+# approvisionner=false
+# transfert=false
+# modifierMail=false
+# creerTrigramme=false
+# modifierTrigramme=false
+# supprimerTrigramme=false
+
+# menu TDB
+# verifTotal=false
+# voirBinets=false
+# voirComptes=false
+# debiterFichier=false
+# positivation=false
+# exporter=false
+# reinitialiserHistorique=false
+# reinitialiserConso=false
+
+# Menu Admin
+# ouvrirModeAdmin=false
+# fermerModeAdmin=false
+# ouvrirBinet=false
+# fermerBinet=false
+# changerMDP=false
+# gestionClopes=false
+# gestionAdmins=false
+# gestionDroits=false

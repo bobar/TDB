@@ -12,14 +12,12 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,6 +25,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.Stack;
 import java.util.prefs.Preferences;
 
@@ -80,6 +79,8 @@ public class MainWindow extends JFrame {
 
   private MainWindowListener mainWindowListener = new MainWindowListener(this);
   Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+
+  private Properties properties = new Properties();
 
   // Création de tous les menus, on les met en variable global pour y avoir
   // accès dans le listener
@@ -166,7 +167,7 @@ public class MainWindow extends JFrame {
 
   public void connecter() throws Exception {
     Database database = new Database();
-    database.connecter();
+    database.connecter(properties);
     connexion = database.connexion;
   }
 
@@ -245,8 +246,7 @@ public class MainWindow extends JFrame {
     stmt.executeUpdate("UPDATE accounts SET turnover=balance");
     stmt.executeUpdate("UPDATE accounts SET turnover=0 WHERE status=2");
     refresh();
-    JOptionPane.showMessageDialog(this, "Chiffres d'affaires réinitialisés", "",
-        JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(this, "Chiffres d'affaires réinitialisés", "", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void reinitialiserHistorique() throws Exception {
@@ -262,8 +262,7 @@ public class MainWindow extends JFrame {
     stmt.executeUpdate("INSERT INTO transactions_history SELECT * FROM transactions");
     stmt.executeUpdate("DELETE FROM transactions");
     refresh();
-    JOptionPane.showMessageDialog(this, "Historiques réinitialisés", "",
-        JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(this, "Historiques réinitialisés", "", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void annuler() throws Exception {
@@ -299,25 +298,12 @@ public class MainWindow extends JFrame {
   public static void main(String[] args) throws AddressException, MessagingException {
     MainWindow TDB = new MainWindow();
     try {
-      String trigrammeBanque = "BOB";
       String absolutePath = TDB.getExecutionPath();
       InputStream ips = new FileInputStream(absolutePath + "/src//TDB.config");
-      InputStreamReader ipsr = new InputStreamReader(ips);
-      BufferedReader br = new BufferedReader(ipsr);
-      String ligne;
-      while ((ligne = br.readLine()) != null) {
-        if (ligne.charAt(0) != '#') {
-          int pos = ligne.indexOf('=');
-          String debut = ligne.substring(0, pos).trim();
-          String fin = ligne.substring(pos + 1, ligne.length()).trim();
-          if (debut.equals("trigrammeBanque") && fin.length() == 3) {
-            trigrammeBanque = fin;
-          }
-        }
-      }
-      br.close();
+      Properties properties = new Properties();
+      properties.load(ips);
       TDB.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-      TDB.initialiser(trigrammeBanque);
+      TDB.initialiser(properties);
     } catch (Exception e) {
       TDB.afficherErreur(e);
     }
@@ -339,8 +325,7 @@ public class MainWindow extends JFrame {
     if (!TDBException.class.isAssignableFrom(e.getClass())) {
       try {
         String absolutePath = this.getExecutionPath();
-        PrintWriter out =
-            new PrintWriter(new BufferedWriter(new FileWriter(absolutePath + "//logTDB", true)));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(absolutePath + "//logTDB", true)));
         out.println(e.getMessage());
         SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = formater.format(new Date());
@@ -357,13 +342,13 @@ public class MainWindow extends JFrame {
   public void afficherMythe() {
     JOptionPane.showMessageDialog(this,
         "Plap zdé mythe" + "\n\nReset chiffres d'affaires : " + prefs.get("dateResetTurnover", "")
-            + "\nReset historiques : " + prefs.get("dateResetHistorique", ""), "Mythe",
-        JOptionPane.INFORMATION_MESSAGE);
-    JOptionPane.showMessageDialog(this, "Manou Manou Manou Manou", "Mythe",
-        JOptionPane.INFORMATION_MESSAGE);
+            + "\nReset historiques : " + prefs.get("dateResetHistorique", ""),
+        "Mythe", JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(this, "Manou Manou Manou Manou", "Mythe", JOptionPane.INFORMATION_MESSAGE);
   }
 
-  public void initialiser(String trigrammeBanque) throws Exception {
+  public void initialiser(Properties properties) throws Exception {
+    this.properties = properties;
     this.setTitle("TDB");
     GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     int width = gd.getDisplayMode().getWidth();
@@ -374,100 +359,158 @@ public class MainWindow extends JFrame {
     this.setSize(tailleEcran);
 
     // Création de tous les menus
-    ouvrirTrigramme.addActionListener(mainWindowListener);
-    fermerTrigramme.addActionListener(mainWindowListener);
-    fermerTrigramme.setAccelerator(KeyStroke.getKeyStroke((char) KeyEvent.VK_ESCAPE));
-    voirHistorique.addActionListener(mainWindowListener);
-    voirHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK));
-    voirAncienHistorique.addActionListener(mainWindowListener);
-    voirAncienHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
-        InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
-    rechercherTrigramme.addActionListener(mainWindowListener);
-    rechercherTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
-        InputEvent.CTRL_DOWN_MASK));
-    debiterTrigramme.addActionListener(mainWindowListener);
-    acheterClopes.addActionListener(mainWindowListener);
-    acheterClopes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK));
-    pinteDeKroPourSIE.addActionListener(mainWindowListener);
-    pinteDeKroPourSIE.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K,
-        InputEvent.CTRL_DOWN_MASK + InputEvent.ALT_DOWN_MASK));
-    annuler.addActionListener(mainWindowListener);
-    annuler.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+    if (!properties.getProperty("ouvrirTrigramme", "true").equals("false")) {
+      ouvrirTrigramme.addActionListener(mainWindowListener);
+      menuStandard.add(ouvrirTrigramme);
+    }
+    if (!properties.getProperty("fermerTrigramme", "true").equals("false")) {
+      fermerTrigramme.addActionListener(mainWindowListener);
+      fermerTrigramme.setAccelerator(KeyStroke.getKeyStroke((char) KeyEvent.VK_ESCAPE));
+      menuStandard.add(fermerTrigramme);
+    }
+    if (!properties.getProperty("voirHistorique", "true").equals("false")) {
+      voirHistorique.addActionListener(mainWindowListener);
+      voirHistorique.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK));
+      menuStandard.add(voirHistorique);
+    }
+    if (!properties.getProperty("voirAncienHistorique", "true").equals("false")) {
+      voirAncienHistorique.addActionListener(mainWindowListener);
+      voirAncienHistorique.setAccelerator(
+          KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
+      menuStandard.add(voirAncienHistorique);
+    }
+    if (!properties.getProperty("rechercherTrigramme", "true").equals("false")) {
+      rechercherTrigramme.addActionListener(mainWindowListener);
+      rechercherTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
+      menuStandard.add(rechercherTrigramme);
+    }
+    if (!properties.getProperty("debiterTrigramme", "true").equals("false")) {
+      debiterTrigramme.addActionListener(mainWindowListener);
+      menuStandard.add(debiterTrigramme);
+    }
+    if (!properties.getProperty("acheterClopes", "true").equals("false")) {
+      acheterClopes.addActionListener(mainWindowListener);
+      acheterClopes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK));
+      menuStandard.add(acheterClopes);
+    }
+    if (!properties.getProperty("pinteDeKroPourSIE", "true").equals("false")) {
+      pinteDeKroPourSIE.addActionListener(mainWindowListener);
+      pinteDeKroPourSIE
+          .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK + InputEvent.ALT_DOWN_MASK));
+      menuStandard.add(pinteDeKroPourSIE);
+    }
+    if (!properties.getProperty("annuler", "true").equals("false")) {
+      annuler.addActionListener(mainWindowListener);
+      annuler.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+      menuStandard.add(annuler);
+    }
 
-    menuStandard.add(ouvrirTrigramme);
-    menuStandard.add(fermerTrigramme);
-    menuStandard.add(voirHistorique);
-    menuStandard.add(voirAncienHistorique);
-    menuStandard.add(rechercherTrigramme);
-    menuStandard.add(debiterTrigramme);
-    menuStandard.add(acheterClopes);
-    menuStandard.add(pinteDeKroPourSIE);
-    menuStandard.add(annuler);
+    if (!properties.getProperty("fasciserParMail", "true").equals("false")) {
+      fasciserParMail.addActionListener(mainWindowListener);
+      fasciserParMail
+          .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK + InputEvent.ALT_DOWN_MASK));
+      menuGestion.add(fasciserParMail);
+    }
+    if (!properties.getProperty("loggerAPlusieurs", "true").equals("false")) {
+      loggerAPlusieurs.addActionListener(mainWindowListener);
+      loggerAPlusieurs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
+      menuGestion.add(loggerAPlusieurs);
+    }
+    if (!properties.getProperty("approvisionner", "true").equals("false")) {
+      approvisionner.addActionListener(mainWindowListener);
+      approvisionner.setAccelerator(KeyStroke.getKeyStroke('+'));
+      menuGestion.add(approvisionner);
+    }
+    if (!properties.getProperty("transfert", "true").equals("false")) {
+      transfert.addActionListener(mainWindowListener);
+      transfert.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
+      menuGestion.add(transfert);
+    }
+    if (!properties.getProperty("modifierMail", "true").equals("false")) {
+      modifierMail.addActionListener(mainWindowListener);
+      creerTrigramme.addActionListener(mainWindowListener);
+      menuGestion.add(modifierMail);
+    }
+    if (!properties.getProperty("creerTrigramme", "true").equals("false")) {
+      creerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+      menuGestion.add(creerTrigramme);
+    }
+    if (!properties.getProperty("modifierTrigramme", "true").equals("false")) {
+      modifierTrigramme.addActionListener(mainWindowListener);
+      modifierTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK));
+      menuGestion.add(modifierTrigramme);
+    }
+    if (!properties.getProperty("supprimerTrigramme", "true").equals("false")) {
+      supprimerTrigramme.addActionListener(mainWindowListener);
+      supprimerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+      menuGestion.add(supprimerTrigramme);
+    }
 
-    fasciserParMail.addActionListener(mainWindowListener);
-    fasciserParMail.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK
-        + InputEvent.ALT_DOWN_MASK));
-    loggerAPlusieurs.addActionListener(mainWindowListener);
-    loggerAPlusieurs.setAccelerator(KeyStroke
-        .getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
-    approvisionner.addActionListener(mainWindowListener);
-    approvisionner.setAccelerator(KeyStroke.getKeyStroke('+'));
-    transfert.addActionListener(mainWindowListener);
-    transfert.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
-    modifierMail.addActionListener(mainWindowListener);
-    creerTrigramme.addActionListener(mainWindowListener);
-    creerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
-    modifierTrigramme.addActionListener(mainWindowListener);
-    modifierTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
-        InputEvent.CTRL_DOWN_MASK));
-    supprimerTrigramme.addActionListener(mainWindowListener);
-    supprimerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-        InputEvent.CTRL_DOWN_MASK));
+    if (!properties.getProperty("verifTotal", "true").equals("false")) {
+      verifTotal.addActionListener(mainWindowListener);
+      menuTDB.add(verifTotal);
+    }
+    if (!properties.getProperty("voirBinets", "true").equals("false")) {
+      voirBinets.addActionListener(mainWindowListener);
+      menuTDB.add(voirBinets);
+    }
+    if (!properties.getProperty("voirComptes", "true").equals("false")) {
+      voirComptes.addActionListener(mainWindowListener);
+      menuTDB.add(voirComptes);
+    }
+    if (!properties.getProperty("debiterFichier", "true").equals("false")) {
+      debiterFichier.addActionListener(mainWindowListener);
+      menuTDB.add(debiterFichier);
+    }
+    if (!properties.getProperty("positivation", "true").equals("false")) {
+      positivation.addActionListener(mainWindowListener);
+      menuTDB.add(positivation);
+    }
+    if (!properties.getProperty("exporter", "true").equals("false")) {
+      exporter.addActionListener(mainWindowListener);
+      menuTDB.add(exporter);
+    }
+    if (!properties.getProperty("reinitialiserHistorique", "true").equals("false")) {
+      reinitialiserHistorique.addActionListener(mainWindowListener);
+      menuTDB.add(reinitialiserHistorique);
+    }
+    if (!properties.getProperty("reinitialiserConso", "true").equals("false")) {
+      reinitialiserConso.addActionListener(mainWindowListener);
+      menuTDB.add(reinitialiserConso);
+    }
 
-    menuGestion.add(fasciserParMail);
-    menuGestion.add(loggerAPlusieurs);
-    menuGestion.add(approvisionner);
-    menuGestion.add(transfert);
-    menuGestion.add(modifierMail);
-    menuGestion.add(creerTrigramme);
-    menuGestion.add(modifierTrigramme);
-    menuGestion.add(supprimerTrigramme);
-
-    verifTotal.addActionListener(mainWindowListener);
-    voirBinets.addActionListener(mainWindowListener);
-    voirComptes.addActionListener(mainWindowListener);
-    debiterFichier.addActionListener(mainWindowListener);
-    positivation.addActionListener(mainWindowListener);
-    exporter.addActionListener(mainWindowListener);
-    reinitialiserHistorique.addActionListener(mainWindowListener);
-    reinitialiserConso.addActionListener(mainWindowListener);
-
-    menuTDB.add(verifTotal);
-    menuTDB.add(voirBinets);
-    menuTDB.add(voirComptes);
-    menuTDB.add(debiterFichier);
-    menuTDB.add(positivation);
-    menuTDB.add(exporter);
-    menuTDB.add(reinitialiserHistorique);
-    menuTDB.add(reinitialiserConso);
-
-    ouvrirModeAdmin.addActionListener(mainWindowListener);
-    fermerModeAdmin.addActionListener(mainWindowListener);
-    ouvrirBinet.addActionListener(mainWindowListener);
-    fermerBinet.addActionListener(mainWindowListener);
-    changerMDP.addActionListener(mainWindowListener);
-    gestionClopes.addActionListener(mainWindowListener);
-    gestionAdmins.addActionListener(mainWindowListener);
-    gestionDroits.addActionListener(mainWindowListener);
-
-    menuAdmin.add(ouvrirModeAdmin);
-    menuAdmin.add(fermerModeAdmin);
-    menuAdmin.add(ouvrirBinet);
-    menuAdmin.add(fermerBinet);
-    menuAdmin.add(changerMDP);
-    menuAdmin.add(gestionClopes);
-    menuAdmin.add(gestionAdmins);
-    menuAdmin.add(gestionDroits);
+    if (!properties.getProperty("ouvrirModeAdmin", "true").equals("false")) {
+      ouvrirModeAdmin.addActionListener(mainWindowListener);
+      menuAdmin.add(ouvrirModeAdmin);
+    }
+    if (!properties.getProperty("fermerModeAdmin", "true").equals("false")) {
+      fermerModeAdmin.addActionListener(mainWindowListener);
+      menuAdmin.add(fermerModeAdmin);
+    }
+    if (!properties.getProperty("ouvrirBinet", "true").equals("false")) {
+      ouvrirBinet.addActionListener(mainWindowListener);
+      menuAdmin.add(ouvrirBinet);
+    }
+    if (!properties.getProperty("fermerBinet", "true").equals("false")) {
+      fermerBinet.addActionListener(mainWindowListener);
+      menuAdmin.add(fermerBinet);
+    }
+    if (!properties.getProperty("changerMDP", "true").equals("false")) {
+      changerMDP.addActionListener(mainWindowListener);
+      menuAdmin.add(changerMDP);
+    }
+    if (!properties.getProperty("gestionClopes", "true").equals("false")) {
+      gestionClopes.addActionListener(mainWindowListener);
+      menuAdmin.add(gestionClopes);
+    }
+    if (!properties.getProperty("gestionAdmins", "true").equals("false")) {
+      gestionAdmins.addActionListener(mainWindowListener);
+      menuAdmin.add(gestionAdmins);
+    }
+    if (!properties.getProperty("gestionDroits", "true").equals("false")) {
+      gestionDroits.addActionListener(mainWindowListener);
+      menuAdmin.add(gestionDroits);
+    }
 
     JMenuBar barreDeMenu = new JMenuBar();
     barreDeMenu.add(menuStandard);
@@ -481,8 +524,7 @@ public class MainWindow extends JFrame {
 
     historiqueScrollPane = new JScrollPane(historique);
     historiqueScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    historiqueScrollPane.setPreferredSize(new Dimension((this.getWidth() - 20) * 2 / 3, this
-        .getHeight() - 80));
+    historiqueScrollPane.setPreferredSize(new Dimension((this.getWidth() - 20) * 2 / 3, this.getHeight() - 80));
 
     String[] header = {"Montant", "Banque", "Admin", "Commentaire", "Date"};
     modele.setColumnIdentifiers(header);
@@ -492,8 +534,7 @@ public class MainWindow extends JFrame {
     historique.getColumnModel().getColumn(0).setPreferredWidth(65);
     historique.getColumnModel().getColumn(1).setPreferredWidth(60);
     historique.getColumnModel().getColumn(2).setPreferredWidth(50);
-    historique.getColumnModel().getColumn(3)
-        .setPreferredWidth(historiqueScrollPane.getPreferredSize().width - 340);
+    historique.getColumnModel().getColumn(3).setPreferredWidth(historiqueScrollPane.getPreferredSize().width - 340);
     historique.getColumnModel().getColumn(4).setPreferredWidth(140);
     historique.setShowGrid(false);
     historique.repaint();
@@ -504,23 +545,21 @@ public class MainWindow extends JFrame {
     infos.setLayout(new FlowLayout(SwingConstants.CENTER));
     infos.setBackground(null);
 
+    String trigrammeBanque = properties.getProperty("trigrammeBanque", "BOB");
     if (trigrammeBanque.equals("BOB")) {
       bobBanqueBouton = new JButton("BôB");
     } else {
       bobBanqueBouton = new JButton(trigrammeBanque);
     }
     bobBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
-    bobBanqueBouton.setPreferredSize(new Dimension(
-        (int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
+    bobBanqueBouton.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
 
     binetBanqueBouton = new JButton("Mythe");
     binetBanqueBouton.setFont(new Font("ARIAL", Font.BOLD, 32));
-    binetBanqueBouton.setPreferredSize(new Dimension(
-        (int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
+    binetBanqueBouton.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 20) / 2, 60));
 
     trigrammeLabel = new JLabel();
-    trigrammeLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 20),
-        60));
+    trigrammeLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 20), 60));
     trigrammeLabel.setHorizontalAlignment(SwingConstants.CENTER);
     trigrammeLabel.setFont(new Font("ARIAL", Font.BOLD, 40));
 
@@ -538,14 +577,12 @@ public class MainWindow extends JFrame {
     nomLabel.setFocusable(false);
 
     balanceLabel = new JLabel();
-    balanceLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10),
-        100));
+    balanceLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 100));
     balanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
     balanceLabel.setFont(new Font("ARIAL", Font.BOLD, 40));
 
     turnoverLabel = new JLabel();
-    turnoverLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10),
-        40));
+    turnoverLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 40));
     turnoverLabel.setHorizontalAlignment(SwingConstants.CENTER);
     turnoverLabel.setFont(new Font("ARIAL", Font.PLAIN, 12));
 
@@ -642,26 +679,24 @@ public class MainWindow extends JFrame {
         promo = "" + trigrammeActif.promo;
       }
       if (!trigrammeActif.nickname.equals("")) {
-        nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " ("
-            + trigrammeActif.nickname + ") " + promo);
+        nomLabel.setText(
+            trigrammeActif.name + " " + trigrammeActif.first_name + " (" + trigrammeActif.nickname + ") " + promo);
       } else {
         nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " " + promo);
       }
       balanceLabel.setText("" + (double) trigrammeActif.balance / 100);
       if (trigrammeActif.status == 2) {
-        turnoverLabel.setText(((double) (trigrammeActif.turnover) / 100)
-            + "€ gagnés depuis dernier reset.");
+        turnoverLabel.setText(((double) (trigrammeActif.turnover) / 100) + "€ gagnés depuis dernier reset.");
       } else {
-        turnoverLabel.setText(((double) (trigrammeActif.turnover - trigrammeActif.balance) / 100)
-            + "€ depensés depuis dernier reset.");
+        turnoverLabel.setText(
+            ((double) (trigrammeActif.turnover - trigrammeActif.balance) / 100) + "€ depensés depuis dernier reset.");
       }
       if (trigrammeActif.picture != "") {
         try {
           Image image = ImageIO.read(new File(trigrammeActif.picture));
           new ImageIcon(image);
-          double zoom =
-              Math.min((double) photo.getWidth() / (double) image.getWidth(null),
-                  (double) photo.getHeight() / (double) image.getHeight(null));
+          double zoom = Math.min((double) photo.getWidth() / (double) image.getWidth(null),
+              (double) photo.getHeight() / (double) image.getHeight(null));
           photo.setIcon(new ImageIcon(image.getScaledInstance((int) (image.getWidth(null) * zoom),
               (int) (image.getHeight(null) * zoom), Image.SCALE_FAST)));
           photo.repaint();
