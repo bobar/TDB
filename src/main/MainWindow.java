@@ -428,10 +428,10 @@ public class MainWindow extends JFrame {
     }
     if (!properties.getProperty("modifierMail", "true").equals("false")) {
       modifierMail.addActionListener(mainWindowListener);
-      creerTrigramme.addActionListener(mainWindowListener);
       menuGestion.add(modifierMail);
     }
     if (!properties.getProperty("creerTrigramme", "true").equals("false")) {
+      creerTrigramme.addActionListener(mainWindowListener);
       creerTrigramme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
       menuGestion.add(creerTrigramme);
     }
