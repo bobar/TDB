@@ -159,6 +159,7 @@ public class MainWindow extends JFrame {
   JButton binetBanqueBouton;
   JLabel trigrammeLabel;
   JTextPane nomLabel;
+  JLabel ageLabel;
   JLabel balanceLabel;
   JLabel turnoverLabel;
   JLabel photo;
@@ -299,7 +300,7 @@ public class MainWindow extends JFrame {
     MainWindow TDB = new MainWindow();
     try {
       String absolutePath = TDB.getExecutionPath();
-      InputStream ips = new FileInputStream(absolutePath + "/src//TDB.config");
+      InputStream ips = new FileInputStream(absolutePath + "/src/TDB.config");
       Properties properties = new Properties();
       properties.load(ips);
       TDB.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -576,6 +577,11 @@ public class MainWindow extends JFrame {
     nomLabel.setEditable(false);
     nomLabel.setFocusable(false);
 
+    ageLabel = new JLabel();
+    ageLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 60));
+    ageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    ageLabel.setFont(new Font("ARIAL", Font.BOLD, 25));
+
     balanceLabel = new JLabel();
     balanceLabel.setPreferredSize(new Dimension((int) (infos.getPreferredSize().getWidth() - 10), 100));
     balanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -594,6 +600,7 @@ public class MainWindow extends JFrame {
     infos.add(binetBanqueBouton);
     infos.add(trigrammeLabel);
     infos.add(nomLabel);
+    infos.add(ageLabel);
     infos.add(balanceLabel);
     infos.add(turnoverLabel);
     infos.add(photo);
@@ -684,6 +691,20 @@ public class MainWindow extends JFrame {
       } else {
         nomLabel.setText(trigrammeActif.name + " " + trigrammeActif.first_name + " " + promo);
       }
+      int age = trigrammeActif.getAge();
+      if (age < 18) {
+        ageLabel.setForeground(Color.RED);
+        ageLabel.setFont(new Font("ARIAL", Font.BOLD, 50));
+      } else {
+        ageLabel.setForeground(Color.BLACK);
+        ageLabel.setFont(new Font("ARIAL", Font.BOLD, 25));
+      }
+      if (age != -1) {
+        ageLabel.setText(age + " ans");
+      } else {
+        ageLabel.setText("");
+      }
+
       balanceLabel.setText("" + (double) trigrammeActif.balance / 100);
       if (trigrammeActif.status == 2) {
         turnoverLabel.setText(((double) (trigrammeActif.turnover) / 100) + "€ gagnés depuis dernier reset.");
@@ -710,6 +731,7 @@ public class MainWindow extends JFrame {
     } else {
       trigrammeLabel.setText("");
       nomLabel.setText("");
+      ageLabel.setText("");
       balanceLabel.setText("");
       turnoverLabel.setText("");
       photo.setIcon(null);

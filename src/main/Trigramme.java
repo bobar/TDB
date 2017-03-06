@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
 import java.text.Normalizer;
+import java.util.Date;
 import java.util.LinkedList;
 import javax.mail.internet.AddressException;
 import admin.AuthentificationDialog;
@@ -26,6 +27,7 @@ public class Trigramme {
   public String name;
   public String first_name;
   public String nickname;
+  public Date birthdate;
   public String casert;
   public int status; // 0=X platal,1=X
   // ancien,2=binet,3=personnel,4=supop,5=autre
@@ -45,6 +47,7 @@ public class Trigramme {
       name = rs.getString("name");
       first_name = rs.getString("first_name");
       nickname = rs.getString("nickname");
+      birthdate = rs.getDate("birthdate");
       casert = rs.getString("casert");
       status = rs.getInt("status");
       promo = rs.getInt("promo");
@@ -87,6 +90,7 @@ public class Trigramme {
       name = rs.getString("name");
       first_name = rs.getString("first_name");
       nickname = rs.getString("nickname");
+      birthdate = rs.getDate("birthdate");
       casert = rs.getString("casert");
       status = rs.getInt("status");
       promo = rs.getInt("promo");
@@ -172,6 +176,21 @@ public class Trigramme {
     stmt.setString(1, email);
     stmt.setInt(2, id);
     stmt.executeUpdate();
+  }
+
+  public int getAge() {
+    if (birthdate == null) {
+      return -1;
+    }
+    Date today = new Date();
+    int age = today.getYear() - birthdate.getYear();
+    if (today.getMonth() > birthdate.getMonth()) {
+      --age;
+    }
+    if (today.getMonth() == birthdate.getMonth() && today.getDay() >= birthdate.getDay()) {
+      --age;
+    }
+    return age;
   }
 
   public void modifier(int id, Admin admin) throws Exception {
