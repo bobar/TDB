@@ -184,10 +184,10 @@ public class Trigramme {
     }
     Date today = new Date();
     int age = today.getYear() - birthdate.getYear();
-    if (today.getMonth() > birthdate.getMonth()) {
+    if (today.getMonth() < birthdate.getMonth()) {
       --age;
     }
-    if (today.getMonth() == birthdate.getMonth() && today.getDay() >= birthdate.getDay()) {
+    if (today.getMonth() == birthdate.getMonth() && today.getDay() < birthdate.getDay()) {
       --age;
     }
     return age;
