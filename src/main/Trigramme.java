@@ -187,7 +187,7 @@ public class Trigramme {
     if (today.getMonth() < birthdate.getMonth()) {
       --age;
     }
-    if (today.getMonth() == birthdate.getMonth() && today.getDay() < birthdate.getDay()) {
+    if (today.getMonth() == birthdate.getMonth() && today.getDate() < birthdate.getDate()) {
       --age;
     }
     return age;
