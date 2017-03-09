@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.text.Normalizer;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import javax.mail.internet.AddressException;
 import admin.AuthentificationDialog;
@@ -182,12 +183,15 @@ public class Trigramme {
     if (birthdate == null) {
       return -1;
     }
-    Date today = new Date();
-    int age = today.getYear() - birthdate.getYear();
-    if (today.getMonth() < birthdate.getMonth()) {
+    GregorianCalendar today = new GregorianCalendar();
+    GregorianCalendar birth = new GregorianCalendar();
+    birth.setTime(birthdate);
+    int age = today.get(GregorianCalendar.YEAR) - birth.get(GregorianCalendar.YEAR);
+    if (today.get(GregorianCalendar.MONTH) < birth.get(GregorianCalendar.MONTH)) {
       --age;
     }
-    if (today.getMonth() == birthdate.getMonth() && today.getDate() < birthdate.getDate()) {
+    if (today.get(GregorianCalendar.MONTH) == birth.get(GregorianCalendar.MONTH) &&
+        today.get(GregorianCalendar.DAY_OF_MONTH) < birth.get(GregorianCalendar.DAY_OF_MONTH)) {
       --age;
     }
     return age;
