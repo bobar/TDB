@@ -2,7 +2,11 @@ package main;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.TimeZone;
 
 public class Historique {
 
@@ -13,6 +17,14 @@ public class Historique {
     public String admin;
     public String comment;
     public String date;
+
+    public String localDate() throws ParseException {
+      SimpleDateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+      utcDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+      return localDateFormat.format(utcDateFormat.parse(date));
+    }
   }
 
   public static LinkedList<Entry> getHistorique(MainWindow parent, Trigramme trigramme, int limit)
@@ -38,7 +50,7 @@ public class Historique {
       }
       zou.admin = rs.getString("t3");
       zou.comment = rs.getString("c");
-      zou.date = rs.getString("date").substring(0, Math.min(16, rs.getString("date").length()));
+      zou.date = rs.getString("date").substring(0, Math.min(19, rs.getString("date").length()));
       res.add(zou);
     }
     return res;
@@ -67,7 +79,7 @@ public class Historique {
       }
       zou.admin = rs.getString("t3");
       zou.comment = rs.getString("c");
-      zou.date = rs.getString("date").substring(0, Math.min(16, rs.getString("date").length()));
+      zou.date = rs.getString("date").substring(0, Math.min(19, rs.getString("date").length()));
       res.add(zou);
     }
     return res;

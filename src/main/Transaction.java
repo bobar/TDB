@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class Transaction {
 
@@ -26,6 +27,8 @@ public class Transaction {
     }
     if (date == null) {
       SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      formater.setTimeZone(TimeZone.getTimeZone("UTC"));
+
       this.date = formater.format(new Date());
     } else {
       this.date = date;

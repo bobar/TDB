@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Stack;
+import java.util.TimeZone;
 import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
@@ -676,7 +677,7 @@ public class MainWindow extends JFrame {
 
       LinkedList<Historique.Entry> histo = Historique.getHistorique(this, trigrammeActif, 50);
       for (Historique.Entry entry : histo) {
-        String[] ligne = {entry.price + "", entry.banque, entry.admin, entry.comment, entry.date};
+        String[] ligne = {entry.price + "", entry.banque, entry.admin, entry.comment, entry.localDate()};
         modele.addRow(ligne);
       }
 
@@ -753,7 +754,7 @@ public class MainWindow extends JFrame {
     if (trigrammeActif != null) {
       LinkedList<Historique.Entry> histo = Historique.getHistorique(this, trigrammeActif, -1);
       for (Historique.Entry entry : histo) {
-        String[] ligne = {entry.price + "", entry.banque, entry.admin, entry.comment, entry.date};
+        String[] ligne = {entry.price + "", entry.banque, entry.admin, entry.comment, entry.localDate()};
         modele.addRow(ligne);
       }
       infos.repaint();
@@ -773,12 +774,12 @@ public class MainWindow extends JFrame {
     if (trigrammeActif != null) {
       LinkedList<Historique.Entry> histo = Historique.getHistorique(this, trigrammeActif, -1);
       for (Historique.Entry entry : histo) {
-        String[] ligne = {entry.price + "", entry.banque, entry.admin, entry.comment, entry.date};
+        String[] ligne = {entry.price + "", entry.banque, entry.admin, entry.comment, entry.localDate()};
         modele.addRow(ligne);
       }
       LinkedList<Historique.Entry> oldhisto = Historique.getOldHistorique(this, trigrammeActif, -1);
       for (Historique.Entry entry : oldhisto) {
-        String[] ligne = {entry.price + "", entry.banque, entry.admin, entry.comment, entry.date};
+        String[] ligne = {entry.price + "", entry.banque, entry.admin, entry.comment, entry.localDate()};
         modele.addRow(ligne);
       }
       infos.repaint();
