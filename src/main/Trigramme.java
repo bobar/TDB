@@ -137,7 +137,7 @@ public class Trigramme {
     stmt2.executeUpdate();
 
     Transaction transaction =
-        new Transaction(id, balance, "Création de trigramme", admin, null, parent.banqueBob.id);
+        new Transaction(id, -balance, "Création de trigramme", admin, null, parent.banqueBob.id);
     transaction.WriteToDB(parent);
     parent.setTrigrammeActif(new Trigramme(parent, trigramme));
   }
@@ -246,7 +246,7 @@ public class Trigramme {
       if (!parent.banqueBobActif) {
         banqueId = parent.banqueBinet.id;
       }
-      Transaction transaction = new Transaction(id, -montant, "", null, null, banqueId);
+      Transaction transaction = new Transaction(id, montant, "", null, null, banqueId);
       transaction.WriteToDB(parent);
       parent.dernieresActions.add(transaction);
     } else if (montant > 2000) {
@@ -260,7 +260,7 @@ public class Trigramme {
         banqueId = parent.banqueBinet.id;
       }
       Transaction transaction =
-          new Transaction(id, -montant, "", authentification.admin, null, banqueId);
+          new Transaction(id, montant, "", authentification.admin, null, banqueId);
       parent.dernieresActions.add(transaction);
       transaction.WriteToDB(parent);
     } else {
@@ -270,7 +270,7 @@ public class Trigramme {
         throw new AuthException();
       }
       Transaction transaction =
-          new Transaction(id, -montant, "", authentification.admin, null, parent.banqueBob.id);
+          new Transaction(id, montant, "", authentification.admin, null, parent.banqueBob.id);
       transaction.WriteToDB(parent);
       parent.dernieresActions.add(transaction);
     }
@@ -286,7 +286,7 @@ public class Trigramme {
     }
     int banqueId = parent.banqueBob.id;
 
-    Transaction transaction = new Transaction(id, montant, commentaire, admin, null, banqueId);
+    Transaction transaction = new Transaction(id, -montant, commentaire, admin, null, banqueId);
     transaction.WriteToDB(parent);
     parent.dernieresActions.add(transaction);
     parent.trigrammeActif = new Trigramme(parent, parent.trigrammeActif.trigramme);

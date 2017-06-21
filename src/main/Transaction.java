@@ -17,8 +17,10 @@ public class Transaction {
   public boolean is_clopes = false;
 
   public Transaction(int id, int price, String comment, Admin admin, String date, int id2) {
-    this.id = id;
-    this.price = price;
+    boolean reverse = (price < 0);
+    this.id = reverse ? id2 : id;
+    this.id2 = reverse ? id : id2;
+    this.price = reverse ? -price : price;
     this.comment = comment;
     if (admin == null) {
       this.admin_id = 0;
@@ -33,54 +35,32 @@ public class Transaction {
     } else {
       this.date = date;
     }
-    this.id2 = id2;
   }
 
   public void WriteToDB(MainWindow parent) throws Exception {
     Statement stmt = parent.connexion.createStatement();
-    if (price > 0) {
-      stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price + ", turnover=turnover+"
-          + price + " WHERE id=" + id);
-    } else if (price < 0) {
-      stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-price) + " WHERE id=" + id);
-    }
-    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (" + id
-        + "," + price + ",'" + comment + "'," + admin_id + ",'" + date + "'," + id2 + ")");
-    stmt.executeUpdate("INSERT INTO transactions (id,price,comment,admin,date,id2) VALUES (" + id2
-        + "," + (-price) + ",'" + comment + "'," + admin_id + ",'" + date + "'," + id + ")");
+    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + ", turnover=turnover+"
+        + price + " WHERE id=" + id);
     if (is_clopes) {
-      stmt.execute("UPDATE accounts SET total_clopes = total_clopes+" + (-price) + " WHERE id="
+      stmt.execute("UPDATE accounts SET total_clopes = total_clopes+" + price + " WHERE id="
           + id);
     }
-    if (price > 0) {
-      stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + " WHERE id=" + id2);
-    } else if (price < 0) {
-      stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-price) + ", turnover=turnover+"
-          + (-price) + " WHERE id=" + id2);
-    }
+    stmt.executeUpdate("INSERT INTO transactions (buyer_id,amount,comment,admin,date,receiver_id) VALUES (" + id
+        + "," + price + ",'" + comment + "'," + admin_id + ",'" + date + "'," + id2 + ")");
+    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price + " WHERE id=" + id2);
   }
 
   public void annuler(Connection connexion) throws Exception {
     Statement stmt = connexion.createStatement();
-    if (price > 0) {
-      stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + ", turnover=turnover-"
-          + price + " WHERE id=" + id);
-    } else if (price < 0) {
-      stmt.executeUpdate("UPDATE accounts SET balance=balance+" + (-price) + " WHERE id=" + id);
-    }
-    stmt.executeUpdate("DELETE FROM transactions WHERE id=" + id + " AND price=" + price
-        + " AND comment='" + comment + "' AND admin=" + admin_id + " AND date='" + date
-        + "' AND id2=" + id2);
+    stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price + ", turnover=turnover-"
+        + price + " WHERE id=" + id);
     if (is_clopes) {
-      stmt.execute("UPDATE accounts SET total_clopes = total_clopes-" + (-price) + " WHERE id="
+      stmt.execute("UPDATE accounts SET total_clopes = total_clopes-" + price + " WHERE id="
           + id);
     }
-    if (price > 0) {
-      stmt.executeUpdate("UPDATE accounts SET balance=balance+" + price + " WHERE id=" + id2);
-    } else if (price < 0) {
-      stmt.executeUpdate("UPDATE accounts SET balance=balance-" + (-price) + ", turnover=turnover-"
-          + (-price) + " WHERE id=" + id2);
-    }
+    stmt.executeUpdate("UPDATE accounts SET balance=balance-" + price + " WHERE id=" + id2);
+    String query = "UPDATE transactions SET amount=0, comment=CONCAT(comment, \" (Annulée, valait " +
+      ((double) price / 100) + " €)\") WHERE buyer_id=" + id + " AND receiver_id=" + id2 + " AND date=\"" + date + "\"";
+    stmt.executeUpdate(query);
   }
-
 }

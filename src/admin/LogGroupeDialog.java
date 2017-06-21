@@ -217,7 +217,7 @@ public class LogGroupeDialog extends JDialog {
         for (int i = 0; i < trigrammes.length; i++) {
           Trigramme trigramme = new Trigramme(parent, trigrammes[i]);
           Transaction transaction =
-              new Transaction(trigramme.id, -montant, commentaire, authentification.admin, null,
+              new Transaction(trigramme.id, montant, commentaire, authentification.admin, null,
                   parent.banqueBob.id);
           transaction.WriteToDB(parent);
         }

@@ -62,7 +62,7 @@ public class Clopes {
 
   public void vendre(Trigramme trigramme, Admin admin, int quantite) throws Exception {
     Transaction transaction =
-        new Transaction(trigramme.id, -quantite * prix, quantite + " " + marque, admin, null,
+        new Transaction(trigramme.id, quantite * prix, quantite + " " + marque, admin, null,
             parent.banqueBob.id);
     transaction.is_clopes = true;
     parent.dernieresActions.add(transaction);

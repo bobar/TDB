@@ -143,7 +143,7 @@ public class TransfertDialog extends JDialog {
       Trigramme trigramme1 = new Trigramme(parent, champTrigramme1.getText());
       Trigramme trigramme2 = new Trigramme(parent, champTrigramme2.getText());
       Transaction transaction =
-          new Transaction(trigramme1.id, -montant, commentaire, authentification.admin, null,
+          new Transaction(trigramme1.id, montant, commentaire, authentification.admin, null,
               trigramme2.id);
       transaction.WriteToDB(parent);
     }

@@ -711,7 +711,7 @@ public class MainWindow extends JFrame {
         turnoverLabel.setText(((double) (trigrammeActif.turnover) / 100) + "€ gagnés depuis dernier reset.");
       } else {
         turnoverLabel.setText(
-            ((double) (trigrammeActif.turnover - trigrammeActif.balance) / 100) + "€ depensés depuis dernier reset.");
+            ((double) (trigrammeActif.turnover) / 100) + "€ depensés depuis dernier reset.");
       }
       if (trigrammeActif.picture != "") {
         try {
